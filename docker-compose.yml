@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: aphasia-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://aphasia:aphasia123@db:5432/aphasia_db
+      - SECRET_KEY=${SECRET_KEY:-change-this-secret-key-in-production}
+      - DEBUG=true
+      - BACKEND_CORS_ORIGINS=http://localhost:3000,http://localhost:8000
+    volumes:
+      - ./backend:/app
+      - ./uploads:/app/uploads
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: aphasia-frontend
+    ports:
+      - "3000:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+    restart: unless-stopped
+
+  db:
+    image: postgres:15-alpine
+    container_name: aphasia-db
+    environment:
+      - POSTGRES_USER=aphasia
+      - POSTGRES_PASSWORD=aphasia123
+      - POSTGRES_DB=aphasia_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

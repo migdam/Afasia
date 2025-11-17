@@ -1,0 +1,194 @@
+"""Pydantic schemas for request/response validation."""
+from datetime import datetime
+from typing import Optional, List
+from pydantic import BaseModel, EmailStr
+from ...db.models import DifficultyLevel, ExerciseType, UserRole, BadgeType
+
+
+# User schemas
+class UserCreate(BaseModel):
+    email: EmailStr
+    username: str
+    password: str
+    full_name: Optional[str] = None
+    language: str = "en"
+
+
+class UserLogin(BaseModel):
+    username: str
+    password: str
+
+
+class UserUpdate(BaseModel):
+    full_name: Optional[str] = None
+    language: Optional[str] = None
+
+
+class UserResponse(BaseModel):
+    id: int
+    email: str
+    username: str
+    full_name: Optional[str]
+    language: str
+    role: UserRole
+    total_points: int
+    current_streak: int
+    longest_streak: int
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    user: UserResponse
+
+
+# Exercise schemas
+class ExerciseCreate(BaseModel):
+    exercise_type: ExerciseType
+    difficulty: DifficultyLevel
+    question: str
+    correct_answer: str
+    image_url: Optional[str] = None
+    audio_url: Optional[str] = None
+    options: Optional[List[str]] = None
+
+
+class ExerciseResponse(BaseModel):
+    id: int
+    exercise_type: ExerciseType
+    difficulty: DifficultyLevel
+    question: str
+    image_url: Optional[str]
+    audio_url: Optional[str]
+    options: Optional[List[str]]
+    user_answer: Optional[str]
+    is_correct: Optional[bool]
+    time_taken_seconds: Optional[int]
+
+    class Config:
+        from_attributes = True
+
+
+class ExerciseAnswer(BaseModel):
+    answer: str
+    time_taken_seconds: int
+
+
+# Session schemas
+class SessionCreate(BaseModel):
+    title: str
+    description: Optional[str] = None
+    exercise_type: ExerciseType
+    difficulty: DifficultyLevel = DifficultyLevel.MEDIUM
+    language: str = "en"
+    num_exercises: int = 10
+
+
+class SessionResponse(BaseModel):
+    id: int
+    title: str
+    description: Optional[str]
+    exercise_type: ExerciseType
+    difficulty: DifficultyLevel
+    language: str
+    total_exercises: int
+    completed_exercises: int
+    score: float
+    duration_seconds: int
+    started_at: datetime
+    completed_at: Optional[datetime]
+    is_completed: bool
+
+    class Config:
+        from_attributes = True
+
+
+class SessionComplete(BaseModel):
+    score: float
+    duration_seconds: int
+
+
+# Progress schemas
+class ProgressResponse(BaseModel):
+    id: int
+    date: datetime
+    exercises_completed: int
+    accuracy_rate: float
+    total_time_seconds: int
+    points_earned: int
+    difficulty_level: Optional[DifficultyLevel]
+    exercise_type: Optional[ExerciseType]
+
+    class Config:
+        from_attributes = True
+
+
+class ProgressStats(BaseModel):
+    total_sessions: int
+    total_exercises: int
+    average_accuracy: float
+    total_time_hours: float
+    total_points: int
+    current_streak: int
+    longest_streak: int
+    progress_history: List[ProgressResponse]
+
+
+# Badge schemas
+class BadgeResponse(BaseModel):
+    id: int
+    badge_type: BadgeType
+    earned_at: datetime
+    metadata: Optional[dict]
+
+    class Config:
+        from_attributes = True
+
+
+# Scheduled session schemas
+class ScheduledSessionCreate(BaseModel):
+    scheduled_time: datetime
+    title: str
+    description: Optional[str] = None
+    exercise_type: ExerciseType
+    difficulty: DifficultyLevel = DifficultyLevel.MEDIUM
+
+
+class ScheduledSessionResponse(BaseModel):
+    id: int
+    scheduled_time: datetime
+    title: str
+    description: Optional[str]
+    exercise_type: ExerciseType
+    difficulty: DifficultyLevel
+    is_completed: bool
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+# Audio recording schemas
+class AudioRecordingResponse(BaseModel):
+    id: int
+    file_path: str
+    duration_seconds: Optional[float]
+    transcription: Optional[str]
+    accuracy_score: Optional[float]
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+# Admin schemas
+class AdminUserStats(BaseModel):
+    total_users: int
+    active_users: int
+    total_sessions: int
+    total_exercises: int
+    average_accuracy: float

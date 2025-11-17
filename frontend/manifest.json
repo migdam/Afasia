@@ -1,0 +1,25 @@
+{
+  "name": "Aphasia Speech Therapy",
+  "short_name": "Aphasia Therapy",
+  "description": "Interactive speech therapy exercises for aphasia patients",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#4F46E5",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["health", "medical", "education"],
+  "lang": "en",
+  "dir": "ltr"
+}

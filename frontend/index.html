@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Speech therapy application for aphasia patients">
+    <title>Aphasia Speech Therapy</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/dark-mode.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body class="light-theme">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <h1>🗣️ Aphasia Therapy</h1>
+            </div>
+            <div class="nav-controls">
+                <button id="theme-toggle" class="icon-btn" aria-label="Toggle dark mode">
+                    <span class="theme-icon">🌙</span>
+                </button>
+                <button id="lang-toggle" class="icon-btn" aria-label="Change language">
+                    <span id="lang-text">EN</span>
+                </button>
+                <button id="logout-btn" class="btn btn-secondary" style="display: none;" data-i18n="logout">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Login/Register Page -->
+        <div id="auth-page" class="page active">
+            <div class="auth-container">
+                <div class="auth-card">
+                    <h2 data-i18n="welcome">Welcome to Aphasia Therapy</h2>
+                    <p class="subtitle" data-i18n="subtitle">Interactive speech therapy exercises</p>
+
+                    <!-- Login Form -->
+                    <div id="login-form" class="auth-form">
+                        <h3 data-i18n="login">Login</h3>
+                        <form id="login-form-submit">
+                            <div class="form-group">
+                                <label for="login-username" data-i18n="username">Username</label>
+                                <input type="text" id="login-username" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="login-password" data-i18n="password">Password</label>
+                                <input type="password" id="login-password" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" data-i18n="login">Login</button>
+                        </form>
+                        <p class="switch-auth">
+                            <span data-i18n="noAccount">Don't have an account?</span>
+                            <a href="#" id="show-register" data-i18n="register">Register</a>
+                        </p>
+                    </div>
+
+                    <!-- Register Form -->
+                    <div id="register-form" class="auth-form" style="display: none;">
+                        <h3 data-i18n="register">Register</h3>
+                        <form id="register-form-submit">
+                            <div class="form-group">
+                                <label for="register-email" data-i18n="email">Email</label>
+                                <input type="email" id="register-email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="register-username" data-i18n="username">Username</label>
+                                <input type="text" id="register-username" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="register-fullname" data-i18n="fullName">Full Name</label>
+                                <input type="text" id="register-fullname">
+                            </div>
+                            <div class="form-group">
+                                <label for="register-password" data-i18n="password">Password</label>
+                                <input type="password" id="register-password" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" data-i18n="register">Register</button>
+                        </form>
+                        <p class="switch-auth">
+                            <span data-i18n="haveAccount">Already have an account?</span>
+                            <a href="#" id="show-login" data-i18n="login">Login</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Page -->
+        <div id="dashboard-page" class="page">
+            <div class="dashboard-header">
+                <h2 data-i18n="dashboard">Dashboard</h2>
+                <div class="user-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">⭐</div>
+                        <div class="stat-content">
+                            <div class="stat-label" data-i18n="points">Points</div>
+                            <div class="stat-value" id="total-points">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🔥</div>
+                        <div class="stat-content">
+                            <div class="stat-label" data-i18n="streak">Streak</div>
+                            <div class="stat-value" id="current-streak">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🏆</div>
+                        <div class="stat-content">
+                            <div class="stat-label" data-i18n="badges">Badges</div>
+                            <div class="stat-value" id="badge-count">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-content">
+                <!-- Start New Session -->
+                <section class="card">
+                    <h3 data-i18n="startSession">Start New Session</h3>
+                    <form id="new-session-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="exercise-type" data-i18n="exerciseType">Exercise Type</label>
+                                <select id="exercise-type" required>
+                                    <option value="word_naming" data-i18n="wordNaming">Word Naming</option>
+                                    <option value="sentence_completion" data-i18n="sentenceCompletion">Sentence Completion</option>
+                                    <option value="image_recognition" data-i18n="imageRecognition">Image Recognition</option>
+                                    <option value="pronunciation" data-i18n="pronunciation">Pronunciation</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="difficulty" data-i18n="difficulty">Difficulty</label>
+                                <select id="difficulty" required>
+                                    <option value="easy" data-i18n="easy">Easy</option>
+                                    <option value="medium" data-i18n="medium" selected>Medium</option>
+                                    <option value="hard" data-i18n="hard">Hard</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="num-exercises" data-i18n="numExercises">Number of Exercises</label>
+                                <input type="number" id="num-exercises" min="5" max="50" value="10" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary" data-i18n="start">Start</button>
+                    </form>
+                </section>
+
+                <!-- Scheduled Sessions -->
+                <section class="card">
+                    <div class="card-header">
+                        <h3 data-i18n="scheduledSessions">Scheduled Sessions</h3>
+                        <button id="add-schedule-btn" class="btn btn-sm" data-i18n="addSchedule">Add Schedule</button>
+                    </div>
+                    <div id="scheduled-list" class="session-list">
+                        <p class="empty-state" data-i18n="noScheduled">No scheduled sessions</p>
+                    </div>
+                </section>
+
+                <!-- Recent Sessions -->
+                <section class="card">
+                    <h3 data-i18n="recentSessions">Recent Sessions</h3>
+                    <div id="recent-sessions" class="session-list">
+                        <p class="empty-state" data-i18n="noSessions">No sessions yet</p>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- Exercise Page -->
+        <div id="exercise-page" class="page">
+            <div class="exercise-container">
+                <div class="exercise-header">
+                    <button id="exit-exercise" class="btn btn-secondary" data-i18n="exit">Exit</button>
+                    <div class="exercise-progress">
+                        <span id="exercise-counter">1/10</span>
+                        <div class="progress-bar">
+                            <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="timer" id="exercise-timer">00:00</div>
+                </div>
+
+                <div class="exercise-content">
+                    <div id="exercise-image" class="exercise-image" style="display: none;">
+                        <img id="exercise-img" src="" alt="Exercise image">
+                    </div>
+
+                    <div class="exercise-question">
+                        <h2 id="exercise-question-text"></h2>
+                    </div>
+
+                    <div id="exercise-audio" class="exercise-audio" style="display: none;">
+                        <button id="play-audio-btn" class="btn btn-audio">
+                            <span>▶️ Play Audio</span>
+                        </button>
+                    </div>
+
+                    <div id="exercise-options" class="exercise-options" style="display: none;">
+                        <!-- Options will be dynamically inserted -->
+                    </div>
+
+                    <div id="exercise-input" class="exercise-input" style="display: none;">
+                        <input type="text" id="answer-input" placeholder="Type your answer...">
+                    </div>
+
+                    <div id="voice-recorder" class="voice-recorder" style="display: none;">
+                        <button id="record-btn" class="btn btn-record">
+                            <span class="record-icon">🎤</span>
+                            <span data-i18n="record">Record</span>
+                        </button>
+                        <div id="recording-status" class="recording-status"></div>
+                    </div>
+
+                    <button id="submit-answer" class="btn btn-primary btn-large" data-i18n="submit">Submit</button>
+
+                    <div id="feedback" class="feedback" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Page -->
+        <div id="progress-page" class="page">
+            <div class="progress-header">
+                <h2 data-i18n="myProgress">My Progress</h2>
+                <div class="export-buttons">
+                    <button id="export-csv" class="btn btn-secondary" data-i18n="exportCSV">Export CSV</button>
+                    <button id="export-pdf" class="btn btn-secondary" data-i18n="exportPDF">Export PDF</button>
+                </div>
+            </div>
+
+            <div class="progress-stats">
+                <div class="stat-card-lg">
+                    <h4 data-i18n="totalSessions">Total Sessions</h4>
+                    <p class="stat-value-lg" id="progress-total-sessions">0</p>
+                </div>
+                <div class="stat-card-lg">
+                    <h4 data-i18n="avgAccuracy">Average Accuracy</h4>
+                    <p class="stat-value-lg" id="progress-avg-accuracy">0%</p>
+                </div>
+                <div class="stat-card-lg">
+                    <h4 data-i18n="totalTime">Total Time</h4>
+                    <p class="stat-value-lg" id="progress-total-time">0h</p>
+                </div>
+                <div class="stat-card-lg">
+                    <h4 data-i18n="longestStreak">Longest Streak</h4>
+                    <p class="stat-value-lg" id="progress-longest-streak">0</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 data-i18n="progressChart">Progress Over Time</h3>
+                <canvas id="progress-chart"></canvas>
+            </div>
+
+            <div class="card">
+                <h3 data-i18n="earnedBadges">Earned Badges</h3>
+                <div id="badges-container" class="badges-grid">
+                    <p class="empty-state" data-i18n="noBadges">No badges yet</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Page -->
+        <div id="admin-page" class="page">
+            <h2 data-i18n="adminDashboard">Admin Dashboard</h2>
+
+            <div class="admin-stats">
+                <div class="stat-card-lg">
+                    <h4 data-i18n="totalUsers">Total Users</h4>
+                    <p class="stat-value-lg" id="admin-total-users">0</p>
+                </div>
+                <div class="stat-card-lg">
+                    <h4 data-i18n="activeUsers">Active Users</h4>
+                    <p class="stat-value-lg" id="admin-active-users">0</p>
+                </div>
+                <div class="stat-card-lg">
+                    <h4 data-i18n="totalSessions">Total Sessions</h4>
+                    <p class="stat-value-lg" id="admin-total-sessions">0</p>
+                </div>
+                <div class="stat-card-lg">
+                    <h4 data-i18n="platformAccuracy">Platform Accuracy</h4>
+                    <p class="stat-value-lg" id="admin-avg-accuracy">0%</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 data-i18n="allUsers">All Users</h3>
+                <div id="admin-users-list" class="users-list"></div>
+            </div>
+        </div>
+
+        <!-- Schedule Modal -->
+        <div id="schedule-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 data-i18n="scheduleSession">Schedule Session</h3>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <form id="schedule-form">
+                    <div class="form-group">
+                        <label for="schedule-title" data-i18n="title">Title</label>
+                        <input type="text" id="schedule-title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="schedule-datetime" data-i18n="dateTime">Date & Time</label>
+                        <input type="datetime-local" id="schedule-datetime" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="schedule-type" data-i18n="exerciseType">Exercise Type</label>
+                        <select id="schedule-type" required>
+                            <option value="word_naming" data-i18n="wordNaming">Word Naming</option>
+                            <option value="sentence_completion" data-i18n="sentenceCompletion">Sentence Completion</option>
+                            <option value="image_recognition" data-i18n="imageRecognition">Image Recognition</option>
+                            <option value="pronunciation" data-i18n="pronunciation">Pronunciation</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="schedule-difficulty" data-i18n="difficulty">Difficulty</label>
+                        <select id="schedule-difficulty" required>
+                            <option value="easy" data-i18n="easy">Easy</option>
+                            <option value="medium" data-i18n="medium">Medium</option>
+                            <option value="hard" data-i18n="hard">Hard</option>
+                        </select>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary modal-cancel" data-i18n="cancel">Cancel</button>
+                        <button type="submit" class="btn btn-primary" data-i18n="schedule">Schedule</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav" style="display: none;">
+        <button class="nav-item active" data-page="dashboard">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label" data-i18n="dashboard">Dashboard</span>
+        </button>
+        <button class="nav-item" data-page="progress">
+            <span class="nav-icon">📊</span>
+            <span class="nav-label" data-i18n="progress">Progress</span>
+        </button>
+        <button class="nav-item" data-page="admin" id="admin-nav" style="display: none;">
+            <span class="nav-icon">⚙️</span>
+            <span class="nav-label" data-i18n="admin">Admin</span>
+        </button>
+    </nav>
+
+    <!-- Scripts -->
+    <script src="js/i18n.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/chart.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/app.js"></script>
+
+    <!-- Service Worker for offline support -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(reg => console.log('Service Worker registered'))
+                .catch(err => console.error('Service Worker registration failed:', err));
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+/* Dark Mode Theme */
+.dark-theme {
+    --primary-color: #6366F1;
+    --primary-hover: #4F46E5;
+    --secondary-color: #9CA3AF;
+    --success-color: #10B981;
+    --error-color: #F87171;
+    --warning-color: #FBBF24;
+
+    --bg-primary: #1F2937;
+    --bg-secondary: #111827;
+    --bg-tertiary: #374151;
+
+    --text-primary: #F9FAFB;
+    --text-secondary: #D1D5DB;
+    --text-tertiary: #9CA3AF;
+
+    --border-color: #374151;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+}
+
+.dark-theme .auth-card {
+    background-color: var(--bg-tertiary);
+}
+
+.dark-theme .form-group input,
+.dark-theme .form-group select {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+.dark-theme .form-group input:focus,
+.dark-theme .form-group select:focus {
+    border-color: var(--primary-color);
+    background-color: var(--bg-secondary);
+}
+
+.dark-theme .option-btn {
+    background-color: var(--bg-tertiary);
+    border-color: var(--border-color);
+}
+
+.dark-theme .option-btn:hover {
+    background-color: var(--bg-primary);
+}
+
+.dark-theme .exercise-input input {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+.dark-theme .feedback.correct {
+    background-color: rgba(16, 185, 129, 0.2);
+    color: #6EE7B7;
+}
+
+.dark-theme .feedback.incorrect {
+    background-color: rgba(248, 113, 113, 0.2);
+    color: #FCA5A5;
+}
+
+.dark-theme .modal-content {
+    background-color: var(--bg-tertiary);
+}
+
+/* Dark mode toggle animation */
+.theme-toggle-animation {
+    animation: rotate 0.5s ease;
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
