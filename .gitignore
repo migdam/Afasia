@@ -52,6 +52,10 @@ uploads/
 *.log
 logs/
 
+# Improvement loop: run logs and the local stop switch
+loop/runs/
+loop/STOP
+
 # Node
 node_modules/
 package-lock.json
