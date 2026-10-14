@@ -4,7 +4,7 @@ You are improving **Afasia**, a bilingual (Polish/English) speech-therapy web ap
 
 Each time you are invoked, carry out **exactly one iteration** of the protocol below, then stop. Iterations may run in fresh sessions with no memory, so everything you need lives in this repo: this file, `loop/BACKLOG.md`, `loop/LOG.md`, and git history.
 
-If `loop/DONE` exists, reply "Loop complete, see loop/DONE" and do nothing else.
+If `loop/DONE` exists, reply "Loop complete, see loop/DONE" and do nothing else. Whenever `loop/DONE` exists (including when you create it in step 3) and you are running inside a self-paced `/loop`, end the loop instead of scheduling another run.
 
 ## North star
 

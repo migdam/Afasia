@@ -12,11 +12,13 @@ The backlog starts with the blockers that were reproduced on 2026-10-14 (the bac
 
 ## Start it
 
-**Inside Claude Code** (CLI, desktop, or the Claude app):
+**Inside a Claude Code session:**
 
 ```
 /loop Read loop/PROMPT.md and carry out exactly one iteration.
 ```
+
+Without an interval, Claude chooses the wait before each run (1 minute to 1 hour). Runs never overlap, and they only happen while that session is open, so closing it stops the loop. The docs describe `/loop` for local sessions; they don't say whether a cloud session keeps looping after you close the app.
 
 **Headless from a terminal.** Each iteration is a fresh `claude -p` session:
 
@@ -26,6 +28,7 @@ loop/run.sh 5      # at most 5 iterations
 
 ## Stop it
 
+- **`/loop`:** press Esc to cancel the next scheduled run, or ask Claude to stop the loop.
 - **`run.sh`:** `touch loop/STOP` stops it after the current iteration; Ctrl-C stops it immediately.
 - **Automatically:** when nothing worthwhile is left, the loop writes `loop/DONE` and stops. Delete that file to restart.
 
