@@ -19,6 +19,25 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 50: 2026-10-15 14:32 UTC: P2-4b In-app messages
+- **Baseline:** `check.sh` exit code 0: 239 backend tests, smoke, 58 e2e. No human commits. Tests were written in the scratchpad until it finished.
+- **Test first:**
+  - `e2e/test_in_app_messages.py` (7 tests, EN and PL) and a static check (`test_frontend_safety.py`) for `alert(`, `confirm(` and `prompt(`: all failed before.
+  - The e2e page fixture now fails on any browser dialog.
+- **Did:**
+  - Replaced all 14 pop-ups: `ui.notify`/`clearNotice`, `ui.confirmLeave` (in-app dialog), form messages chosen by status code, an inline "answer first", and a microphone explanation.
+  - i18n EN/PL, CSS.
+  - E2E: a `leave_session` helper instead of `record_dialogs`; the result is checked in the message area.
+  - Guides and READMEs (EN/PL).
+- **Mistakes caught on the way:**
+  - My Python-to-JS string conversion replaced apostrophes with quotes ("couldn"t"). I restored them, and checked the diff contained only additions.
+  - A blanket replace made `leave_session` call itself; fixed.
+  - In Polish, the page's Exit and the dialog's Leave are both "Wyjdź", so the test now looks inside the dialog.
+- **Verified:** `scripts/check.sh` exit code 0: ruff, pip-audit "No known vulnerabilities found", 240 backend tests, smoke, 65 e2e.
+- **Commit:** 49dad60 (pushed: yes)
+- **Discovered:** nothing new.
+- **Next:** P2-4c (larger text and targets, the language button's contrast).
+
 ### 49: 2026-10-15 14:11 UTC: P2-4a No time pressure
 - **Baseline:** `check.sh` exit code 0: 239 backend tests, smoke, 54 e2e. No human commits. Tests were written in the scratchpad until it finished.
 - **Split:** P2-4 became a–f (time pressure, dialogs, sizes, read aloud, language and focus, calm feedback).
