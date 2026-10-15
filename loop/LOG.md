@@ -17,6 +17,16 @@ Newest entry first. One entry per iteration.
 
 ---
 
+### 10b: 2026-10-15 06:06 UTC: Flaky admin e2e test (regression fix)
+- **What happened:** the `check.sh` run before entry 10's bookkeeping commit (4e5e82c) had `1 failed, 7 passed` in e2e. My command piped `check.sh` through `grep` and chained `&& git commit`, and `grep`'s exit status hid the failure, so 4e5e82c was committed and pushed while `check.sh` was red. That commit changed only `loop/` files, and its code was identical to 19bb94f, which had passed 8/8. That made it an intermittent failure, not a code change.
+- **Cause:** in `test_an_admin_sees_patients_as_text_and_can_deactivate_them`, which failed in about 1 of 7 full-suite runs with `KeyError: 'detail'`, the patient's login succeeded. Playwright matches role names by case-insensitive substring, so the wait for the "Activate" button matched the old "Deactivate" button and passed at once. The test's direct login then raced the browser's deactivate request (CORS preflight plus PUT).
+- **Proof:** before any click, `name="Activate"` matched 1 button, with text "Deactivate"; with `exact=True` it matched 0. A first attempt to force the race by delaying the request proved nothing: a blocking sleep in a sync route handler serializes the requests.
+- **Fix:** `exact=True` on both button lookups (a08eb9d).
+- **Verified:** the full e2e suite passed 10 runs in a row. A worker restart killed the first batch partway, so the runs were split 4+6. `check.sh` green, with its exit code checked directly.
+- **Protocol notes:**
+  - Never pipe `check.sh` into another command before deciding to commit. Capture it (`scripts/check.sh > log; rc=$?`) and commit only if `rc` is 0.
+  - In Playwright tests, use `exact=True` whenever one name is a substring of another.
+
 ### 10: 2026-10-15 05:45 UTC: P0-7d Dashboard and admin data
 - **Baseline:** `check.sh` green (48 backend, smoke, 6 e2e), same as entry 9. No human commits.
 - **Did:**
