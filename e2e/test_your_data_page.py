@@ -66,8 +66,11 @@ def test_on_a_phone_the_last_button_is_not_hidden_behind_the_menu(page, account)
     open_account(page)
 
     button = page.locator("#delete-account")
-    button.scroll_into_view_if_needed()
-    page.mouse.wheel(0, 2000)  # as far down as the page goes
+    expect(button).to_be_visible()
+    # As far down as the page goes, at once: a mouse wheel scrolls
+    # asynchronously, and measuring mid-scroll made this test flaky.
+    page.evaluate("window.scrollTo({ top: document.body.scrollHeight, behavior: 'instant' })")
+    page.evaluate("new Promise((resolve) => requestAnimationFrame(() => resolve()))")
 
     nav_top = page.locator(".bottom-nav").bounding_box()["y"]
     box = button.bounding_box()
