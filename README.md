@@ -852,6 +852,7 @@ We welcome contributions! Please follow these guidelines:
 - Use ESLint for JavaScript code
 - Write meaningful commit messages
 - Add tests for new features
+- Run `scripts/check.sh` before you commit; it must pass
 - Update documentation
 
 ### Pull Request Process

@@ -644,6 +644,7 @@ Witamy wkłady! Prosimy o przestrzeganie tych wytycznych:
 - Używaj ESLint dla kodu JavaScript
 - Pisz znaczące komunikaty commitów
 - Dodawaj testy dla nowych funkcji
+- Przed commitem uruchom `scripts/check.sh`; skrypt musi zakończyć się bez błędów
 - Aktualizuj dokumentację
 
 ---

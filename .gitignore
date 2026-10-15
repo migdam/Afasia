@@ -5,6 +5,7 @@ __pycache__/
 *.so
 .Python
 venv/
+.venv/
 env/
 ENV/
 build/
@@ -22,6 +23,10 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+
+# Test and lint caches
+.pytest_cache/
+.ruff_cache/
 
 # Database
 *.db
