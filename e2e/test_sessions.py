@@ -1,31 +1,47 @@
-"""A therapy session in the browser: feedback on each answer, then the server's score."""
+"""Therapy sessions in the browser: answering, feedback, and the server's score."""
 from playwright.sync_api import expect
 
 # The easy sentence-completion items in backend/app/api/v1/endpoints/therapy.py.
 ANSWERS = {"The sky is ___": "blue", "I am ___": "happy", "The sun is ___": "bright"}
 
 
-def test_a_session_gives_feedback_and_ends_with_the_server_score(page, account):
-    alerts = []
+def record_dialogs(page):
+    """Accept every alert and confirm, and return the list of their messages."""
+    messages = []
 
     def on_dialog(dialog):
-        alerts.append(dialog.message)
+        messages.append(dialog.message)
         dialog.accept()
 
     page.on("dialog", on_dialog)
-    page.select_option("#exercise-type", "sentence_completion")
+    return messages
+
+
+def start_session(page, exercise_type="sentence_completion"):
+    page.select_option("#exercise-type", exercise_type)
     page.select_option("#difficulty", "easy")
     page.fill("#num-exercises", "5")
     page.click("#new-session-form button[type=submit]")
+    expect(page.locator("#exercise-counter")).to_have_text("1/5")
+
+
+def choose(page, correct=True):
+    """Pick the right option, or a wrong one; returns the right answer."""
+    right = ANSWERS[page.inner_text("#exercise-question-text")]
+    options = page.locator(".option-btn").all_inner_texts()
+    choice = right if correct else next(o for o in options if o != right)
+    page.click(f".option-btn[data-answer='{choice}']")
+    return right
+
+
+def test_a_session_gives_feedback_and_ends_with_the_server_score(page, account):
+    dialogs = record_dialogs(page)
+    start_session(page)
 
     for number in range(1, 6):
         expect(page.locator("#exercise-counter")).to_have_text(f"{number}/5")
-        right = ANSWERS[page.inner_text("#exercise-question-text")]
-        options = page.locator(".option-btn").all_inner_texts()
         # Answer the first exercise wrongly and the rest correctly: 4 of 5.
-        choice = right if number > 1 else next(o for o in options if o != right)
-
-        page.click(f".option-btn[data-answer='{choice}']")
+        right = choose(page, correct=number > 1)
         page.click("#submit-answer")
 
         feedback = page.locator("#feedback")
@@ -36,5 +52,45 @@ def test_a_session_gives_feedback_and_ends_with_the_server_score(page, account):
             expect(feedback).to_have_text("Correct! Well done!")
 
     expect(page.locator("#dashboard-page")).to_be_visible(timeout=10_000)
-    assert alerts == ["Session complete! Score: 80%"]
+    assert dialogs == ["Session complete! Score: 80%"]
     expect(page.locator("#recent-sessions")).to_contain_text("80%")
+
+
+def test_double_clicking_submit_sends_the_answer_once(page, account):
+    dialogs = record_dialogs(page)
+    start_session(page)
+    choose(page)
+
+    page.dblclick("#submit-answer")
+
+    expect(page.locator("#feedback")).to_have_text("Correct! Well done!")
+    expect(page.locator("#exercise-counter")).to_have_text("2/5")
+    assert dialogs == []  # a second submission would get "already answered"
+
+
+def test_a_typed_answer_is_not_carried_into_the_next_session(page, account):
+    record_dialogs(page)
+    start_session(page, "word_naming")
+    page.fill("#answer-input", "cat")
+    page.click("#exit-exercise")
+    start_session(page)
+
+    with page.expect_event("dialog") as dialog:
+        page.click("#submit-answer")  # no option chosen
+
+    assert dialog.value.message == "Please provide an answer"
+    expect(page.locator("#feedback")).to_be_hidden()
+
+
+def test_leaving_during_feedback_does_not_move_the_next_session_on(page, account):
+    record_dialogs(page)
+    start_session(page)
+    choose(page)
+    page.click("#submit-answer")
+    expect(page.locator("#feedback")).to_be_visible()
+    page.click("#exit-exercise")  # while the feedback is still showing
+    start_session(page)
+
+    page.wait_for_timeout(2500)  # longer than the feedback pause
+
+    expect(page.locator("#exercise-counter")).to_have_text("1/5")

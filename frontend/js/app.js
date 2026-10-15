@@ -10,6 +10,7 @@ class AphasiaApp {
         this.currentExerciseIndex = 0;
         this.exerciseStartTime = null;
         this.timerInterval = null;
+        this.advanceTimeout = null;
         this.recordedAudio = null;
     }
 
@@ -265,6 +266,12 @@ class AphasiaApp {
 
         this.exerciseStartTime = Date.now();
 
+        // Start clean: nothing typed or recorded for an earlier exercise is
+        // kept, and Submit works again.
+        this.recordedAudio = null;
+        document.getElementById('answer-input').value = '';
+        document.getElementById('submit-answer').disabled = false;
+
         // Update progress
         document.getElementById('exercise-counter').textContent =
             `${this.currentExerciseIndex + 1}/${this.currentExercises.length}`;
@@ -319,24 +326,25 @@ class AphasiaApp {
         } else {
             // Text input
             document.getElementById('exercise-input').style.display = 'block';
-            document.getElementById('answer-input').value = '';
             document.getElementById('answer-input').focus();
         }
     }
 
     async submitCurrentAnswer() {
         const exercise = this.currentExercises[this.currentExerciseIndex];
+        const submitButton = document.getElementById('submit-answer');
+        // One submission per exercise: Submit stays off until the next one
+        // is shown, so a double click can't send the answer twice.
+        submitButton.disabled = true;
         let answer = '';
 
-        // Get answer based on input type
-        const selectedOption = document.querySelector('.option-btn.selected');
-        if (selectedOption) {
-            answer = selectedOption.dataset.answer;
-        } else {
-            const inputField = document.getElementById('answer-input');
-            if (inputField.value) {
-                answer = inputField.value;
-            } else if (this.recordedAudio) {
+        // Read the answer from the input this exercise shows, never from a
+        // hidden one that still holds an earlier value.
+        if (exercise.options && exercise.options.length > 0) {
+            const selectedOption = document.querySelector('.option-btn.selected');
+            answer = selectedOption ? selectedOption.dataset.answer : '';
+        } else if (exercise.exercise_type === 'pronunciation') {
+            if (this.recordedAudio) {
                 // Use speech recognition if available (Enhancement 12)
                 if (speechRecognizer.isSupported()) {
                     try {
@@ -355,9 +363,12 @@ class AphasiaApp {
                     answer = 'recorded';
                 }
             }
+        } else {
+            answer = document.getElementById('answer-input').value;
         }
 
         if (!answer) {
+            submitButton.disabled = false;
             alert('Please provide an answer');
             return;
         }
@@ -384,7 +395,8 @@ class AphasiaApp {
             }
 
             // Move to next exercise after delay
-            setTimeout(() => {
+            this.advanceTimeout = setTimeout(() => {
+                this.advanceTimeout = null;
                 this.currentExerciseIndex++;
                 if (this.currentExerciseIndex < this.currentExercises.length) {
                     this.showCurrentExercise();
@@ -393,6 +405,7 @@ class AphasiaApp {
                 }
             }, 2000);
         } catch (error) {
+            submitButton.disabled = false;
             alert('Failed to submit answer: ' + error.message);
         }
     }
@@ -437,6 +450,10 @@ class AphasiaApp {
     }
 
     exitExercise() {
+        // A pending move to the next exercise would otherwise run in the
+        // next session.
+        clearTimeout(this.advanceTimeout);
+        this.advanceTimeout = null;
         this.stopTimer();
         ui.showPage('dashboard');
     }
