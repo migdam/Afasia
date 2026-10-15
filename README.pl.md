@@ -1,707 +1,152 @@
-# 🗣️ Aplikacja Terapii Mowy dla Afazji
+# Afasia: ćwiczenia mowy dla osób z afazją
 
-[![Licencja: MIT](https://img.shields.io/badge/Licencja-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.104-green.svg)](https://fastapi.tiangolo.com/)
-[![PRs Welcome](https://img.shields.io/badge/PRs-witamy-brightgreen.svg)](http://makeapullrequest.com)
+[🇬🇧 English version](README.md)
 
-> **Gotowa do produkcji aplikacja webowa do terapii mowy, zaprojektowana dla pacjentów z afazją, obsługująca język polski i angielski.**
+Aplikacja internetowa do ćwiczenia słów i zdań po udarze lub urazie mózgu. Osoby z afazją ćwiczą w niej samodzielnie, równolegle z terapią u logopedy, a terapeuci widzą, kto ćwiczy. Interfejs jest dostępny po polsku i po angielsku.
 
-[🇬🇧 **English Version** / Wersja Angielska →](README.md)
+> **Stan: wczesna faza rozwoju. Nie do użytku klinicznego.**
+> Ćwiczenia są tymczasowe i nie sprawdził ich jeszcze żaden logopeda, treść ćwiczeń jest tylko po angielsku, a prace nad bezpieczeństwem wymienione w części [Znane ograniczenia](#znane-ograniczenia) nie są skończone. Postęp prac jest w [`loop/BACKLOG.md`](loop/BACKLOG.md).
 
----
+## Co już działa
 
-## 📖 Spis Treści
+Konta, sesje ćwiczeń, informacja zwrotna, wyniki, wykres postępów i panel administratora są sprawdzane testami automatycznymi (zob. [Rozwój](#rozwój)). Eksport, planowanie sesji i układ na telefon nie mają jeszcze testów.
 
-- [Przegląd](#-przegląd)
-- [Funkcje](#-funkcje)
-- [Zrzuty Ekranu](#-zrzuty-ekranu)
-- [Szybki Start](#-szybki-start)
-- [Instalacja](#-instalacja)
-- [Użytkowanie](#-użytkowanie)
-- [Dokumentacja API](#-dokumentacja-api)
-- [Architektura](#-architektura)
-- [Konfiguracja](#-konfiguracja)
-- [Wdrożenie](#-wdrożenie)
-- [Współpraca](#-współpraca)
-- [Licencja](#-licencja)
-- [Wsparcie](#-wsparcie)
+- **Konta.** Rejestracja, logowanie i wylogowanie. Po odświeżeniu strony nadal jesteś zalogowany. Hasła są szyfrowane algorytmem bcrypt, a logowanie korzysta z tokenów JWT ważnych 30 minut.
+- **Sesje ćwiczeń** po 5–50 ćwiczeń, na poziomie łatwym, średnim lub trudnym:
+  - *Nazywanie słów*: przeczytaj krótki opis („A pet that barks and wags its tail”) i wpisz słowo.
+  - *Uzupełnianie zdań*: wybierz słowo, które kończy zdanie.
 
----
+  Po każdej odpowiedzi pojawia się „Poprawnie! Świetna robota!” albo prawidłowa odpowiedź. Serwer liczy wynik sesji, gdy przyjdzie ostatnia odpowiedź.
+- **Postępy.** Punkty za poprawne odpowiedzi, codzienne serie, trzy odznaki (pierwsza sesja, seria 7 i 30 dni), strona postępów z podsumowaniem i wykresem trafności oraz eksport do CSV i PDF.
+- **Planowanie.** Można zaplanować przyszłe sesje. Aplikacja jeszcze o nich nie przypomina.
+- **Panel terapeuty/administratora.** Lista wszystkich pacjentów, aktywowanie i dezaktywowanie kont. W aplikacji nie da się jeszcze utworzyć konta administratora ani terapeuty: trzeba zmienić `role` istniejącego użytkownika w bazie danych.
+- **Interfejs.** Polski i angielski, motyw jasny i ciemny, układ na telefon i komputer.
 
-## 🌟 Przegląd
+### Co jeszcze nie działa
 
-Aplikacja Terapii Mowy dla Afazji to kompleksowa platforma webowa zaprojektowana, aby pomóc osobom z afazją poprawić ich umiejętności komunikacyjne poprzez interaktywne ćwiczenia i śledzenie postępów. Zbudowana z wykorzystaniem nowoczesnych technologii i najlepszych praktyk, zapewnia płynne doświadczenie zarówno dla pacjentów, jak i terapeutów.
+- **Wymowa.** Można się nagrać, ale odpowiedź ocenia wbudowane rozpoznawanie mowy przeglądarki. W większości przeglądarek ono nie działa, a mowy osób z afazją nie rozpoznaje wiarygodnie. Ten typ ćwiczeń jest projektowany od nowa (backlog P2-7).
+- **Rozpoznawanie obrazów** nie ma ćwiczeń, więc aplikacja go nie oferuje.
+- **Obrazków ani nagrań** jeszcze nie ma. Ćwiczenia nazywania używają opisów.
+- **Praca offline.** Service worker zapamiętuje pliki aplikacji, ale każde ćwiczenie wymaga połączenia z serwerem.
 
-### Czym jest Afazja?
+## Szybki start (praca nad kodem)
 
-Afazja to zaburzenie komunikacji, które wpływa na zdolność osoby do mówienia, rozumienia, czytania i pisania. Zwykle występuje po udarze mózgu lub urazie głowy. Ta aplikacja pomaga pacjentom ćwiczyć i poprawiać ich umiejętności językowe poprzez ustrukturyzowane sesje terapeutyczne.
-
-### Dla kogo jest ta aplikacja?
-
-- **Pacjenci**: Osoby z afazją pragnące poprawić swoje umiejętności komunikacyjne
-- **Logopedzi**: Specjaliści monitorujący postępy pacjentów i zarządzający planami terapii
-- **Opiekunowie**: Członkowie rodziny wspierający pacjentów z afazją w procesie powrotu do zdrowia
-- **Placówki Medyczne**: Kliniki i szpitale oferujące usługi terapii mowy
-
----
-
-## ✨ Funkcje
-
-### Podstawowa Funkcjonalność
-
-#### 🎯 **Interaktywne Sesje Terapeutyczne**
-- **Nazywanie Słów**: Nazywanie codziennych rzeczy na podstawie krótkiego opisu (obrazki są planowane)
-- **Uzupełnianie Zdań**: Ćwiczenia wypełniania luk z opcjami wielokrotnego wyboru
-- **Rozpoznawanie Obrazów**: Dopasowywanie obrazów do właściwych słów (jeszcze niedostępne: nie ma ćwiczeń tego typu)
-- **Ćwiczenie Wymowy**: Nagrywanie i ocena wzorców mowy
-
-#### 📊 **Śledzenie Postępów**
-- Monitorowanie wydajności w czasie rzeczywistym
-- Wizualne wykresy postępów i analityka
-- Śledzenie wskaźnika dokładności w czasie
-- Historia sesji ze szczegółowymi statystykami
-
-#### 👤 **Zarządzanie Użytkownikami**
-- Bezpieczne uwierzytelnianie za pomocą tokenów JWT
-- Personalizacja profilu osobistego
-- Ustawienia preferencji językowych (Polski/Angielski)
-- Kontrola dostępu oparta na rolach (Pacjent, Terapeuta, Administrator)
-
-### 🚀 12 Ulepszonych Funkcji
-
-#### 1. **🎤 Nagrywanie Głosu do Ćwiczenia Wymowy**
-Nagrywaj swoje próby wymowy za pomocą mikrofonu urządzenia. System przechowuje nagrania do późniejszego przeglądu i oceny.
-
-**Korzyści:**
-- Ćwicz we własnym tempie
-- Przeglądaj wcześniejsze próby
-- Śledź poprawę wymowy
-- Otrzymuj opinię od terapeutów
-
-#### 2. **🖼️ Rozpoznawanie Słów Oparte na Obrazach**
-Uczenie się wizualne poprzez wysokiej jakości obrazy połączone z ćwiczeniami słownymi.
-
-**Korzyści:**
-- Wzmocnione skojarzenia pamięciowe
-- Kontekst wizualny dla lepszego uczenia się
-- Odpowiednie dla różnych typów afazji
-- Angażujące i interaktywne
-
-#### 3. **📈 Poziomy Trudności (Łatwy, Średni, Trudny)**
-Adaptacyjne uczenie się z trzema poziomami trudności dopasowanymi do Twojego poziomu umiejętności.
-
-**Łatwy**: Proste, powszechne słowa i podstawowe zdania
-**Średni**: Umiarkowane słownictwo i złożone zdania
-**Trudny**: Zaawansowane słowa i wymagające ćwiczenia
-
-#### 4. **🎮 System Gryfikacji**
-Pozostań zmotywowany dzięki elementom przypominającym grę:
-
-- **Punkty**: Zdobywaj punkty na podstawie dokładności i trudności
-- **Odznaki**: Odblokuj osiągnięcia (Pierwsza Sesja, Seria Tygodniowa, Seria Miesięczna, Perfekcjonista, Oddany, Mistrz)
-- **Serie**: Buduj codzienne nawyki praktyki dzięki śledzeniu serii
-- **Rankingi**: (Widok administratora) Zobacz postępy całej platformy
-
-#### 5. **📊 Panel Analityki Postępów**
-Wizualizuj swoje postępy za pomocą:
-
-- Interaktywnych wykresów liniowych pokazujących dokładność w czasie
-- Łączna liczba ukończonych sesji
-- Średni procent dokładności
-- Całkowity czas praktyki
-- Informacje o seriach
-- Wyświetlanie kolekcji odznak
-
-#### 6. **🔊 Odtwarzanie Audio do Wymowy**
-Słuchaj prawidłowej wymowy przed próbami ćwiczeń.
-
-**Funkcje:**
-- Nagrania native speakerów
-- Opcje wolnej/normalnej prędkości
-- Powtarzalne odtwarzanie
-- Wsparcie wielu języków
-
-#### 7. **🌙 Tryb Ciemny**
-Przyjazny dla oczu ciemny motyw do komfortowego długiego użytkowania.
-
-**Funkcje:**
-- Płynne przejścia motywów
-- Zapisywanie trwałych preferencji
-- Zmniejszone zmęczenie oczu
-- Lepsze współczynniki kontrastu
-- Przełączanie jednym kliknięciem
-
-#### 8. **📅 System Planowania Sesji**
-Planuj swoje sesje terapeutyczne z wyprzedzeniem.
-
-**Funkcje:**
-- Integracja z kalendarzem
-- Ustaw preferowany czas i datę
-- Powiadomienia przypominające (w przyszłości)
-- Zobacz wszystkie zaplanowane sesje
-- Łatwe zarządzanie i zmiana terminu
-
-#### 9. **📄 Eksport Raportów Postępów (PDF/CSV)**
-Generuj kompleksowe raporty dla terapeutów lub osobistych zapisów.
-
-**Eksport CSV**: Szczegółowe dane do analizy w arkuszu kalkulacyjnym
-**Eksport PDF**: Profesjonalnie sformatowane raporty
-
-**Zawartość Raportu:**
-- Historia sesji
-- Trendy dokładności
-- Czas spędzony na ćwiczeniach
-- Punkty i osiągnięcia
-- Podział ćwiczeń według typu
-
-#### 10. **👨‍⚕️ Panel Administratora dla Terapeutów**
-Kompleksowe narzędzia dla profesjonalistów medycznych.
-
-**Funkcje:**
-- Statystyki całej platformy
-- Zarządzanie pacjentami
-- Wyświetlanie postępów wszystkich użytkowników
-- Aktywacja/deaktywacja kont
-- Monitorowanie wskaźników zaangażowania
-- Eksport raportów pacjentów
-
-#### 11. **📱 Tryb Offline (Progresywna Aplikacja Webowa)**
-Ćwicz nawet bez połączenia z internetem.
-
-**Funkcje:**
-- Instalacja na ekranie głównym
-- Pamięć podręczna offline
-- Synchronizacja w tle
-- Doświadczenie podobne do aplikacji
-- Nie wymaga sklepu z aplikacjami
-
-#### 12. **🎙️ Ocena Mowy na Tekst**
-Automatyczna ocena dokładności wymowy.
-
-**Funkcje:**
-- Transkrypcja w czasie rzeczywistym
-- Punktacja dokładności
-- Metryki pewności
-- Wsparcie wielu języków (PL/EN)
-- Szczegółowa opinia zwrotna
-
----
-
-## 📸 Zrzuty Ekranu
-
-### Logowanie i Panel
-
-```
-┌─────────────────────────────────────┐
-│  🗣️ Terapia Afazji        🌙 PL ⚙️ │
-├─────────────────────────────────────┤
-│                                     │
-│     Witamy w Terapii Afazji         │
-│   Interaktywne ćwiczenia            │
-│       logopedyczne                  │
-│                                     │
-│  ┌─────────────────────────────┐   │
-│  │ Login: ________________     │   │
-│  │ Hasło: ________________     │   │
-│  │                             │   │
-│  │      [Zaloguj się]          │   │
-│  └─────────────────────────────┘   │
-│                                     │
-└─────────────────────────────────────┘
-```
-
-### Widok Panelu
-
-```
-┌─────────────────────────────────────┐
-│ Panel                               │
-├─────────────────────────────────────┤
-│ ⭐ Punkty  🔥 Seria  🏆 Odznaki     │
-│    1,250       14        6          │
-├─────────────────────────────────────┤
-│ Rozpocznij Nową Sesję               │
-│ Typ: [Nazywanie Słów ▼]             │
-│ Trudność: [Średni ▼]                │
-│ Ćwiczenia: [10]                     │
-│ [Start]                             │
-├─────────────────────────────────────┤
-│ Ostatnie Sesje                      │
-│ ✓ Nazywanie Słów - Średni | 85%    │
-│ ✓ Wymowa - Łatwy | 92%             │
-│ ✓ Uzupełnij Zdania - Trudny | 78% │
-└─────────────────────────────────────┘
-```
-
----
-
-## 🚀 Szybki Start
-
-### Wymagania Wstępne
-
-Upewnij się, że masz zainstalowane:
-
-- **Python 3.8+** ([Pobierz](https://www.python.org/downloads/))
-- **Git** ([Pobierz](https://git-scm.com/downloads))
-- **Node.js** (opcjonalnie, dla narzędzi deweloperskich)
-
-### Sklonuj Repozytorium
+Potrzebujesz Pythona 3.11 i Gita.
 
 ```bash
-git clone https://github.com/twojnazwa/aplikacja-terapii-afazji.git
-cd aplikacja-terapii-afazji
-```
+git clone <to repozytorium>
+cd Afasia
 
-### Uruchom Serwer Backend
-
-```bash
-# Przejdź do katalogu backend
+# Backend: http://localhost:8000 (dokumentacja API: http://localhost:8000/docs)
 cd backend
-
-# Utwórz środowisko wirtualne
-python -m venv venv
-
-# Aktywuj środowisko wirtualne
-# Na Linux/Mac:
-source venv/bin/activate
-# Na Windows:
-venv\Scripts\activate
-
-# Zainstaluj zależności
+python3 -m venv venv
+source venv/bin/activate        # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-
-# Skonfiguruj zmienne środowiskowe
-cp ../.env.template ../.env
-# Edytuj .env i ustaw SECRET_KEY (wygeneruj: openssl rand -hex 32)
-
-# Uruchom serwer
+cp ../.env.template ../.env     # potem ustaw SECRET_KEY: openssl rand -hex 32
 python -m app.main
 ```
 
-API będzie dostępne pod adresem: **http://localhost:8000**
-
-### Uruchom Serwer Frontend
-
 ```bash
-# Otwórz nowy terminal
+# Frontend, w drugim terminalu: http://localhost:3000
 cd frontend
-
-# Serwuj za pomocą wbudowanego serwera Python
-python -m http.server 3000
-
-# Lub użyj Node.js
-npx serve -p 3000
+python3 -m http.server 3000
 ```
 
-Aplikacja będzie dostępna pod adresem: **http://localhost:3000**
+Backend czyta `.env` z katalogu głównego repozytorium, niezależnie od tego, skąd go uruchomisz. Nieznane mu ustawienia pomija, więc ten sam plik służy też Docker Compose. Podczas pracy nad kodem bazą danych jest SQLite (`backend/aphasia_app.db`).
 
-### Uzyskaj Dostęp do Aplikacji
+## Uruchamianie w Dockerze
 
-1. Otwórz przeglądarkę i przejdź do **http://localhost:3000**
-2. Kliknij "Zarejestruj się", aby utworzyć nowe konto
-3. Zaloguj się przy użyciu swoich poświadczeń
-4. Rozpocznij swoją pierwszą sesję terapeutyczną!
-
----
-
-## 📥 Instalacja
-
-### Metoda 1: Docker (Zalecana dla Produkcji)
+Potrzebujesz Dockera z Compose v2.
 
 ```bash
-# Wymaga Dockera z Compose v2
-cp .env.template .env   # następnie ustaw SECRET_KEY i POSTGRES_PASSWORD
+cp .env.template .env           # ustaw SECRET_KEY i POSTGRES_PASSWORD
 docker compose up --build
-
-# Aplikacja (nginx, z API pod /api): http://localhost:3000
-# API bezpośrednio: http://localhost:8000 (dokumentacja: http://localhost:8000/docs)
 ```
 
-Aby sprawdzić cały stos od początku do końca, uruchom `scripts/docker-smoke.sh`. Skrypt buduje i uruchamia osobną kopię z własnymi hasłami i portami, rejestruje się i loguje przez nginx, a na koniec wszystko usuwa.
+- Aplikacja: http://localhost:3000. nginx serwuje frontend i przekazuje `/api` do backendu.
+- API bezpośrednio: http://localhost:8000.
+- Dane są w PostgreSQL, w wolumenie Dockera.
+- Bez tych dwóch sekretów `docker compose up` się nie uruchomi.
+- Za proxy, które podgląda ruch TLS, ustaw `PIP_CA_FILE` na jego pakiet certyfikatów CA, żeby budowanie obrazu mogło pobrać pakiety z PyPI.
 
-### Metoda 2: Instalacja Ręczna
+`scripts/docker-smoke.sh` buduje i uruchamia osobną kopię całości, rejestruje się i loguje przez nginx, a potem wszystko usuwa.
 
-#### Konfiguracja Backend
+## Konfiguracja
 
-1. **Utwórz Środowisko Wirtualne**
-   ```bash
-   cd backend
-   python -m venv venv
-   source venv/bin/activate  # Windows: venv\Scripts\activate
-   ```
+Skopiuj `.env.template` do `.env` w katalogu głównym repozytorium. Ustawienia:
 
-2. **Zainstaluj Zależności**
-   ```bash
-   pip install -r requirements.txt
-   ```
+| Ustawienie | Domyślnie | Znaczenie |
+|---|---|---|
+| `SECRET_KEY` | (wymagane) | Podpisuje tokeny logowania. Co najmniej 32 losowe bajty (`openssl rand -hex 32`). |
+| `DATABASE_URL` | `sqlite:///./aphasia_app.db` | Dowolny adres SQLAlchemy, np. `postgresql://użytkownik:hasło@host/baza` |
+| `BACKEND_CORS_ORIGINS` | `http://localhost:3000,http://localhost:8000` | Adresy stron (oddzielone przecinkami), które mogą wywoływać API |
+| `ACCESS_TOKEN_EXPIRE_MINUTES` | `30` | Jak długo trwa zalogowanie |
+| `DEBUG`, `HOST`, `PORT` | `true`, `0.0.0.0`, `8000` | Opcje serwera |
+| `UPLOAD_DIR`, `MAX_UPLOAD_SIZE` | `./uploads`, 10 MB | Gdzie trafiają nagrania głosu |
+| `POSTGRES_PASSWORD`, `FRONTEND_PORT`, `BACKEND_PORT`, `PIP_CA_FILE` | | Tylko dla Docker Compose |
 
-3. **Skonfiguruj Środowisko**
-   ```bash
-   cp ../.env.template ../.env
-   ```
+## API
 
-   Edytuj `.env` i skonfiguruj:
-   ```env
-   SECRET_KEY=twoj-sekretny-klucz  # Wygeneruj: openssl rand -hex 32
-   DATABASE_URL=sqlite:///./aphasia_app.db
-   BACKEND_CORS_ORIGINS=http://localhost:3000
-   ```
+FastAPI udostępnia interaktywną dokumentację pod `/docs` i `/redoc`. Wszystkie adresy zaczynają się od `/api/v1`. Wszystkie oprócz rejestracji i logowania wymagają nagłówka `Authorization: Bearer <token>`. Brakujący lub nieprawidłowy token daje 401.
 
-4. **Uruchom Serwer**
-   ```bash
-   python -m app.main
-   ```
+| Obszar | Adresy |
+|---|---|
+| Konta | `POST /auth/register`, `POST /auth/login` |
+| Sesje | `POST /therapy/sessions`, `GET /therapy/sessions`, `GET /therapy/sessions/{id}`, `GET /therapy/sessions/{id}/exercises` |
+| Odpowiedzi | `POST /therapy/exercises/{id}/answer`: jedna odpowiedź na ćwiczenie. Odpowiedź serwera zawiera prawidłową odpowiedź, a ostatnia odpowiedź kończy sesję i ją ocenia. |
+| Wyniki | `POST /therapy/sessions/{id}/complete`: wynik ukończonej sesji, policzony przez serwer |
+| Twoje dane | `GET`/`PUT /users/profile`, `GET /users/progress`, `GET /users/badges`, `GET /users/progress/export/csv`, `GET /users/progress/export/pdf` |
+| Planowanie | `GET`/`POST /users/scheduled-sessions`, `DELETE /users/scheduled-sessions/{id}` |
+| Nagrania | `POST /users/audio/upload`, `GET /users/audio/{id}` |
+| Administrator | `GET /admin/stats`, `GET /admin/users`, `GET /admin/users/{id}/sessions`, `PUT /admin/users/{id}/activate`, `PUT /admin/users/{id}/deactivate` |
 
-#### Konfiguracja Frontend
+`GET /health` odpowiada bez logowania.
 
-1. **Przejdź do Frontend**
-   ```bash
-   cd frontend
-   ```
-
-2. **Serwuj Pliki Statyczne**
-   ```bash
-   # Opcja 1: Python
-   python -m http.server 3000
-
-   # Opcja 2: Node.js
-   npx serve -p 3000
-   ```
-
----
-
-## 💡 Użytkowanie
-
-### Dla Pacjentów
-
-#### 1. **Utwórz Konto**
-- Kliknij "Zarejestruj się" na stronie logowania
-- Wypełnij swój email, nazwę użytkownika i hasło
-- Wybierz preferowany język (Polski lub Angielski)
-- Kliknij "Zarejestruj się"
-
-#### 2. **Rozpocznij Sesję Terapeutyczną**
-- Z panelu wybierz "Rozpocznij Nową Sesję"
-- Wybierz typ ćwiczenia (Nazywanie Słów, Uzupełnianie Zdań, itp.)
-- Wybierz poziom trudności (Łatwy, Średni lub Trudny)
-- Ustaw liczbę ćwiczeń (5-50)
-- Kliknij "Start"
-
-#### 3. **Wykonaj Ćwiczenia**
-- Przeczytaj uważnie pytanie
-- Dla wielokrotnego wyboru: Kliknij poprawną odpowiedź
-- Dla wprowadzania tekstu: Wpisz swoją odpowiedź
-- Dla wymowy: Kliknij przycisk nagrywania i mów
-- Kliknij "Zatwierdź", gdy będziesz gotowy
-- Otrzymaj natychmiastową opinię
-
-#### 4. **Śledź Swoje Postępy**
-- Kliknij "Postęp" w menu nawigacji
-- Zobacz swoje statystyki i wykresy
-- Zobacz zdobyte odznaki
-- Eksportuj raporty dla swojego terapeuty
-
-#### 5. **Zaplanuj Przyszłe Sesje**
-- Kliknij "Dodaj Harmonogram" na panelu
-- Wybierz datę i godzinę
-- Wybierz typ ćwiczenia i trudność
-- Kliknij "Zaplanuj"
-
-### Dla Terapeutów/Administratorów
-
-#### 1. **Dostęp do Panelu Administratora**
-- Zaloguj się za pomocą poświadczeń administratora
-- Kliknij "Administrator" w menu nawigacji
-
-#### 2. **Monitoruj Pacjentów**
-- Zobacz łączną liczbę użytkowników i aktywnych użytkowników
-- Zobacz statystyki całej platformy
-- Sprawdź postępy indywidualnych pacjentów
-
-#### 3. **Zarządzaj Użytkownikami**
-- Zobacz wszystkich zarejestrowanych pacjentów
-- Aktywuj lub dezaktywuj konta
-- Uzyskaj dostęp do historii sesji pacjentów
-
-#### 4. **Generuj Raporty**
-- Eksportuj statystyki platformy
-- Pobieraj raporty postępów pacjentów
-- Analizuj skuteczność terapii
-
----
-
-## 📚 Dokumentacja API
-
-### Dokumentacja Interaktywna
-
-Po uruchomieniu backendu, uzyskaj dostęp do interaktywnej dokumentacji API:
-
-- **Swagger UI**: http://localhost:8000/docs
-- **ReDoc**: http://localhost:8000/redoc
-- **Schemat OpenAPI**: http://localhost:8000/openapi.json
-
-### Główne Punkty Końcowe
-
-#### Uwierzytelnianie
-
-| Metoda | Punkt Końcowy | Opis |
-|--------|---------------|------|
-| POST | `/api/v1/auth/register` | Zarejestruj nowego użytkownika |
-| POST | `/api/v1/auth/login` | Zaloguj użytkownika |
-
-**Przykładowe Żądanie Logowania:**
-```json
-{
-  "username": "jankowalski",
-  "password": "bezpiecznehaslo123"
-}
-```
-
-**Odpowiedź:**
-```json
-{
-  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "token_type": "bearer",
-  "user": {
-    "id": 1,
-    "username": "jankowalski",
-    "email": "jan@example.com",
-    "total_points": 0,
-    "current_streak": 0
-  }
-}
-```
-
-#### Sesje Terapeutyczne
-
-| Metoda | Punkt Końcowy | Opis |
-|--------|---------------|------|
-| POST | `/api/v1/therapy/sessions` | Utwórz nową sesję |
-| GET | `/api/v1/therapy/sessions` | Wyświetl sesje użytkownika |
-| GET | `/api/v1/therapy/sessions/{id}` | Pobierz szczegóły sesji |
-| GET | `/api/v1/therapy/sessions/{id}/exercises` | Pobierz ćwiczenia sesji |
-| POST | `/api/v1/therapy/exercises/{id}/answer` | Prześlij odpowiedź na ćwiczenie (jedna na ćwiczenie; ostatnia kończy sesję) |
-| POST | `/api/v1/therapy/sessions/{id}/complete` | Pobierz wynik ukończonej sesji (liczony przez serwer) |
-
-**Przykład Tworzenia Sesji:**
-```json
-{
-  "title": "Poranna Praktyka",
-  "exercise_type": "word_naming",
-  "difficulty": "medium",
-  "language": "pl",
-  "num_exercises": 10
-}
-```
-
-#### Zarządzanie Użytkownikami
-
-| Metoda | Punkt Końcowy | Opis |
-|--------|---------------|------|
-| GET | `/api/v1/users/profile` | Pobierz profil użytkownika |
-| PUT | `/api/v1/users/profile` | Zaktualizuj profil |
-| GET | `/api/v1/users/progress` | Pobierz statystyki postępów |
-| GET | `/api/v1/users/badges` | Pobierz zdobyte odznaki |
-| GET | `/api/v1/users/scheduled-sessions` | Pobierz zaplanowane sesje |
-| POST | `/api/v1/users/scheduled-sessions` | Zaplanuj nową sesję |
-| GET | `/api/v1/users/progress/export/csv` | Eksportuj raport CSV |
-| GET | `/api/v1/users/progress/export/pdf` | Eksportuj raport PDF |
-
-#### Administrator
-
-| Metoda | Punkt Końcowy | Opis |
-|--------|---------------|------|
-| GET | `/api/v1/admin/stats` | Pobierz statystyki platformy |
-| GET | `/api/v1/admin/users` | Wyświetl wszystkich użytkowników |
-| GET | `/api/v1/admin/users/{id}/sessions` | Pobierz sesje użytkownika |
-| PUT | `/api/v1/admin/users/{id}/activate` | Aktywuj użytkownika |
-| PUT | `/api/v1/admin/users/{id}/deactivate` | Dezaktywuj użytkownika |
-
-### Uwierzytelnianie
-
-Wszystkie punkty końcowe (oprócz rejestracji i logowania) wymagają uwierzytelniania JWT. Dołącz token w nagłówku Authorization:
+## Struktura projektu
 
 ```
-Authorization: Bearer <twoj-token-tutaj>
+backend/          Aplikacja FastAPI (app/), testy (tests/), zależności
+frontend/         index.html, css/, js/ (czysty JavaScript, bez kompilacji), nginx.conf
+e2e/              Testy w przeglądarce (Playwright)
+scripts/          check.sh (wszystkie testy), smoke.sh (szybki start z README), docker-smoke.sh
+docs/             Przewodniki dla użytkowników (po polsku i po angielsku)
+loop/             Pętla ulepszeń: zasady, backlog, dziennik
+docker-compose.yml, .env.template
 ```
 
----
+## Rozwój
 
-## 🏗️ Architektura
-
-### Stos Technologiczny
-
-#### Backend
-- **Framework**: FastAPI (Python)
-- **Baza Danych**: SQLAlchemy ORM z SQLite (dev) / PostgreSQL (prod)
-- **Uwierzytelnianie**: Tokeny JWT z passlib/bcrypt
-- **Walidacja**: Modele Pydantic
-- **Logowanie**: Structlog
-- **Dokumentacja**: OpenAPI/Swagger
-
-#### Frontend
-- **HTML5**: Semantyczne, dostępne znaczniki
-- **CSS3**: Nowoczesne stylowanie z Grid i Flexbox
-- **JavaScript**: Vanilla ES6+ z modułami
-- **PWA**: Service Workers dla wsparcia offline
-- **Wykresy**: Niestandardowa implementacja Canvas API
-- **Audio**: Web Audio API, MediaRecorder API
-- **Mowa**: Web Speech API dla rozpoznawania
-
-#### Infrastruktura
-- **Konteneryzacja**: Docker & Docker Compose
-- **Serwer WWW**: Nginx (dla frontendu)
-- **Baza Danych**: PostgreSQL (produkcja)
-- **Buforowanie**: Pamięć podręczna Service Worker
-
----
-
-## ⚙️ Konfiguracja
-
-### Zmienne Środowiskowe
-
-Utwórz plik `.env` w katalogu głównym (użyj `.env.template` jako odniesienia):
-
-```env
-# Konfiguracja Serwera
-HOST=0.0.0.0
-PORT=8000
-DEBUG=true
-
-# Bezpieczeństwo
-SECRET_KEY=twoj-sekretny-klucz  # Wygeneruj: openssl rand -hex 32
-ALGORITHM=HS256
-ACCESS_TOKEN_EXPIRE_MINUTES=30
-
-# Baza Danych
-DATABASE_URL=sqlite:///./aphasia_app.db
-# Produkcja: postgresql://uzytkownik:haslo@localhost/aphasia_db
-
-# CORS (oddzielone przecinkami)
-BACKEND_CORS_ORIGINS=http://localhost:3000,http://localhost:8000
-
-# Przesyłanie Plików
-MAX_UPLOAD_SIZE=10485760  # 10MB
-UPLOAD_DIR=./uploads
-
-# Email (opcjonalnie)
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=twoj-email@gmail.com
-SMTP_PASSWORD=twoje-haslo-aplikacji
-SMTP_FROM=noreply@terapia-afazji.app
+```bash
+scripts/check.sh
 ```
 
----
+To jedyne sprawdzenie, które musi przejść przed każdym commitem. Samo przygotowuje swoje środowisko (`.venv-check`) i uruchamia:
+- linter;
+- testy backendu;
+- powyższy szybki start w osobnej kopii repozytorium;
+- testy w przeglądarce, które obejmują rejestrację, całe sesje po polsku i po angielsku, informację zwrotną, wykres postępów i panel administratora.
 
-## 🚢 Wdrożenie
+Wkład w projekt: zgłoś problem albo pull request. Utrzymuj `scripts/check.sh` na zielono, do każdej zmiany dodaj test, a to README i [wersję angielską](README.md) aktualizuj razem.
 
-### Wdrożenie Docker (Zalecane)
+Aplikację ulepsza się małymi, przetestowanymi krokami według opisanej pętli. Zob. [`loop/README.md`](loop/README.md).
 
-1. **Sklonuj repozytorium**
-   ```bash
-   git clone https://github.com/twojnazwa/aplikacja-terapii-afazji.git
-   cd aplikacja-terapii-afazji
-   ```
+## Znane ograniczenia
 
-2. **Skonfiguruj środowisko**
-   ```bash
-   cp .env.template .env
-   # Ustaw SECRET_KEY (openssl rand -hex 32) i POSTGRES_PASSWORD
-   ```
+Zanim ktokolwiek zacznie polegać na tej aplikacji, trzeba naprawić co najmniej poniższe. Każdy punkt jest w [`loop/BACKLOG.md`](loop/BACKLOG.md).
 
-3. **Uruchom usługi**
-   ```bash
-   docker compose up -d --build
-   ```
+- **Bezpieczeństwo**
+  - Niektóre listy nadal wstawiają dane użytkowników do strony jako HTML (P1-1).
+  - Nagrania głosu może pobrać każdy, kto zna ich adres (P1-2).
+  - Logowanie nie ma limitu prób, a tokeny są przechowywane w `localStorage` (P1-5).
+  - Dwie odpowiedzi wysłane w tej samej chwili mogą obie zostać policzone (P1-10).
+  - Część zależności jest przestarzała (P1-4).
+- **Prywatność:** brak informacji o prywatności, zgody przed nagrywaniem oraz możliwości eksportu i usunięcia swoich danych (P1-6). Aplikacja przechowuje dane o zdrowiu.
+- **Role:** każdy terapeuta widzi wszystkich pacjentów i nie da się tworzyć kont personelu (P1-3).
+- **Treść kliniczna:** kilka tymczasowych ćwiczeń po angielsku, niesprawdzonych przez logopedę. Nie ma obrazków ani nagrań.
+- **Dostępność** nie została zbadana, a zasady projektowania przyjaznego osobom z afazją z [`loop/PROMPT.md`](loop/PROMPT.md) nie są jeszcze spełnione. Na przykład aplikacja nadal sama przechodzi dalej po 2 sekundach.
+- **Kwestie prawne:** nie oceniono, czy aplikacja jest wyrobem medycznym w rozumieniu przepisów UE.
+- **Wdrażanie:** nie ma jeszcze ciągłej integracji (CI).
 
-4. **Uzyskaj dostęp do aplikacji**
-   - Aplikacja, z API pod /api: http://twoja-domena.com (przed portem 3000 ustaw TLS)
+## Licencja
 
----
-
-## 🤝 Współpraca
-
-Witamy wkłady! Prosimy o przestrzeganie tych wytycznych:
-
-### Rozpoczęcie
-
-1. **Forkuj repozytorium**
-2. **Sklonuj swój fork**
-   ```bash
-   git clone https://github.com/twojnazwa/aplikacja-terapii-afazji.git
-   ```
-3. **Utwórz gałąź**
-   ```bash
-   git checkout -b feature/nazwa-twojej-funkcji
-   ```
-
-### Wytyczne Deweloperskie
-
-- Przestrzegaj PEP 8 dla kodu Python
-- Używaj ESLint dla kodu JavaScript
-- Pisz znaczące komunikaty commitów
-- Dodawaj testy dla nowych funkcji
-- Przed commitem uruchom `scripts/check.sh`; skrypt musi zakończyć się bez błędów
-- Aktualizuj dokumentację
-
----
-
-## 📄 Licencja
-
-Ten projekt jest licencjonowany na licencji MIT - zobacz plik [LICENSE](LICENSE) dla szczegółów.
-
----
-
-## 💬 Wsparcie
-
-### Uzyskiwanie Pomocy
-
-- **Dokumentacja**: Sprawdź folder [docs](docs/)
-- **Problemy**: Zgłaszaj błędy lub proś o funkcje na [GitHub Issues](https://github.com/twojnazwa/aplikacja-terapii-afazji/issues)
-- **Dyskusje**: Zadawaj pytania w [GitHub Discussions](https://github.com/twojnazwa/aplikacja-terapii-afazji/discussions)
-
-### Kontakt
-
-- **Email**: wsparcie@terapia-afazji.app
-- **Strona WWW**: https://terapia-afazji.app
-
----
-
-## 🙏 Podziękowania
-
-- Zespół FastAPI za doskonały framework
-- Profesjonaliści terapii mowy, którzy udzielili wskazówek
-- Społeczność open source za cenne narzędzia
-- Wszyscy współtwórcy i wspierający
-
----
-
-## 📊 Status Projektu
-
-- ✅ **Wersja**: 1.0.0
-- ✅ **Status**: Gotowy do Produkcji
-- ✅ **Ostatnia Aktualizacja**: 2024
-- ✅ **Utrzymywany**: Tak
-
----
-
-## 🗺️ Plan Rozwoju
-
-### Wersja 1.1 (Planowana)
-- [ ] Sesje terapii wideo
-- [ ] Pokoje terapii grupowej
-- [ ] Natywne aplikacje mobilne
-- [ ] Ulepszona analiza mowy AI
-
-### Wersja 1.2 (Przyszłość)
-- [ ] Niestandardowe tworzenie ćwiczeń
-- [ ] Portal rodziny/opiekuna
-- [ ] Rozszerzenie treści wielojęzycznych
-- [ ] Integracja z EHR
-
----
-
-**Stworzone z ❤️ dla społeczności afazji**
-
-[⬆ Powrót na górę](#-aplikacja-terapii-mowy-dla-afazji)
+Licencja nie została jeszcze wybrana. Do tego czasu wszelkie prawa należą do autorów.
