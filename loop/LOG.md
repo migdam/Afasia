@@ -19,6 +19,23 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 52: 2026-10-15 15:07 UTC: P2-4d Read aloud
+- **Baseline:** `check.sh` exit code 0: 240 backend tests, smoke, 72 e2e. No human commits. Tests were written in the scratchpad until it finished.
+- **Checked first:** `SpeechSynthesisVoice.localService` (MDN): true means a local synthesizer, false a remote service. So read-aloud uses local voices only, which keeps the privacy notice true.
+- **Test first:** `e2e/test_read_aloud.py` with a fake `speechSynthesis` and `SpeechSynthesisUtterance` (a fake voice can't be assigned to a real utterance). 4 of 5 failed before; "no local voice, no button" passed, as there was no button.
+- **Did:**
+  - `Reader` in `audio.js`; buttons for the question, hints and feedback.
+  - `ui.updateReadAloud`, run on each exercise, language change and `voiceschanged`.
+  - `[hidden]` always wins in CSS. A `.btn` display rule had overridden it, which the "no voice" test caught.
+  - The hint-button test reads the hint's own span.
+  - Privacy notice, guides and READMEs (EN/PL).
+- **Verified:**
+  - `scripts/check.sh` exit code 0: ruff, pip-audit "No known vulnerabilities found", 240 backend tests, smoke, 77 e2e.
+  - A 375 px screenshot.
+- **Commit:** 28e8d8e (pushed: yes)
+- **Discovered:** the tall sticky header on phones (P2-4g, added). Read-aloud on other pages (P2-4d2, added).
+- **Next:** P2-4d2, or P2-4e (language and focus) first if it's smaller.
+
 ### 51: 2026-10-15 14:49 UTC: P2-4c Larger text and targets
 - **Baseline:** `check.sh` exit code 0: 240 backend tests, smoke, 65 e2e. No human commits. Tests were written in the scratchpad until it finished.
 - **Test first:** `e2e/test_sizes.py` measures in the browser. 6 tests failed before: body 16 px, controls 36–46 px tall, language button contrast 1.43:1, and no A+. I added the 7th after a phone screenshot showed the header running off a 375 px screen; it failed until the header wrapped.
