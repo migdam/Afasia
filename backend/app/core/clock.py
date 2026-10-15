@@ -1,7 +1,8 @@
 """The app's clock, in UTC.
 
-The database columns hold UTC times without an offset ("naive"), because
-changing their type needs migrations (backlog P3-1). So inside the app
+The database columns hold UTC times without an offset ("naive"), as they
+were made before there were migrations (backlog P3-1); changing their type
+would need one. So inside the app
 times are naive UTC, and the API converts at its edges: times it receives
 become naive UTC, and times it sends carry +00:00 (schemas.UTCDateTime), so
 browsers show them in the person's own time zone.

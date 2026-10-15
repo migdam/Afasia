@@ -14,3 +14,5 @@ python-dotenv==1.2.4
 reportlab==5.0.1
 # Time zone data for zoneinfo (streak days in the person's zone), as slim images have none
 tzdata==2026.5
+# Database migrations (backlog P3-1)
+alembic==1.20.0

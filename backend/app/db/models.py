@@ -145,8 +145,8 @@ class Exercise(Base):
 class ExerciseCue(Base):
     """The naming hints given for an exercise (backlog P2-3).
 
-    A table of its own rather than a column on exercises, because there are
-    no migrations yet (backlog P3-1). Deleted with its exercise.
+    A table of its own rather than a column on exercises, because there were
+    no migrations when it was added (backlog P3-1). Deleted with its exercise.
     """
     __tablename__ = "exercise_cues"
 
@@ -156,8 +156,8 @@ class ExerciseCue(Base):
 
 class ExerciseChoice(Base):
     """The words offered to choose from in a naming exercise (backlog P2-6a),
-    kept so asking again shows the same ones. Its own table, as there are no
-    migrations yet (backlog P3-1). Deleted with its exercise."""
+    kept so asking again shows the same ones. Its own table, as there were no
+    migrations when it was added (backlog P3-1). Deleted with its exercise."""
     __tablename__ = "exercise_choices"
 
     exercise_id = Column(Integer, ForeignKey("exercises.id"), primary_key=True)
@@ -166,8 +166,8 @@ class ExerciseChoice(Base):
 
 class ExerciseTiles(Base):
     """The letter tiles offered in a naming exercise (backlog P2-6b), kept so
-    asking again shows the same order. Its own table, as there are no
-    migrations yet (backlog P3-1). Deleted with its exercise."""
+    asking again shows the same order. Its own table, as there were no
+    migrations when it was added (backlog P3-1). Deleted with its exercise."""
     __tablename__ = "exercise_tiles"
 
     exercise_id = Column(Integer, ForeignKey("exercises.id"), primary_key=True)
@@ -246,8 +246,8 @@ class AudioRecording(Base):
 class RevokedLogin(Base):
     """A login that was ended by logging out; its tokens are refused.
 
-    A new table rather than a column on users, because there are no
-    migrations yet (backlog P3-1) and create_all adds only new tables.
+    A new table rather than a column on users, because there were no
+    migrations when it was added (backlog P3-1).
     """
     __tablename__ = "revoked_logins"
 
@@ -268,8 +268,8 @@ class LoginCutoff(Base):
 
 class TimeZoneSetting(Base):
     """The person's time zone (IANA name, from their browser), so streak days
-    follow their own midnight (backlog P2-9b). Its own table, as there are
-    no migrations yet (P3-1); no foreign key, like consents, so deleting an
+    follow their own midnight (backlog P2-9b). Its own table, as there were
+    no migrations when it was added (P3-1); no foreign key, like consents, so deleting an
     account deletes it by hand."""
     __tablename__ = "time_zones"
 

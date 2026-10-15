@@ -134,7 +134,7 @@ FastAPI udostępnia interaktywną dokumentację pod `/docs` i `/redoc`. Wszystki
 ## Struktura projektu
 
 ```
-backend/          Aplikacja FastAPI (app/), testy (tests/), zależności
+backend/          Aplikacja FastAPI (app/), migracje bazy danych (migrations/), testy (tests/), zależności
 frontend/         index.html, css/, js/ (czysty JavaScript, bez kompilacji), nginx.conf
 e2e/              Testy w przeglądarce (Playwright)
 scripts/          check.sh (wszystkie testy), smoke.sh (szybki start z README), docker-smoke.sh
@@ -155,6 +155,16 @@ To jedyne sprawdzenie, które musi przejść przed każdym commitem. Samo przygo
 - testy backendu;
 - powyższy szybki start w osobnej kopii repozytorium;
 - testy w przeglądarce, które obejmują rejestrację, całe sesje po polsku i po angielsku, informację zwrotną, wykres postępów i panel administratora.
+
+### Zmiany w bazie danych
+
+Schemat bazy danych pochodzi z migracji Alembic w `backend/migrations/`, które aplikacja wykonuje przy starcie. Baza założona, zanim pojawiły się migracje, jest aktualizowana tak samo, z zachowaniem danych. Żeby zmienić schemat, zmień `backend/app/db/models.py`, a potem w katalogu `backend/` uruchom:
+
+```bash
+alembic revision --autogenerate -m "co się zmieniło"
+```
+
+Przeczytaj i popraw nowy plik w `backend/migrations/versions/`, a potem uruchom `scripts/check.sh`: `tests/test_migrations.py` nie przejdzie, jeśli migracje i modele się nie zgadzają.
 
 Wkład w projekt: zgłoś problem albo pull request. Utrzymuj `scripts/check.sh` na zielono, do każdej zmiany dodaj test, a to README i [wersję angielską](README.md) aktualizuj razem.
 

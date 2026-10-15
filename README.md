@@ -134,7 +134,7 @@ FastAPI serves interactive documentation at `/docs` and `/redoc`. All endpoints 
 ## Project structure
 
 ```
-backend/          FastAPI app (app/), tests (tests/), requirements
+backend/          FastAPI app (app/), database migrations (migrations/), tests (tests/), requirements
 frontend/         index.html, css/, js/ (plain JavaScript, no build step), nginx.conf
 e2e/              Browser tests (Playwright)
 scripts/          check.sh (all checks), smoke.sh (README quick start), docker-smoke.sh
@@ -155,6 +155,16 @@ This is the one check that must pass before every commit. It sets up its own env
 - the backend tests;
 - the quick start above, in a scratch copy of the repository;
 - the browser tests, which cover signing up, whole sessions in English and Polish, feedback, the progress chart and the admin page.
+
+### Database changes
+
+The database's schema comes from Alembic migrations in `backend/migrations/`, which the app applies when it starts. A database made before migrations existed is brought up to date the same way, with its data kept. To change the schema, edit `backend/app/db/models.py`, then, from `backend/`:
+
+```bash
+alembic revision --autogenerate -m "what changed"
+```
+
+Read and correct the new file in `backend/migrations/versions/`, then run `scripts/check.sh`: `tests/test_migrations.py` fails if the migrations and the models disagree.
 
 Contributions: open an issue or a pull request. Keep `scripts/check.sh` green, add a test for every change, and update this README and [the Polish one](README.pl.md) together.
 
