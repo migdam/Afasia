@@ -19,6 +19,27 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 27: 2026-10-15 08:58 UTC: P1-5d Logout ends the login on the server
+- **Baseline:** the backend stage passed: 125 tests. Then 1 e2e test failed, but that's on me: I edited `security.py` (which now requires `sid`) while the baseline was still running. Its e2e server started on my edited code, and the old aged-token test sent no `sid`. Not a regression.
+- **Test first:**
+  - `backend/tests/test_logout.py`, 5 tests. 4 failed before. The "other devices carry on" test is a guard and passed both times.
+  - The e2e logout test now also checks that a copied token gets 401. Against the old backend it got 200.
+- **Did:**
+  - Tokens get a random `sid`, kept by `/auth/refresh`, and `decode_token` requires it.
+  - New `revoked_logins` table, with `sid` and `expires_at`. It is a table and not a column, because there are no migrations yet (P3-1).
+  - `get_current_user_id` refuses revoked logins.
+  - `/auth/logout` revokes the login when the request carries a valid token (Bearer, or the cookie with `X-Requested-With`), and deletes rows that have expired.
+  - Hand-made test tokens (`test_login_renewal.py`, e2e aged token) now include `sid`.
+  - `docker-smoke.sh` logs out and checks for 401.
+  - READMEs (EN/PL): endpoint table and Known limitations.
+- **Verified:**
+  - `scripts/check.sh` exit code 0 (run twice, the second after the docs edits): ruff, pip-audit "No known vulnerabilities found", 130 backend tests, smoke, 20 e2e.
+  - `scripts/docker-smoke.sh` exit code 0: "page, /api, sign-up, login, profile and logout all work through nginx".
+- **Commit:** 4e5c445 (pushed: yes)
+- **Discovered:** P1-5e (no way to change a password).
+- **Next:** P1-5e.
+- **Protocol notes:** don't edit backend code while the baseline `check.sh` is still running. Its e2e stage starts its server from the working tree a minute or two in, so the baseline ends up testing a mix of old and new code. Read and write tests during the baseline, but make code changes only after it finishes.
+
 ### 26: 2026-10-15 08:45 UTC: P1-5c3 Wrong-password limit per client
 - **Baseline:** `check.sh` exit code 0: 123 backend tests, smoke, 20 e2e. No human commits.
 - **Found while planning:** in Docker every request reached the backend from nginx's address, and nginx appended to any `X-Forwarded-For` header the client sent. So keying on the client address needs the proxy set up too, or it changes nothing, or it can be forged.
