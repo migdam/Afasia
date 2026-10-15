@@ -19,6 +19,17 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 43: 2026-10-15 12:34 UTC: P1-9 Session size 1 to 50
+- **Baseline:** `check.sh` exit code 0: 166 backend tests, smoke, 51 e2e. No human commits. Tests were written in the scratchpad until it finished.
+- **Decision:** the server allows 1 to 50, not the form's 5 to 50. Short sessions are legitimate (U9), and many tests use one exercise. The safety problem is ≤0 and huge sizes.
+- **Test first:** `backend/tests/test_session_size.py`. The 4 out-of-range cases (0, -5, 51, 20,000) failed before; the in-range ones (1, 5, 50) passed before and after.
+- **Did:** `Field(default=10, ge=1, le=50)` on `SessionCreate.num_exercises`; READMEs (EN/PL).
+- **Verified:** `scripts/check.sh` exit code 0: ruff, pip-audit "No known vulnerabilities found", 173 backend tests, smoke, 51 e2e.
+- **Commit:** d17e99b (pushed: yes)
+- **Discovered:** nothing new.
+- **State:** every P1 item is done except P1-3b, which is blocked on H7.
+- **Next:** P2-1 (clinical foundation). It needs verified references only: check each source before citing it, and write `[citation needed]` otherwise.
+
 ### 42: 2026-10-15 12:20 UTC: P1-8d Times in UTC, with an offset
 - **Baseline:** `check.sh` exit code 0: 162 backend tests, smoke, 50 e2e. No human commits. Tests were written in the scratchpad until it finished.
 - **The user-visible bug:** the API sent naive UTC times, which browsers read as local. In Warsaw, a session planned for 10:00 showed at 08:00.

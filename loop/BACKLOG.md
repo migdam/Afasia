@@ -158,11 +158,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
   - [x] **P1-8c A tighter CSP** (8feaeaf). The page's `connect-src` allows only itself and local development ports. Docker's nginx adds a header policy with `connect-src 'self'` and `frame-ancestors 'none'`. An API on another site must be added to `index.html` (README).
   - [x] **P1-8d Times in UTC, with an offset** (e94cf91). The API takes times as UTC and sends them with `+00:00` (`schemas.UTCDateTime`); the database keeps naive UTC until migrations (P3-1); `app/core/clock.py` replaces the deprecated `datetime.utcnow`. A browser in Europe/Warsaw now sees a 10:00 plan at 10:00 (it showed 08:00).
 
-- [ ] **P1-9 Unbounded session size** ✅. `num_exercises` has no limits. Measured on 2026-10-15:
-  - 0 and -5 are accepted, creating sessions that can never complete (`total_exercises=-5`).
-  - 20,000 takes 1.6 s and inserts 20,000 rows. That's linear, so one request from any signed-in user can tie up a worker for minutes and fill the database.
-
-  Validate it in `SessionCreate`, and test the limits. The UI and the user guide say 5–50; U9 asks for short sessions by default.
+- [x] **P1-9 Unbounded session size** ✅ (d17e99b). `num_exercises` must be 1 to 50 (422 otherwise, nothing stored). It used to accept 0 and -5 (sessions that could never finish) and 20,000 (20,000 rows in one request). The form offers 5 to 50.
 
 ## P2: Clinically sound and aphasia-friendly
 
