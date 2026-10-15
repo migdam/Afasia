@@ -60,6 +60,11 @@ class Settings(BaseSettings):
     LEVEL_UP_SCORE: float = 85.0
     LEVEL_DOWN_SCORE: float = 50.0
 
+    # Days off in a row that don't break a streak (app/streaks.py, backlog
+    # P2-9c): 2 lets someone practise on Monday, Wednesday and Friday.
+    # Placeholder, pending clinical review (U10, C7).
+    STREAK_REST_DAYS: int = 2
+
     # Database
     DATABASE_URL: str = "sqlite:///./aphasia_app.db"
 

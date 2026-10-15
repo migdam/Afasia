@@ -1,10 +1,11 @@
 """Database models."""
 from datetime import datetime
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Float, Text, JSON, Enum
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import object_session, relationship
 import enum
 from .database import Base
 from ..core.clock import utcnow
+from ..streaks import streak_today
 
 
 class DifficultyLevel(str, enum.Enum):
@@ -66,6 +67,15 @@ class User(Base):
     badges = relationship("UserBadge", back_populates="user", cascade="all, delete-orphan")
     scheduled_sessions = relationship("ScheduledSession", back_populates="user", cascade="all, delete-orphan")
     audio_recordings = relationship("AudioRecording", back_populates="user", cascade="all, delete-orphan")
+
+    @property
+    def streak_now(self) -> int:
+        """current_streak as it stands today: it was counted when the last
+        session finished, and ends after more days off than a streak allows
+        (backlog P2-9c)."""
+        session = object_session(self)
+        setting = session.get(TimeZoneSetting, self.id) if session else None
+        return streak_today(self.current_streak, self.last_activity_date, setting.time_zone if setting else None)
 
 
 class TherapySession(Base):

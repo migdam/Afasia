@@ -35,6 +35,7 @@ services:
       LEVEL_WINDOW: ${LEVEL_WINDOW:-3}
       LEVEL_UP_SCORE: ${LEVEL_UP_SCORE:-85.0}
       LEVEL_DOWN_SCORE: ${LEVEL_DOWN_SCORE:-50.0}
+      STREAK_REST_DAYS: ${STREAK_REST_DAYS:-2}
       # nginx also caps uploads at 10 MB (client_max_body_size).
       MAX_UPLOAD_SIZE: ${MAX_UPLOAD_SIZE:-10485760}
       BACKEND_CORS_ORIGINS: ${BACKEND_CORS_ORIGINS:-http://localhost:${FRONTEND_PORT:-3000}}

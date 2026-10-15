@@ -2,7 +2,7 @@
 from datetime import datetime
 from typing import Annotated
 from typing import List, Literal, Optional
-from pydantic import AfterValidator, BaseModel, ConfigDict, EmailStr, Field, PlainSerializer, StrictBool, field_validator
+from pydantic import AfterValidator, AliasChoices, BaseModel, ConfigDict, EmailStr, Field, PlainSerializer, StrictBool, field_validator
 from ...core.clock import as_utc, to_naive_utc
 from ...db.models import DifficultyLevel, ExerciseType, UserRole, BadgeType
 
@@ -97,7 +97,8 @@ class UserResponse(BaseModel):
     language: str
     role: UserRole
     total_points: int
-    current_streak: int
+    # As it stands today (User.streak_now), not as counted at the last session.
+    current_streak: int = Field(validation_alias=AliasChoices("streak_now", "current_streak"))
     longest_streak: int
     created_at: UTCDateTime
 

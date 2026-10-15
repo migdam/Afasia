@@ -1,6 +1,7 @@
 """Streak days follow the person's own time zone (backlog P2-9b)."""
 from datetime import datetime
 
+from app import streaks
 from app.api.v1.endpoints import therapy
 from app.db.database import SessionLocal
 from app.db.models import TimeZoneSetting
@@ -10,6 +11,7 @@ from test_streaks import profile
 
 def finish_at(client, auth, monkeypatch, when):
     monkeypatch.setattr(therapy, "utcnow", lambda: when)
+    monkeypatch.setattr(streaks, "utcnow", lambda: when)  # the streak shown is today's (P2-9c)
     session = client.post("/api/v1/therapy/sessions", headers=auth, json={
         "title": "t", "exercise_type": "pronunciation", "difficulty": "easy", "num_exercises": 1,
     }).json()

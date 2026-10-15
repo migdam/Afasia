@@ -17,7 +17,7 @@ Konta, sesje ćwiczeń, informacja zwrotna, wyniki, wykres postępów i panel ad
   - *Uzupełnianie zdań*: wybierz słowo, które kończy zdanie.
 
   Po każdej odpowiedzi pojawia się „Poprawnie! Świetna robota!” albo prawidłowa odpowiedź. Serwer liczy wynik sesji, gdy przyjdzie ostatnia odpowiedź. Ćwiczenia z błędną odpowiedzią wracają w następnej sesji tego samego rodzaju, poziomu i języka; zajmują w niej najwyżej połowę. Ćwiczenia z dobrą odpowiedzią wracają po coraz dłuższych przerwach (2, 4, 8, potem 16 dni) albo po 1 dniu, jeśli potrzebna była pomoc.
-- **Postępy.** Punkty za poprawne odpowiedzi, codzienne serie, trzy odznaki (pierwsza sesja, seria 7 i 30 dni), strona postępów z podsumowaniem i wykresem trafności oraz eksport do CSV i PDF.
+- **Postępy.** Punkty za poprawne odpowiedzi, serie dni z ćwiczeniami, których nie przerywa dzień czy dwa przerwy, trzy odznaki (pierwsza sesja, seria 7 i 30 dni), strona postępów z podsumowaniem i wykresem trafności oraz eksport do CSV i PDF.
 - **Planowanie.** Można zaplanować przyszłe sesje. Aplikacja jeszcze o nich nie przypomina.
 - **Panel terapeuty/administratora.** Lista wszystkich pacjentów, aktywowanie i dezaktywowanie kont. Rejestracja w aplikacji zawsze tworzy konto pacjenta; konta personelu zakłada się na serwerze (zob. [Konta personelu](#konta-personelu)).
 - **Interfejs.** Polski i angielski, motyw jasny i ciemny, układ na telefon i komputer.
@@ -102,6 +102,7 @@ Skopiuj `.env.template` do `.env` w katalogu głównym repozytorium. Ustawienia:
 | `LOGIN_MAX_FAILURES`, `LOGIN_MAX_FAILURES_PER_ACCOUNT`, `LOGIN_LOCK_MINUTES` | `5`, `50`, `15` | Ile błędnych haseł wolno podać dla jednej nazwy użytkownika z jednego adresu klienta oraz dla konta ze wszystkich adresów łącznie w ciągu tylu minut; potem logowanie musi poczekać (429) |
 | `RECORDING_RETENTION_DAYS` | `0` | Usuwaj nagrania starsze niż tyle dni, przy starcie i potem codziennie; `0` przechowuje je, dopóki osoba ich nie usunie lub nie usunie konta. Przekazywane także przez Docker Compose |
 | `LEVEL_WINDOW`, `LEVEL_UP_SCORE`, `LEVEL_DOWN_SCORE` | `3`, `85`, `50` | Kiedy tablica proponuje inny poziom: po tylu ukończonych sesjach jednego rodzaju na jednym poziomie trudniejszy, gdy ich średnia to co najmniej `LEVEL_UP_SCORE` %, a łatwiejszy, gdy jest niższa niż `LEVEL_DOWN_SCORE` %. Wartości tymczasowe, oczekują na ocenę kliniczną |
+| `STREAK_REST_DAYS` | `2` | Ile dni przerwy z rzędu nie przerywa serii; `2` pozwala ćwiczyć w poniedziałki, środy i piątki. Wartość tymczasowa, oczekuje na ocenę kliniczną |
 | `COOKIE_SECURE` | `true` | Wysyłaj ciasteczko logowania tylko przez HTTPS (przeglądarki dopuszczają też `http://localhost`). Ustaw `false` tylko do testów przez zwykłe HTTP na innym hoście. |
 | `DEBUG`, `HOST`, `PORT` | `false`, `0.0.0.0`, `8000` | Opcje serwera. `.env.template` włącza `DEBUG` na potrzeby pracy nad kodem (więcej szczegółów w dziennikach i automatyczne przeładowanie); w innych miejscach zostaw go wyłączonego |
 | `UPLOAD_DIR`, `MAX_UPLOAD_SIZE` | `./uploads`, 10 MB | Gdzie trafiają nagrania głosu |

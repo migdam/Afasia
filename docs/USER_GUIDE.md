@@ -40,7 +40,7 @@ While you use the app, you stay logged in. After 30 minutes without using it, or
 
 At the top are three numbers:
 - **Points:** see [Points, streaks and badges](#points-streaks-and-badges).
-- **Streak:** how many days in a row you finished a session.
+- **Streak:** how many days you have practised without a longer break. A day or two off doesn't break it.
 - **Badges:** how many badges you have earned.
 
 Below them:
@@ -109,8 +109,8 @@ Not available yet: there are no exercises of this type, so the app doesn't offer
 ## Points, streaks and badges
 
 - **Points:** every correct answer earns 10 points on Easy, 20 on Medium and 30 on Hard. They're added when you finish the session.
-- **Streak:** finishing a session on consecutive days builds a streak. Days follow the time zone of your device, which the app keeps for this.
-- **Badges:** you earn one for your first finished session, for a 7-day streak and for a 30-day streak.
+- **Streak:** each day on which you finish a session adds one to your streak. Up to 2 days off in a row don't break it, so practising three times a week, for example on Monday, Wednesday and Friday, keeps it going. After a longer break, your next session starts a new streak, and your longest streak is kept. Days follow the time zone of your device, which the app keeps for this.
+- **Badges:** you earn one for your first finished session, and for streaks of 7 and of 30 days.
 
 ## Your progress
 

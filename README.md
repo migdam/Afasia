@@ -17,7 +17,7 @@ Accounts, practice sessions, feedback, scores, the progress chart and the admin 
   - *Sentence completion*: choose the word that completes a sentence.
 
   After each answer you see "Correct! Well done!" or the right answer. The server scores the session when the last answer arrives. Items you got wrong come back in your next session of the same type, difficulty and language, up to half of it. Items you got right come back after growing gaps (2, 4, 8, then 16 days), or after 1 day if you needed help.
-- **Progress.** Points per correct answer, daily streaks, three badges (first session, 7-day and 30-day streaks), a progress page with totals and an accuracy chart, and export as CSV or PDF.
+- **Progress.** Points per correct answer, streaks of practice days that a day or two off don't break, three badges (first session, 7-day and 30-day streaks), a progress page with totals and an accuracy chart, and export as CSV or PDF.
 - **Planning.** Schedule future sessions. Nothing reminds you of them yet.
 - **Therapist/admin page.** See all patients and activate or deactivate accounts. Signing up always makes a patient account; staff accounts are made on the server (see [Staff accounts](#staff-accounts)).
 - **Interface.** English and Polish, light and dark themes, and layouts for phones and computers.
@@ -102,6 +102,7 @@ Copy `.env.template` to `.env` at the repository root. The settings:
 | `LOGIN_MAX_FAILURES`, `LOGIN_MAX_FAILURES_PER_ACCOUNT`, `LOGIN_LOCK_MINUTES` | `5`, `50`, `15` | Wrong passwords allowed per username from one client address, and per account from all addresses together, within that many minutes; after that, logins wait (429) |
 | `RECORDING_RETENTION_DAYS` | `0` | Delete recordings older than this many days, at start-up and then daily; `0` keeps them until the person deletes them or their account. Also passed through by Docker Compose |
 | `LEVEL_WINDOW`, `LEVEL_UP_SCORE`, `LEVEL_DOWN_SCORE` | `3`, `85`, `50` | When the dashboard suggests another level: after that many finished sessions of a type at one level, a harder level if they average at least `LEVEL_UP_SCORE` %, an easier one below `LEVEL_DOWN_SCORE` %. Placeholders, pending clinical review |
+| `STREAK_REST_DAYS` | `2` | Days off in a row that don't break a streak; `2` lets someone practise on Monday, Wednesday and Friday. Placeholder, pending clinical review |
 | `COOKIE_SECURE` | `true` | Send the login cookie over HTTPS only (browsers allow it on `http://localhost` too). Set to `false` only to test over plain HTTP on another host. |
 | `DEBUG`, `HOST`, `PORT` | `false`, `0.0.0.0`, `8000` | Server options. `.env.template` turns `DEBUG` on for development (more detail in logs, and auto-reload); leave it off anywhere else |
 | `UPLOAD_DIR`, `MAX_UPLOAD_SIZE` | `./uploads`, 10 MB | Where voice recordings go |

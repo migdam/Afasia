@@ -2,6 +2,7 @@
 sessions finishing at the same time can't miscount a streak (P2-9a)."""
 from datetime import datetime, timedelta
 
+from app import streaks
 from app.api.v1.endpoints import therapy
 from app.db.database import SessionLocal
 from app.db.models import TherapySession, User
@@ -19,7 +20,9 @@ def start(client, auth):
 
 
 def finish(client, auth, monkeypatch, day):
+    # The streak shown is today's (P2-9c), so reading it uses the same clock.
     monkeypatch.setattr(therapy, "utcnow", lambda: DAY0 + timedelta(days=day))
+    monkeypatch.setattr(streaks, "utcnow", lambda: DAY0 + timedelta(days=day))
     _, exercise = start(client, auth)
     client.post(f"/api/v1/therapy/exercises/{exercise}/answer", headers=auth,
                 json={"answer": "", "time_taken_seconds": 3, "self_rating": "said_it"})
@@ -42,13 +45,13 @@ def test_the_first_finished_session_earns_the_badge_after_one_left_unfinished(cl
     assert badges(client, pat) == ["first_session"]
 
 
-def test_days_in_a_row_make_a_streak_and_a_gap_starts_again(client, monkeypatch):
+def test_days_in_a_row_make_a_streak_and_a_long_gap_starts_again(client, monkeypatch):
     pat = register(client, "pat")
     for day in (0, 1, 1, 2):
         finish(client, pat, monkeypatch, day)
     assert (profile(client, pat)["current_streak"], profile(client, pat)["longest_streak"]) == (3, 3)
 
-    finish(client, pat, monkeypatch, 4)
+    finish(client, pat, monkeypatch, 6)  # three days off: more than a streak allows (P2-9c)
 
     assert (profile(client, pat)["current_streak"], profile(client, pat)["longest_streak"]) == (1, 3)
 
@@ -72,6 +75,7 @@ def test_a_session_finishing_while_another_does_still_counts_its_day(client, mon
         early.commit()
 
         monkeypatch.setattr(therapy, "utcnow", lambda: DAY0 + timedelta(days=1, hours=12, minutes=1))
+        monkeypatch.setattr(streaks, "utcnow", lambda: DAY0 + timedelta(days=1, hours=12, minutes=1))
         therapy.finish_session(late, stale)
         late.commit()
     finally:

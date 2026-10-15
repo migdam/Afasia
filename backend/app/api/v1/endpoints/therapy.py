@@ -1,7 +1,6 @@
 """Therapy session and exercise endpoints."""
 from typing import List
-from datetime import datetime, timedelta, timezone
-from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+from datetime import datetime, timedelta
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import func
@@ -12,8 +11,9 @@ from ....db.models import (
     TimeZoneSetting,
 )
 from ....answers import is_near_miss, matches
+from ....streaks import local_day, streaks, zone
 from ....content import MAX_CUE_LEVEL, accepted_answers, choice_words, content_items, letter_tiles, naming_cue
-from ....core.clock import as_utc, utcnow
+from ....core.clock import utcnow
 from ....core.security import get_current_user_id
 from ..schemas import (
     SessionCreate, SessionResponse,
@@ -210,22 +210,6 @@ def check_and_award_badges(db: Session, user: User):
     return new_badges
 
 
-def streaks(days: set, today) -> tuple:
-    """The run of days in a row up to today, and the longest run, in a set
-    of dates."""
-    current = 0
-    while today - timedelta(days=current) in days:
-        current += 1
-    longest = 0
-    for day in days:
-        if day - timedelta(days=1) not in days:  # the start of a run
-            length = 1
-            while day + timedelta(days=length) in days:
-                length += 1
-            longest = max(longest, length)
-    return current, longest
-
-
 def finish_session(db: Session, session: TherapySession):
     """Score a session whose exercises are all answered, and credit the user.
 
@@ -251,22 +235,12 @@ def finish_session(db: Session, session: TherapySession):
 
     # Streaks come from the days with a finished session, read afresh, not
     # from the counters: a session finishing at the same time as another
-    # may have read the person before the other one finished (P2-9a). Days
-    # are the person's own, in their time zone if known (P2-9b).
+    # may have read the person before the other one finished (app/streaks.py).
     setting = db.get(TimeZoneSetting, user.id)
-    zone = timezone.utc
-    if setting:
-        try:
-            zone = ZoneInfo(setting.time_zone)
-        except (ZoneInfoNotFoundError, ValueError):
-            pass  # a zone no longer known: count in UTC rather than fail the answer
-
-    def local_day(moment):
-        return as_utc(moment).astimezone(zone).date()
-
-    today = local_day(now)
+    in_zone = zone(setting.time_zone if setting else None)
+    today = local_day(now, in_zone)
     days = {today} | {
-        local_day(finished) for (finished,) in db.query(TherapySession.completed_at).filter(
+        local_day(finished, in_zone) for (finished,) in db.query(TherapySession.completed_at).filter(
             TherapySession.user_id == user.id,
             TherapySession.is_completed.is_(True),
             TherapySession.completed_at.isnot(None),

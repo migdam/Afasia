@@ -320,7 +320,7 @@ def get_progress(
         average_accuracy=round(average_accuracy, 2),
         total_time_hours=round(total_time_seconds / 3600, 2),
         total_points=user.total_points,
-        current_streak=user.current_streak,
+        current_streak=user.streak_now,
         longest_streak=user.longest_streak,
         progress_history=[ProgressResponse.model_validate(p) for p in progress_records]
     )
@@ -474,7 +474,7 @@ def export_progress_pdf(
     y = height - 170
     c.drawString(50, y, f"Total Points: {user.total_points}")
     y -= 20
-    c.drawString(50, y, f"Current Streak: {user.current_streak} days")
+    c.drawString(50, y, f"Current Streak: {user.streak_now} days")
     y -= 20
     c.drawString(50, y, f"Longest Streak: {user.longest_streak} days")
     y -= 40
