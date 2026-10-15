@@ -80,6 +80,7 @@ Signing up in the app always makes a patient account. Admin and therapist accoun
 ```bash
 python -m app.cli create-user --username ada --email ada@example.com --role admin
 python -m app.cli set-role tess therapist      # change an existing account's role
+python -m app.cli delete-old-recordings --days 365   # delete recordings older than a year now
 ```
 
 `create-user` asks for the password, which must have at least 12 characters, so it never ends up in shell history. With Docker, run the same commands as `docker compose exec backend python -m app.cli …`.
@@ -96,6 +97,7 @@ Copy `.env.template` to `.env` at the repository root. The settings:
 | `ACCESS_TOKEN_EXPIRE_MINUTES` | `30` | Minutes without using the app before a login ends (the app renews the login while it is in use) |
 | `LOGIN_MAX_HOURS` | `12` | Hours after logging in when a login ends anyway |
 | `LOGIN_MAX_FAILURES`, `LOGIN_MAX_FAILURES_PER_ACCOUNT`, `LOGIN_LOCK_MINUTES` | `5`, `50`, `15` | Wrong passwords allowed per username from one client address, and per account from all addresses together, within that many minutes; after that, logins wait (429) |
+| `RECORDING_RETENTION_DAYS` | `0` | Delete recordings older than this many days, at start-up and then daily; `0` keeps them until the person deletes them or their account. Also passed through by Docker Compose |
 | `COOKIE_SECURE` | `true` | Send the login cookie over HTTPS only (browsers allow it on `http://localhost` too). Set to `false` only to test over plain HTTP on another host. |
 | `DEBUG`, `HOST`, `PORT` | `true`, `0.0.0.0`, `8000` | Server options |
 | `UPLOAD_DIR`, `MAX_UPLOAD_SIZE` | `./uploads`, 10 MB | Where voice recordings go |

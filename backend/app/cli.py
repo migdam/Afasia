@@ -6,6 +6,7 @@ directory, with the same settings as the server:
 
     python -m app.cli create-user --username ada --email ada@example.com --role admin
     python -m app.cli set-role tess therapist
+    python -m app.cli delete-old-recordings [--days 365]
 
 create-user asks for the password, or reads one line from standard input
 with --password-stdin. Passwords never go on the command line, where they
@@ -15,9 +16,11 @@ import argparse
 import getpass
 import sys
 
+from .core.config import settings
 from .core.security import MAX_PASSWORD_BYTES, get_password_hash
 from .db.database import SessionLocal, init_db
 from .db.models import User, UserRole
+from .retention import delete_old_recordings
 
 MIN_PASSWORD_LENGTH = 12
 ROLES = [role.value for role in UserRole]
@@ -76,6 +79,17 @@ def set_role(args):
     return 0
 
 
+def delete_old(args):
+    days = args.days if args.days is not None else settings.RECORDING_RETENTION_DAYS
+    if days <= 0:
+        print("RECORDING_RETENTION_DAYS is 0: recordings are kept until deleted. Nothing to do.")
+        return 0
+    with SessionLocal() as db:
+        deleted = delete_old_recordings(db, days)
+    print(f"Deleted {deleted} recording(s) older than {days} days.")
+    return 0
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(prog="python -m app.cli", description=__doc__.split("\n\n")[0])
     commands = parser.add_subparsers(dest="command", required=True)
@@ -92,6 +106,12 @@ def main(argv=None):
     role.add_argument("username")
     role.add_argument("role", choices=ROLES)
     role.set_defaults(handler=set_role)
+
+    old = commands.add_parser(
+        "delete-old-recordings", help="delete recordings older than RECORDING_RETENTION_DAYS (or --days)",
+    )
+    old.add_argument("--days", type=int, help="override RECORDING_RETENTION_DAYS")
+    old.set_defaults(handler=delete_old)
 
     args = parser.parse_args(argv)
     init_db()

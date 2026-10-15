@@ -80,6 +80,7 @@ Rejestracja w aplikacji zawsze tworzy konto pacjenta. Konta administratorów i t
 ```bash
 python -m app.cli create-user --username ada --email ada@example.com --role admin
 python -m app.cli set-role tess therapist      # zmiana roli istniejącego konta
+python -m app.cli delete-old-recordings --days 365   # usuń teraz nagrania starsze niż rok
 ```
 
 `create-user` pyta o hasło, które musi mieć co najmniej 12 znaków, więc nie trafia ono do historii poleceń. W Dockerze uruchom te same polecenia jako `docker compose exec backend python -m app.cli …`.
@@ -96,6 +97,7 @@ Skopiuj `.env.template` do `.env` w katalogu głównym repozytorium. Ustawienia:
 | `ACCESS_TOKEN_EXPIRE_MINUTES` | `30` | Po ilu minutach bez korzystania z aplikacji kończy się zalogowanie (aplikacja odnawia je, gdy jest używana) |
 | `LOGIN_MAX_HOURS` | `12` | Po ilu godzinach od zalogowania zalogowanie kończy się mimo wszystko |
 | `LOGIN_MAX_FAILURES`, `LOGIN_MAX_FAILURES_PER_ACCOUNT`, `LOGIN_LOCK_MINUTES` | `5`, `50`, `15` | Ile błędnych haseł wolno podać dla jednej nazwy użytkownika z jednego adresu klienta oraz dla konta ze wszystkich adresów łącznie w ciągu tylu minut; potem logowanie musi poczekać (429) |
+| `RECORDING_RETENTION_DAYS` | `0` | Usuwaj nagrania starsze niż tyle dni, przy starcie i potem codziennie; `0` przechowuje je, dopóki osoba ich nie usunie lub nie usunie konta. Przekazywane także przez Docker Compose |
 | `COOKIE_SECURE` | `true` | Wysyłaj ciasteczko logowania tylko przez HTTPS (przeglądarki dopuszczają też `http://localhost`). Ustaw `false` tylko do testów przez zwykłe HTTP na innym hoście. |
 | `DEBUG`, `HOST`, `PORT` | `true`, `0.0.0.0`, `8000` | Opcje serwera |
 | `UPLOAD_DIR`, `MAX_UPLOAD_SIZE` | `./uploads`, 10 MB | Gdzie trafiają nagrania głosu |

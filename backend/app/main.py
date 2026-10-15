@@ -1,4 +1,5 @@
 """Main FastAPI application."""
+import asyncio
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -6,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from .core.config import settings
 from .core.logging import configure_logging, logger
 from .db.database import init_db
+from .retention import clean_up, clean_up_daily
 from .api.v1.endpoints import auth, therapy, users, admin
 import os
 
@@ -15,11 +17,18 @@ configure_logging()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Set up the database on startup; log the shutdown."""
+    """Set up the database on startup, and the daily recording clean-up if
+    RECORDING_RETENTION_DAYS is set; log the shutdown."""
     logger.info("Starting Aphasia Speech Therapy API")
     init_db()
     logger.info("Database initialized")
+    daily = None
+    if settings.RECORDING_RETENTION_DAYS > 0:
+        await clean_up()  # before the first request
+        daily = asyncio.create_task(clean_up_daily())
     yield
+    if daily:
+        daily.cancel()
     logger.info("Shutting down Aphasia Speech Therapy API")
 
 

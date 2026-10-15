@@ -21,6 +21,7 @@ services:
       SECRET_KEY: ${SECRET_KEY:?Set SECRET_KEY in .env}
       DEBUG: "true"
       BACKEND_CORS_ORIGINS: http://localhost:${FRONTEND_PORT:-3000}
+      RECORDING_RETENTION_DAYS: ${RECORDING_RETENTION_DAYS:-0}
     volumes:
       - uploads:/app/uploads
     depends_on:

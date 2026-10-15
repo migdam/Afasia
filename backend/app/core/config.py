@@ -43,6 +43,10 @@ class Settings(BaseSettings):
     LOGIN_MAX_FAILURES_PER_ACCOUNT: int = 50
     LOGIN_LOCK_MINUTES: int = 15
 
+    # Delete recordings older than this many days (app/retention.py);
+    # 0 keeps them until the person deletes them or their account.
+    RECORDING_RETENTION_DAYS: int = 0
+
     # Database
     DATABASE_URL: str = "sqlite:///./aphasia_app.db"
 
