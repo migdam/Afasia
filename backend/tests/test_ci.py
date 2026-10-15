@@ -26,8 +26,10 @@ def test_it_runs_on_every_push_and_pull_request():
 
 
 def test_it_runs_the_full_check_and_the_docker_smoke_test():
-    assert any(step.get("run", "").strip().endswith("scripts/check.sh") for step in steps("check"))
-    assert any(step.get("run", "").strip().endswith("scripts/docker-smoke.sh") for step in steps("docker"))
+    assert any(line.strip().startswith("scripts/check.sh")
+               for step in steps("check") for line in step.get("run", "").splitlines())
+    assert any(line.strip().startswith("scripts/docker-smoke.sh")
+               for step in steps("docker") for line in step.get("run", "").splitlines())
 
 
 def test_it_uses_the_python_of_the_docker_image():

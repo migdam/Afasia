@@ -29,7 +29,15 @@ jobs:
       - name: Lint, vulnerabilities, tests, quick start and browser tests
         env:
           PYTHON: python
-        run: scripts/check.sh
+        # On failure, the end of the output also becomes an annotation, which
+        # shows on the run's page and can be read through the API.
+        run: |
+          set -o pipefail
+          scripts/check.sh 2>&1 | tee "$RUNNER_TEMP/check.log" || {
+            status=$?
+            tail -n 80 "$RUNNER_TEMP/check.log" | python -c 'import sys; print("::error title=scripts/check.sh failed::" + sys.stdin.read().replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A"))'
+            exit "$status"
+          }
 
   docker:
     name: Docker Compose smoke test
