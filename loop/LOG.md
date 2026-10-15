@@ -17,6 +17,25 @@ Newest entry first. One entry per iteration.
 
 ---
 
+### 11: 2026-10-15 06:20 UTC: P0-7e Unavailable content
+- **Baseline:** `check.sh` green (49 backend, smoke, 8 e2e). No human commits.
+- **Did:**
+  - Removed the 15 `image`/`audio` references from `EXERCISE_DATA`. `frontend/assets` doesn't exist, so every one was broken.
+  - Removed the Image Recognition options from both menus.
+  - Marked "Play Audio" as not available yet in both user guides.
+  - Tests:
+    - Content test: every referenced asset must exist under `frontend/`.
+    - 2 e2e tests: the menus offer only types with content, and starting exercises loads no missing files.
+- **Verified:**
+  ```
+  old code: asset test "2 failed" · menu test listed 'image_recognition' · "#exercise-image … Actual value: visible"
+  now:      ruff clean · backend "51 passed" · smoke OK · e2e "10 passed in 41.47s" (exit code checked directly)
+  ```
+- **Caught by the checks:** my first version of the missing-files test had no dialog handler, so the exit confirmation was dismissed and the test timed out. I added one. Nothing was committed while red.
+- **Commit:** ad4204c (pushed: yes), plus this log/backlog commit.
+- **Discovered:** nothing new.
+- **Next:** P0-7f, the progress chart.
+
 ### 10b: 2026-10-15 06:06 UTC: Flaky admin e2e test (regression fix)
 - **What happened:** the `check.sh` run before entry 10's bookkeeping commit (4e5e82c) had `1 failed, 7 passed` in e2e. My command piped `check.sh` through `grep` and chained `&& git commit`, and `grep`'s exit status hid the failure, so 4e5e82c was committed and pushed while `check.sh` was red. That commit changed only `loop/` files, and its code was identical to 19bb94f, which had passed 8/8. That made it an intermittent failure, not a code change.
 - **Cause:** in `test_an_admin_sees_patients_as_text_and_can_deactivate_them`, which failed in about 1 of 7 full-suite runs with `KeyError: 'detail'`, the patient's login succeeded. Playwright matches role names by case-insensitive substring, so the wait for the "Activate" button matched the old "Deactivate" button and passed at once. The test's direct login then raced the browser's deactivate request (CORS preflight plus PUT).

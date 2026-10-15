@@ -20,8 +20,8 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 | Gate | Status | Evidence |
 |------|--------|----------|
 | G1 Runs | 🟡 | `scripts/check.sh` passes, including `scripts/smoke.sh`: the README backend quick start in a copy of the tree answers `/health`. Not yet covered: a from-scratch install in the copy (it reuses `.venv`) and the frontend half of the quick start (P0-7) |
-| G2 Backend tests | 🔴 | 49 tests pass, including register → login → profile and a full scored session; coverage not measured |
-| G3 End-to-end | 🟡 | 8 tests in Chromium: sign-up, reload, logout and login; a whole sentence-completion session with feedback, the server's score and the first badge; double submit, carried-over answers, leaving during feedback; the admin list and deactivation. Not covered yet: the other exercise types, the progress page, export, and Polish (P0-7e–g) |
+| G2 Backend tests | 🔴 | 51 tests pass, including register → login → profile and a full scored session; coverage not measured |
+| G3 End-to-end | 🟡 | 10 tests in Chromium (including: only exercise types with content are offered, and no broken media): sign-up, reload, logout and login; a whole sentence-completion session with feedback, the server's score and the first badge; double submit, carried-over answers, leaving during feedback; the admin list and deactivation. Not covered yet: the other exercise types, the progress page, export, and Polish (P0-7e–g) |
 | G4 Authorization | 🔴 | P1-3 |
 | G5 Security | 🔴 | P1-1, P1-2, P1-4 |
 | G6 Accessibility | 🔴 | Not measured |
@@ -70,7 +70,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
   - [x] **P0-7d Dashboard and admin data** (19bb94f). `GET /admin/users` returns `is_active`, so deactivation works (it never did). The list is built with DOM methods, not `innerHTML`. The dashboard loads the badge count. The admin menu is hidden again for non-staff users. Original report:
     - The admin list reads `user.is_active`, which `UserResponse` doesn't include.
     - The dashboard badge count only updates after visiting Progress.
-  - [ ] **P0-7e Unavailable content.**
+  - [x] **P0-7e Unavailable content** (ad4204c). The menus no longer offer Image Recognition. The 15 references to images and audio that don't exist are removed, and a content test requires any referenced asset to exist. Original report:
     - Both exercise-type dropdowns offer Image Recognition, which the server refuses (422) since P0-5. Hide it until P2-2 adds content.
     - The images and audio that exercises reference (`/assets/images/*.jpg`, `/assets/audio/*.mp3`) don't exist, so the UI shows broken media. Show nothing until there are assets (H2, H3).
   - [ ] **P0-7f Progress chart.** It draws dots but no line (`beginPath()` inside the path loop), the canvas has no height, and its colors are hard-coded for the light theme.
