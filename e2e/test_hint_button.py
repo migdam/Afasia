@@ -36,7 +36,7 @@ def test_three_hints_then_the_word_and_the_feedback_counts_them(page, account, l
     expect(button).to_be_disabled()
     expect(page.locator("#hint-list")).to_have_attribute("aria-live", "polite")
 
-    word = hints.nth(2).inner_text().split(":", 1)[1].strip()
+    word = hints.nth(2).locator("span").first.inner_text().split(":", 1)[1].strip()
     page.fill("#answer-input", word)
     page.click("#submit-answer")
     expect(page.locator("#feedback")).to_contain_text(text["used"])

@@ -74,6 +74,8 @@ You read a short description of an everyday thing, such as "A pet that barks and
 
 The answer must match exactly, apart from capital letters and spaces at the ends; some words have accepted alternatives, such as **bike** for **bicycle**. There are no pictures yet.
 
+**🔊 Read aloud**, under the question, under each hint and under the feedback, reads it out. It uses only voices on your own device; if your device has none for your language, the button isn't shown.
+
 **If the word doesn't come**, click **Hint**. Each click gives a little more help: first what the thing is for and where you find it, then its first letter, then the word itself. A right answer after hints earns fewer points, and the message says how many hints you used.
 
 ### Sentence Completion

@@ -209,6 +209,9 @@
 
                     <div class="exercise-question">
                         <h2 id="exercise-question-text"></h2>
+                        <button type="button" id="read-question" class="btn btn-secondary read-aloud" hidden>
+                            <span aria-hidden="true">🔊 </span><span data-i18n="readAloud">Read aloud</span>
+                        </button>
                     </div>
 
                     <!-- Naming hints, one at a time (cueing hierarchy) -->
@@ -242,6 +245,9 @@
                     <button id="submit-answer" class="btn btn-primary btn-large" data-i18n="submit">Submit</button>
 
                     <div id="feedback" class="feedback" role="status" style="display: none;"></div>
+                    <button type="button" id="read-feedback" class="btn btn-secondary read-aloud" hidden>
+                        <span aria-hidden="true">🔊 </span><span data-i18n="readAloud">Read aloud</span>
+                    </button>
 
                     <!-- No automatic move on (U4): the person goes on when ready. -->
                     <button type="button" id="next-exercise" class="btn btn-primary btn-large" style="display: none;" data-i18n="nextExercise">Next</button>

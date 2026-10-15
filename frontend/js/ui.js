@@ -83,6 +83,30 @@ class UIManager {
         });
     }
 
+    // A "Read aloud" button for whatever getText returns (U3).
+    readAloudButton(getText, id = null) {
+        const button = el('button', 'btn btn-secondary read-aloud');
+        button.type = 'button';
+        if (id) button.id = id;
+        const label = el('span', '', i18n.translate('readAloud'));
+        label.dataset.i18n = 'readAloud';
+        button.append(el('span', '', '🔊 '), label);
+        button.firstChild.setAttribute('aria-hidden', 'true');
+        button.addEventListener('click', () => reader.read(getText(), i18n.getCurrentLanguage()));
+        button.hidden = !reader.canRead(i18n.getCurrentLanguage());
+        return button;
+    }
+
+    // Show read-aloud buttons only when there is a voice on this device for
+    // the current language (it can change with the language, or once the
+    // browser has loaded its voices).
+    updateReadAloud() {
+        const available = reader.canRead(i18n.getCurrentLanguage());
+        document.querySelectorAll('.read-aloud').forEach((button) => {
+            button.hidden = !available;
+        });
+    }
+
     clearFormMessage(id) {
         const message = document.getElementById(id);
         message.textContent = '';

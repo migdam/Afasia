@@ -55,6 +55,7 @@ const translations = {
         hint: "Hint",
         nextExercise: "Next",
         largerText: "Larger text",
+        readAloud: "Read aloud",
 
         // Messages in the app (U12)
         ok: "OK",
@@ -203,6 +204,7 @@ const translations = {
         hint: "Podpowiedź",
         nextExercise: "Dalej",
         largerText: "Większy tekst",
+        readAloud: "Przeczytaj",
 
         // Messages in the app (U12)
         ok: "OK",

@@ -116,7 +116,19 @@ class AphasiaApp {
             const currentLang = i18n.getCurrentLanguage();
             const newLang = currentLang === 'en' ? 'pl' : 'en';
             i18n.setLanguage(newLang);
+            ui.updateReadAloud();
         });
+
+        // Read aloud (U3): the question and the feedback.
+        document.getElementById('read-question').addEventListener('click', () => {
+            reader.read(document.getElementById('exercise-question-text').textContent, i18n.getCurrentLanguage());
+        });
+        document.getElementById('read-feedback').addEventListener('click', () => {
+            reader.read(document.getElementById('feedback').textContent, i18n.getCurrentLanguage());
+        });
+        if ('speechSynthesis' in window) {
+            speechSynthesis.addEventListener('voiceschanged', () => ui.updateReadAloud());
+        }
 
         // Theme toggle (Enhancement 7)
         document.getElementById('theme-toggle').addEventListener('click', () => {
@@ -324,7 +336,9 @@ class AphasiaApp {
         button.disabled = true;  // one request at a time
         try {
             const hint = await api.getHint(exercise.id);
-            document.getElementById('hint-list').append(el('li', '', hint.cue));
+            const item = el('li');
+            item.append(el('span', '', hint.cue), ' ', ui.readAloudButton(() => hint.cue));
+            document.getElementById('hint-list').append(item);
             button.disabled = hint.last;
         } catch (error) {
             // No more hints, or the exercise was answered meanwhile.
@@ -435,7 +449,9 @@ class AphasiaApp {
         document.getElementById('exercise-input').style.display = 'none';
         document.getElementById('voice-recorder').style.display = 'none';
         document.getElementById('feedback').style.display = 'none';
+        document.getElementById('read-feedback').style.display = 'none';
         document.getElementById('next-exercise').style.display = 'none';
+        ui.updateReadAloud();
         document.getElementById('submit-answer').style.display = '';
 
         // Hints: for naming only, starting afresh for every exercise.
@@ -565,6 +581,7 @@ class AphasiaApp {
             next.dataset.i18n = last ? 'seeResult' : 'nextExercise';
             next.textContent = i18n.translate(next.dataset.i18n);
             submitButton.style.display = 'none';
+            document.getElementById('read-feedback').style.display = '';
             next.style.display = 'inline-block';
             next.focus();
         } catch (error) {

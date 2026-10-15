@@ -32,6 +32,11 @@
     box-sizing: border-box;
 }
 
+/* "hidden" always hides, even where a class sets its own display. */
+[hidden] {
+    display: none !important;
+}
+
 /* Text size (U1): 20 px by default; "A+" (#text-size) makes it larger. */
 html {
     font-size: 125%;
@@ -984,4 +989,13 @@ button,
 .btn,
 .nav-item {
     min-width: 48px;
+}
+
+/* Read aloud (U3) */
+.read-aloud {
+    margin-top: 0.75rem;
+}
+
+.hint-list .read-aloud {
+    margin: 0.25rem 0 0;
 }

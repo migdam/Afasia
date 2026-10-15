@@ -151,7 +151,38 @@ class SpeechRecognizer {
     }
 }
 
+// Read aloud (U3) with the browser's speech synthesis, using only voices the
+// browser reports as running on this device (localService), so the text is
+// never sent to a speech service elsewhere. With no such voice for the
+// language, there is no read-aloud.
+class Reader {
+    voiceFor(language) {
+        if (!('speechSynthesis' in window) || typeof SpeechSynthesisUtterance === 'undefined') {
+            return null;
+        }
+        return speechSynthesis.getVoices()
+            .find((voice) => voice.localService && voice.lang.toLowerCase().startsWith(language)) || null;
+    }
+
+    canRead(language) {
+        return this.voiceFor(language) !== null;
+    }
+
+    read(text, language) {
+        const voice = this.voiceFor(language);
+        if (!voice) return;
+        speechSynthesis.cancel();
+        // A gap in a sentence ("___") is read as a pause.
+        const utterance = new SpeechSynthesisUtterance(text.replace(/_{2,}/g, '…'));
+        utterance.voice = voice;
+        utterance.lang = voice.lang;
+        utterance.rate = 0.9;  // a little slower than usual
+        speechSynthesis.speak(utterance);
+    }
+}
+
 // Create global instances
 const audioRecorder = new AudioRecorder();
 const audioPlayer = new AudioPlayer();
 const speechRecognizer = new SpeechRecognizer();
+const reader = new Reader();
