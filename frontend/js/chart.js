@@ -125,8 +125,13 @@ class SimpleChart {
         // Clear canvas
         ctx.clearRect(0, 0, rect.width, rect.height);
 
+        // Colors come from the current theme (light or dark).
+        const style = getComputedStyle(document.body);
+        const themeColor = name => style.getPropertyValue(name).trim();
+        const textColor = themeColor('--text-secondary');
+
         if (datasets.length === 0 || datasets[0].data.length === 0) {
-            ctx.fillStyle = '#6B7280';
+            ctx.fillStyle = textColor;
             ctx.font = '14px Inter, sans-serif';
             ctx.textAlign = 'center';
             ctx.fillText('No data available', rect.width / 2, rect.height / 2);
@@ -146,7 +151,7 @@ class SimpleChart {
         });
 
         // Draw axes
-        ctx.strokeStyle = '#E5E7EB';
+        ctx.strokeStyle = themeColor('--border-color');
         ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.moveTo(padding, padding);
@@ -154,39 +159,38 @@ class SimpleChart {
         ctx.lineTo(rect.width - padding, rect.height - padding);
         ctx.stroke();
 
-        // Draw each dataset
-        datasets.forEach((dataset, datasetIndex) => {
+        // Draw each dataset: the line first, then a dot on each point. (Each
+        // dot needs its own path, so the line can't share one with them.)
+        datasets.forEach(dataset => {
             const pointSpacing = chartWidth / (dataset.data.length - 1 || 1);
+            const points = dataset.data.map((value, index) => [
+                padding + (index * pointSpacing),
+                rect.height - padding - (value / maxValue * chartHeight),
+            ]);
+            const color = dataset.color || themeColor('--primary-color');
 
-            ctx.strokeStyle = dataset.color || '#4F46E5';
-            ctx.fillStyle = dataset.color || '#4F46E5';
+            ctx.strokeStyle = color;
+            ctx.fillStyle = color;
             ctx.lineWidth = 2;
             ctx.beginPath();
-
-            dataset.data.forEach((value, index) => {
-                const x = padding + (index * pointSpacing);
-                const y = rect.height - padding - (value / maxValue * chartHeight);
-
+            points.forEach(([x, y], index) => {
                 if (index === 0) {
                     ctx.moveTo(x, y);
                 } else {
                     ctx.lineTo(x, y);
                 }
+            });
+            ctx.stroke();
 
-                // Draw point
-                ctx.save();
+            points.forEach(([x, y]) => {
                 ctx.beginPath();
                 ctx.arc(x, y, 4, 0, Math.PI * 2);
                 ctx.fill();
-                ctx.closePath();
-                ctx.restore();
             });
-
-            ctx.stroke();
         });
 
         // Draw labels
-        ctx.fillStyle = '#6B7280';
+        ctx.fillStyle = textColor;
         ctx.font = '11px Inter, sans-serif';
         ctx.textAlign = 'center';
 
@@ -217,10 +221,10 @@ class SimpleChart {
             let legendY = padding;
 
             datasets.forEach((dataset, index) => {
-                ctx.fillStyle = dataset.color || '#4F46E5';
+                ctx.fillStyle = dataset.color || themeColor('--primary-color');
                 ctx.fillRect(legendX, legendY + (index * 20), 15, 3);
 
-                ctx.fillStyle = '#374151';
+                ctx.fillStyle = textColor;
                 ctx.font = '12px Inter, sans-serif';
                 ctx.textAlign = 'left';
                 ctx.fillText(dataset.label || `Dataset ${index + 1}`, legendX + 20, legendY + (index * 20) + 4);

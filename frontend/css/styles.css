@@ -587,7 +587,9 @@ body {
 }
 
 #progress-chart {
-    max-height: 400px;
+    display: block;
+    width: 100%;
+    height: 300px;
 }
 
 .badges-grid {

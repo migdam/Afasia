@@ -172,19 +172,13 @@ class UIManager {
             document.getElementById('badge-count').textContent = badges.length;
 
             // Draw chart
+            // Oldest first; with no history the chart says there's no data.
             const chart = new SimpleChart('progress-chart');
-            if (progress.progress_history && progress.progress_history.length > 0) {
-                const labels = progress.progress_history.reverse().map(p =>
-                    new Date(p.date).toLocaleDateString()
-                );
-                const data = progress.progress_history.map(p => p.accuracy_rate);
-
-                chart.drawLineChart(labels, [{
-                    label: 'Accuracy %',
-                    data: data,
-                    color: '#4F46E5'
-                }]);
-            }
+            const history = [...(progress.progress_history || [])].reverse();
+            chart.drawLineChart(
+                history.map(p => new Date(p.date).toLocaleDateString()),
+                [{ label: 'Accuracy %', data: history.map(p => p.accuracy_rate) }]
+            );
 
             // Load badges
             this.loadBadges(badges);
