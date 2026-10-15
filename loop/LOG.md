@@ -19,6 +19,19 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 61: 2026-10-15 17:57 UTC: P2-8a Missed items come back
+- **Baseline:** `check.sh` exit code 0: 273 backend tests, smoke, 103 e2e. No human commits. Tests were written in the scratchpad until it finished.
+- **Split:** P2-8 became a (missed items come back), b (spaced intervals) and c (adaptive difficulty).
+- **Test first:** `backend/tests/test_missed_items_return.py`. The first test failed before the change; the other three are guards (the half-share test passed by chance about 2 times in 3 before; the selection is deterministic now).
+- **Did:**
+  - `missed_items()` finds the person's items whose last answer was wrong, for the same type, difficulty and language.
+  - `generate_exercises(review=…)` puts up to `REVIEW_SHARE` (0.5, at least one) of them in the session and fills the rest with items not missed first. The order is shuffled.
+  - Updated the READMEs, user guides and clinical docs (EN/PL). The basis for spacing is `[citation needed]`.
+- **Verified:** `scripts/check.sh` exit code 0: ruff "All checks passed!", pip-audit "No known vulnerabilities found", 277 backend tests, smoke, 103 e2e.
+- **Commit:** 69790a3 (pushed: yes)
+- **Discovered:** nothing new. The share and the rule "wrong counts as missed; hints don't" wait for H1.
+- **Next:** P2-8b (spaced intervals).
+
 ### 60: 2026-10-15 17:40 UTC: P2-7a Speech practice that works
 - **Baseline:** `check.sh` exit code 0: 269 backend tests, smoke, 100 e2e. No human commits. Tests were written in the scratchpad until it finished.
 - **Split:** P2-7 became a (the flow) and b (confidence storage and therapist review: after P3-1 and P1-3b).
