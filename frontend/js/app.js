@@ -248,7 +248,7 @@ class AphasiaApp {
             try {
                 const blob = await api.exportProgressCSV();
                 ui.downloadFile(blob, `progress_${new Date().toISOString().split('T')[0]}.csv`);
-            } catch (error) {
+            } catch {
                 ui.notify('exportFailed');
             }
         });
@@ -257,7 +257,7 @@ class AphasiaApp {
             try {
                 const blob = await api.exportProgressPDF();
                 ui.downloadFile(blob, `progress_${new Date().toISOString().split('T')[0]}.pdf`);
-            } catch (error) {
+            } catch {
                 ui.notify('exportFailed');
             }
         });
@@ -420,7 +420,7 @@ class AphasiaApp {
             ui.hideModal('schedule-modal');
             ui.loadScheduledSessions();
             document.getElementById('schedule-form').reset();
-        } catch (error) {
+        } catch {
             ui.notify('scheduleFailed');
         }
     }
@@ -447,7 +447,7 @@ class AphasiaApp {
             // Show exercise page
             ui.showPage('exercise');
             this.showCurrentExercise();
-        } catch (error) {
+        } catch {
             ui.notify('startFailed');
         }
     }
@@ -544,7 +544,7 @@ class AphasiaApp {
         // One submission per exercise: Submit stays off until the next one
         // is shown, so a double click can't send the answer twice.
         submitButton.disabled = true;
-        let answer = '';
+        let answer;
         let selfRating = null;
 
         // Read the answer from the input this exercise shows, never from a
@@ -620,7 +620,7 @@ class AphasiaApp {
             this.lastRightAnswer = result.is_correct || exercise.exercise_type === 'pronunciation'
                 ? null : result.correct_answer;
             this.offerNext();
-        } catch (error) {
+        } catch {
             submitButton.disabled = false;
             ui.notify('answerFailed');
         }

@@ -150,7 +150,7 @@ scripts/check.sh
 ```
 
 This is the one check that must pass before every commit. It sets up its own environment (`.venv-check`) and runs:
-- the linter;
+- the linters: ruff for Python, and ESLint for the web app's scripts (it needs Node.js and npm, and is skipped with a warning without them; CI always runs it);
 - a check of the backend's dependencies for known vulnerabilities (pip-audit);
 - the backend tests;
 - the quick start above, in a scratch copy of the repository;

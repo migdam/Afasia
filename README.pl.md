@@ -151,7 +151,7 @@ scripts/check.sh
 
 To jedyne sprawdzenie, które musi przejść przed każdym commitem. Samo przygotowuje swoje środowisko (`.venv-check`) i uruchamia:
 - sprawdzenie zależności backendu pod kątem znanych podatności (pip-audit);
-- linter;
+- lintery: ruff dla Pythona i ESLint dla skryptów aplikacji (wymaga Node.js i npm; bez nich jest pomijany z ostrzeżeniem, a CI uruchamia go zawsze);
 - testy backendu;
 - powyższy szybki start w osobnej kopii repozytorium;
 - testy w przeglądarce, które obejmują rejestrację, całe sesje po polsku i po angielsku, informację zwrotną, wykres postępów i panel administratora.

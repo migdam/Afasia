@@ -4,8 +4,9 @@
 #   scripts/check.sh
 #
 # Creates or reuses .venv-check at the repository root (rebuilt when the pinned
-# backend requirements change), then runs the linter, the backend tests, the
-# README quick start (scripts/smoke.sh) and the browser tests (e2e/).
+# backend requirements change), then runs the linters (ruff; ESLint, with
+# Node.js), the backend tests, the README quick start (scripts/smoke.sh) and
+# the browser tests (e2e/).
 # Set PYTHON to choose the interpreter (default: python3.11, else python3).
 set -euo pipefail
 
@@ -45,6 +46,19 @@ fi
 cd "$backend"
 echo "== Lint: ruff"
 "$venv/bin/ruff" check . "$root/e2e"
+echo "== Lint: ESLint (frontend)"
+if command -v npm >/dev/null; then
+  # Reinstall only when the lockfile changes, like .venv-check above.
+  lock_stamp="$root/node_modules/.lock-stamp"
+  lock_want="$(cksum <"$root/package-lock.json")"
+  if [[ "$(cat "$lock_stamp" 2>/dev/null)" != "$lock_want" ]]; then
+    (cd "$root" && npm ci --silent --no-audit --no-fund)
+    echo "$lock_want" >"$lock_stamp"
+  fi
+  (cd "$root" && node_modules/.bin/eslint frontend)
+else
+  echo "npm not found: ESLint skipped (CI runs it). Install Node.js to run it here." >&2
+fi
 echo "== Known vulnerabilities: pip-audit"
 "$venv/bin/pip-audit" --requirement requirements.txt --progress-spinner off
 echo "== Tests: pytest"

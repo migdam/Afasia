@@ -64,5 +64,4 @@ loop/STOP
 
 # Node
 node_modules/
-package-lock.json
 

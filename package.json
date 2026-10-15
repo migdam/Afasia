@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "description": "Development tools only: ESLint for the web app's scripts (backlog P3-3a). The app has no build step and no Node dependencies.",
+  "type": "module",
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "eslint": "10.12.0",
+    "globals": "17.13.0"
+  }
+}

@@ -328,7 +328,7 @@ class UIManager {
         try {
             await api.deleteScheduledSession(sessionId);
             await this.loadScheduledSessions();
-        } catch (error) {
+        } catch {
             this.notify('deletePlanFailed');
         }
     }
@@ -472,7 +472,7 @@ class UIManager {
                 await api.activateUser(userId);
             }
             await this.loadAdminDashboard();
-        } catch (error) {
+        } catch {
             this.notify('userStatusFailed');
         }
     }
