@@ -19,6 +19,26 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 72: 2026-10-15 21:16 UTC: P2-10c2 The PDF report in Polish
+- **Baseline:** `check.sh` exit code 0: 309 backend tests, smoke, 121 e2e. No human commits. The module, tests, credits and license file were written in the scratchpad until the baseline finished.
+- **Test first:**
+  - `backend/tests/test_pdf_export.py`: 7 tests, which could not be imported before. They cover the Polish lines one by one (Warsaw time, "3 marca 2026", "3 dni", "22 ćwiczenia", "66,7%"), English in UTC, the report with no sessions, Polish plural forms, an A4 PDF with DejaVuSans embedded, 422 for unknown languages, and the font's license and credit.
+  - `e2e/test_exports.py`: the PDF downloaded from a Polish screen embeds DejaVu Sans. It failed before (Helvetica).
+- **Did:**
+  - `app/progress_report.py`: `report_lines` and `report_pdf` (A4, `simpleSplit` wrapping, 1.5 line spacing, a closing note that these are practice results, not a clinical assessment).
+  - `export_text.py`: `date_in_words`, `plural_category` (CLDR rules for whole numbers), `count`.
+  - The font is copied from Debian's fonts-dejavu-core 2.37-8. Its license text comes from the package's copyright file; the credit is in the new `frontend/assets/CREDITS.md`.
+  - The Docker smoke test fetches a Polish PDF and checks the font.
+  - Updated the docs (EN/PL).
+- **Verified:**
+  - `scripts/check.sh` exit code 0: ruff "All checks passed!", pip-audit "No known vulnerabilities found", 317 backend tests, smoke, 122 e2e.
+  - `scripts/docker-smoke.sh` exit code 0.
+  - `pdftotext` on a sample report reads back every Polish letter, and `pdffonts` shows the embedded DejaVuSans subset. A rendered page was sent to the user.
+- **Commit:** 710934c (pushed: yes)
+- **Gate:** G9 is now 🟢. The only English left is the name in `manifest.json`, which nothing uses (P3-9).
+- **Discovered:** nothing new.
+- **Next:** P2-11 (an accessible progress chart: a data table, and a y-axis from 0 to 100%).
+
 ### 71: 2026-10-15 20:59 UTC: P2-10c1 The CSV export in the person's language
 - **Baseline:** `check.sh` exit code 0: 305 backend tests, smoke, 120 e2e. No human commits. The module, tests and patch were written in the scratchpad until the baseline finished.
 - **Split:** P2-10c became c1 (CSV) and c2 (PDF, which needs an embedded font with Polish letters).
