@@ -19,6 +19,32 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 65: 2026-10-15 19:04 UTC: P2-9b Streak days in the person's time zone
+- **Baseline:** `check.sh` exit code 0: 291 backend tests, smoke, 106 e2e. No human commits. The tests and the patch were written in the scratchpad until the baseline finished.
+- **Test first:**
+  - `backend/tests/test_time_zone.py`: could not be imported before, as there was no zone setting. Its four tests cover:
+    - 23:30 UTC in Warsaw is the next day;
+    - without a zone, days are UTC;
+    - only real zones are accepted;
+    - the zone is exported and deleted with the account.
+  - `e2e/test_streak_time_zone.py`: a browser in Europe/Warsaw sends its zone. It failed with the old frontend.
+- **Did:**
+  - `TimeZoneSetting` (table `time_zones`, no foreign key, deleted by hand like consents).
+  - `TimeZoneChoice`, validated with zoneinfo and at most 64 characters.
+  - `GET`/`PUT /users/time-zone`; added to the export; removed on account deletion.
+  - `finish_session` counts days in that zone, falling back to UTC if a stored zone is no longer known.
+  - `ui.showDashboard` sends `Intl.DateTimeFormat().resolvedOptions().timeZone`.
+  - `tzdata==2026.5` added to the requirements, for slim images.
+  - Updated the privacy notice, the user guides and the READMEs (EN/PL).
+- **Mistake caught:** I first wrote the e2e test over the existing `e2e/test_time_zone.py` (P1-8d, planned sessions in Warsaw time). `git status` showed it as modified rather than new. I restored it, and the new test went to `e2e/test_streak_time_zone.py`. Lesson: check with `ls` that a test file name is free before copying.
+- **Interrupted:** the worker restarted during the first full check (exit code 137). The working tree was intact, and the check was run again in the background.
+- **Verified:**
+  - `scripts/check.sh` exit code 0: ruff "All checks passed!", pip-audit "No known vulnerabilities found", 297 backend tests, smoke, 107 e2e.
+  - `scripts/docker-smoke.sh` exit code 0, with the image rebuilt with `tzdata`.
+- **Commit:** f9e5d11 (pushed: yes)
+- **Discovered:** nothing new.
+- **Next:** P2-9c (rest days or a weekly goal, so a missed day doesn't reset everything).
+
 ### 64: 2026-10-15 18:43 UTC: P2-9a Streaks that can't miscount, and the first-session badge
 - **Baseline:** `check.sh` exit code 0: 288 backend tests, smoke, 106 e2e. No human commits. The tests and the patch were written in the scratchpad until the baseline finished.
 - **Split:** P2-9 became:
