@@ -19,6 +19,24 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 59: 2026-10-15 17:11 UTC: P2-6b Letter tiles
+- **Baseline:** `check.sh` exit code 0: 264 backend tests, smoke, 99 e2e. No human commits. Tests were written in the scratchpad until it finished.
+- **Test first:** `backend/tests/test_letter_tiles.py` (3 of 4 failed before; the 4th, about access rules, passed partly by accident because the route didn't exist) and `e2e/test_letter_tiles.py` (failed on the old frontend).
+- **Did:**
+  - `ExerciseTiles` table, `Exercise.tiles_used`, `content.letter_tiles`, and the `/tiles` endpoint.
+  - The tiles share the 50% cap in `calculate_points`.
+  - Export field.
+  - Frontend `showLetterTiles`/`undoTile` with a per-exercise reset.
+  - Privacy notice, guides, READMEs (EN/PL), `docker-smoke.sh`.
+- **A slip:** my edit script stopped at a signature that wasn't as I remembered (one line, not two), after the model, content and schema edits had applied. I checked `git diff --stat` and applied the rest against the actual text.
+- **Verified:**
+  - `scripts/check.sh` exit code 0: ruff, pip-audit "No known vulnerabilities found", 269 backend tests, smoke, 100 e2e.
+  - `docker-smoke.sh` exit code 0.
+  - A screenshot of the tiles was sent to the user.
+- **Commit:** e891ccb (pushed: yes)
+- **Discovered:** nothing new.
+- **Next:** P2-6c waits on H2, so P2-7 (speech practice that works).
+
 ### 58: 2026-10-15 16:52 UTC: P2-6a Word choice for naming
 - **Baseline:** `check.sh` exit code 0: 259 backend tests, smoke, 97 e2e. No human commits. Tests were written in the scratchpad until it finished.
 - **Split:** P2-6 became a (word choice), b (letter tiles) and c (picture choice, waiting on H2).
