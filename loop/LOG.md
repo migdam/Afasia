@@ -19,6 +19,23 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 26: 2026-10-15 08:45 UTC: P1-5c3 Wrong-password limit per client
+- **Baseline:** `check.sh` exit code 0: 123 backend tests, smoke, 20 e2e. No human commits.
+- **Found while planning:** in Docker every request reached the backend from nginx's address, and nginx appended to any `X-Forwarded-For` header the client sent. So keying on the client address needs the proxy set up too, or it changes nothing, or it can be forged.
+- **Test first:** 2 new tests in `test_login_safety.py`, using `TestClient(client=(address, port))`. Both failed before: a stranger's 5 wrong passwords locked the owner out, and the account limit didn't exist.
+- **Did:**
+  - `login_limit.py`: per (username, client) count, limit 5, and per-account count, limit 50, in a 15-minute window. All three are settings. A success clears only that client's count, so an attacker can't reset the account count by waiting for the owner to log in.
+  - `docker-compose.yml`: `FORWARDED_ALLOW_IPS: "*"`, and the backend port is bound to `127.0.0.1`. `nginx.conf`: `X-Forwarded-For $remote_addr`, replacing the header instead of appending to it.
+  - `docker-smoke.sh`: forged `X-Forwarded-For` values still add up to 429. The backend's access log shows the client's address, not nginx's.
+  - READMEs (config table, Docker section, Known limitations), user guides (EN/PL), `.env.template`. H7 now also asks about the numbers.
+- **Verified:**
+  - `scripts/check.sh` exit code 0: ruff, pip-audit "No known vulnerabilities found", 125 backend tests, smoke, 20 e2e.
+  - `scripts/docker-smoke.sh` exit code 0: "nginx is 172.18.0.4; the backend logged: 172.18.0.1:0 - POST /api/v1/auth/login ... 429".
+  - Not done: running the new Docker checks against the old setup.
+- **Commit:** 1027037 (pushed: yes)
+- **Discovered:** nothing new.
+- **Next:** P1-5d (revoke tokens at logout).
+
 ### 25: 2026-10-15 08:35 UTC: P1-5c2 Web app uses the cookie
 - **Baseline:** `check.sh` exit code 0: 121 backend tests, smoke, 17 e2e. No human commits.
 - **Found while planning:** with a cookie login, `/auth/refresh` still returned the token in its body, so an injected script could fetch it and defeat httpOnly. Fixed in the same change.
