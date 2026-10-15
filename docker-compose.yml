@@ -19,7 +19,7 @@ services:
       FORWARDED_ALLOW_IPS: "*"
       DATABASE_URL: postgresql://aphasia:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@db:5432/aphasia_db
       SECRET_KEY: ${SECRET_KEY:?Set SECRET_KEY in .env}
-      DEBUG: "true"
+      DEBUG: ${DEBUG:-false}
       BACKEND_CORS_ORIGINS: http://localhost:${FRONTEND_PORT:-3000}
       RECORDING_RETENTION_DAYS: ${RECORDING_RETENTION_DAYS:-0}
     volumes:

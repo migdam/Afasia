@@ -35,6 +35,9 @@ mkdir "$work/repo"
 port="$("$python" -c 'import socket; s = socket.socket(); s.bind(("127.0.0.1", 0)); print(s.getsockname()[1])')"
 cd "$work/repo/backend"
 cp ../.env.template ../.env
+# "then set SECRET_KEY": the app refuses the template's example key.
+key="$("$python" -c 'import secrets; print(secrets.token_hex(32))')"
+sed -i "s/^SECRET_KEY=.*/SECRET_KEY=$key/" ../.env
 env -u ENV_FILE HOST=127.0.0.1 PORT="$port" "$python" -m app.main >"$work/server.log" 2>&1 &
 pid=$!
 

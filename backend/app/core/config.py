@@ -2,12 +2,16 @@
 import os
 from pathlib import Path
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # The README has people copy .env.template to the repository root, where
 # docker compose reads the same file, so .env is read from there whatever the
 # working directory. ENV_FILE overrides the location (the tests use this).
 ROOT_ENV_FILE = Path(__file__).resolve().parents[3] / ".env"
+
+# The example key in .env.template: public, so it must never sign tokens.
+TEMPLATE_SECRET_KEY = "your-secret-key-change-this-in-production-use-openssl-rand-hex-32"
 
 
 class Settings(BaseSettings):
@@ -24,7 +28,8 @@ class Settings(BaseSettings):
     # Server
     HOST: str = "0.0.0.0"
     PORT: int = 8000
-    DEBUG: bool = True
+    # Off unless asked for: debug mode shows more in errors and logs.
+    DEBUG: bool = False
 
     # Security
     SECRET_KEY: str
@@ -56,6 +61,18 @@ class Settings(BaseSettings):
     # File Upload
     MAX_UPLOAD_SIZE: int = 10485760  # 10MB
     UPLOAD_DIR: str = "./uploads"
+
+    @field_validator("SECRET_KEY")
+    @classmethod
+    def secret_key_is_safe(cls, key: str) -> str:
+        """Refuse keys that let anyone forge logins."""
+        how = "Generate one with: openssl rand -hex 32"
+        if key == TEMPLATE_SECRET_KEY:
+            raise ValueError(f"SECRET_KEY is still the example from .env.template. {how}")
+        # HS256 needs at least 32 bytes (RFC 7518, section 3.2).
+        if len(key.encode()) < 32:
+            raise ValueError(f"SECRET_KEY must be at least 32 bytes. {how}")
+        return key
 
     @property
     def cors_origins(self) -> list[str]:

@@ -91,7 +91,7 @@ Copy `.env.template` to `.env` at the repository root. The settings:
 
 | Setting | Default | Meaning |
 |---|---|---|
-| `SECRET_KEY` | (required) | Signs login tokens. Use at least 32 random bytes (`openssl rand -hex 32`). |
+| `SECRET_KEY` | (required) | Signs login tokens. Use at least 32 random bytes (`openssl rand -hex 32`). The app refuses to start with a shorter key or with the example from `.env.template`. |
 | `DATABASE_URL` | `sqlite:///./aphasia_app.db` | Any SQLAlchemy URL, e.g. `postgresql://user:password@host/db` |
 | `BACKEND_CORS_ORIGINS` | `http://localhost:3000,http://localhost:8000` | Comma-separated origins allowed to call the API |
 | `ACCESS_TOKEN_EXPIRE_MINUTES` | `30` | Minutes without using the app before a login ends (the app renews the login while it is in use) |
@@ -99,7 +99,7 @@ Copy `.env.template` to `.env` at the repository root. The settings:
 | `LOGIN_MAX_FAILURES`, `LOGIN_MAX_FAILURES_PER_ACCOUNT`, `LOGIN_LOCK_MINUTES` | `5`, `50`, `15` | Wrong passwords allowed per username from one client address, and per account from all addresses together, within that many minutes; after that, logins wait (429) |
 | `RECORDING_RETENTION_DAYS` | `0` | Delete recordings older than this many days, at start-up and then daily; `0` keeps them until the person deletes them or their account. Also passed through by Docker Compose |
 | `COOKIE_SECURE` | `true` | Send the login cookie over HTTPS only (browsers allow it on `http://localhost` too). Set to `false` only to test over plain HTTP on another host. |
-| `DEBUG`, `HOST`, `PORT` | `true`, `0.0.0.0`, `8000` | Server options |
+| `DEBUG`, `HOST`, `PORT` | `false`, `0.0.0.0`, `8000` | Server options. `.env.template` turns `DEBUG` on for development (more detail in logs, and auto-reload); leave it off anywhere else |
 | `UPLOAD_DIR`, `MAX_UPLOAD_SIZE` | `./uploads`, 10 MB | Where voice recordings go |
 | `POSTGRES_PASSWORD`, `FRONTEND_PORT`, `BACKEND_PORT`, `PIP_CA_FILE` | | Docker Compose only |
 
@@ -120,7 +120,7 @@ FastAPI serves interactive documentation at `/docs` and `/redoc`. All endpoints 
 | Consent | `GET`/`PUT /users/consents`: `recordings` and `speech_recognition`, each `true`, `false` or `null` (not asked yet) |
 | Admin | `GET /admin/stats`, `GET /admin/users`, `GET /admin/users/{id}/sessions`, `PUT /admin/users/{id}/activate`, `PUT /admin/users/{id}/deactivate` |
 
-`GET /health` answers without logging in.
+`GET /health` answers without logging in; `GET /health/detailed` also checks the database (503 when it can't reach it) and shows no settings.
 
 ## Project structure
 

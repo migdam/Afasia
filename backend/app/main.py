@@ -3,10 +3,12 @@ import asyncio
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.responses import JSONResponse
+from sqlalchemy import text
 from fastapi.middleware.cors import CORSMiddleware
 from .core.config import settings
 from .core.logging import configure_logging, logger
-from .db.database import init_db
+from .db.database import engine, init_db
 from .retention import clean_up, clean_up_daily
 from .api.v1.endpoints import auth, therapy, users, admin
 import os
@@ -65,14 +67,16 @@ def health_check():
 
 @app.get("/health/detailed")
 def detailed_health():
-    """Detailed health check."""
-    return {
-        "status": "healthy",
-        "service": "aphasia-therapy-api",
-        "version": "1.0.0",
-        "debug": settings.DEBUG,
-        "database": "connected",
-    }
+    """Health check that also asks the database. Shows no settings."""
+    try:
+        with engine.connect() as connection:
+            connection.execute(text("SELECT 1"))
+    except Exception:
+        return JSONResponse(
+            {"status": "unhealthy", "service": "aphasia-therapy-api", "database": "unavailable"},
+            status_code=503,
+        )
+    return {"status": "healthy", "service": "aphasia-therapy-api", "database": "ok"}
 
 
 # Include routers

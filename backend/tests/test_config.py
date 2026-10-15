@@ -15,13 +15,15 @@ def test_env_file_is_read_from_the_repo_root():
     assert (REPO_ROOT / ".env.template").is_file()
 
 
-def test_env_template_loads_as_is(monkeypatch):
-    monkeypatch.delenv("SECRET_KEY")
+def test_env_template_loads_once_secret_key_is_set(monkeypatch):
+    # The template's example key is refused (test_safe_defaults.py), as the
+    # README says to set a real one; the rest of the file must load as is.
+    monkeypatch.setenv("SECRET_KEY", "a-real-key-of-at-least-thirty-two-bytes")
     monkeypatch.delenv("BACKEND_CORS_ORIGINS", raising=False)
 
     settings = Settings(_env_file=REPO_ROOT / ".env.template")
 
-    assert settings.SECRET_KEY
+    assert settings.DEBUG is True  # the template is for development
     assert settings.cors_origins == [
         "http://localhost:3000",
         "http://localhost:8000",
@@ -31,12 +33,12 @@ def test_env_template_loads_as_is(monkeypatch):
 
 def test_unknown_env_file_keys_are_ignored(tmp_path, monkeypatch):
     env_file = tmp_path / ".env"
-    env_file.write_text("SECRET_KEY=from-file\nPOSTGRES_PASSWORD=compose-only\n")
+    env_file.write_text("SECRET_KEY=from-file-and-at-least-thirty-two-bytes\nPOSTGRES_PASSWORD=compose-only\n")
     monkeypatch.delenv("SECRET_KEY")
 
     settings = Settings(_env_file=env_file)
 
-    assert settings.SECRET_KEY == "from-file"
+    assert settings.SECRET_KEY == "from-file-and-at-least-thirty-two-bytes"
     assert not hasattr(settings, "POSTGRES_PASSWORD")
 
 

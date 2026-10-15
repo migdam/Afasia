@@ -91,7 +91,7 @@ Skopiuj `.env.template` do `.env` w katalogu głównym repozytorium. Ustawienia:
 
 | Ustawienie | Domyślnie | Znaczenie |
 |---|---|---|
-| `SECRET_KEY` | (wymagane) | Podpisuje tokeny logowania. Co najmniej 32 losowe bajty (`openssl rand -hex 32`). |
+| `SECRET_KEY` | (wymagane) | Podpisuje tokeny logowania. Co najmniej 32 losowe bajty (`openssl rand -hex 32`). Aplikacja nie uruchomi się z krótszym kluczem ani z przykładem z `.env.template`. |
 | `DATABASE_URL` | `sqlite:///./aphasia_app.db` | Dowolny adres SQLAlchemy, np. `postgresql://użytkownik:hasło@host/baza` |
 | `BACKEND_CORS_ORIGINS` | `http://localhost:3000,http://localhost:8000` | Adresy stron (oddzielone przecinkami), które mogą wywoływać API |
 | `ACCESS_TOKEN_EXPIRE_MINUTES` | `30` | Po ilu minutach bez korzystania z aplikacji kończy się zalogowanie (aplikacja odnawia je, gdy jest używana) |
@@ -99,7 +99,7 @@ Skopiuj `.env.template` do `.env` w katalogu głównym repozytorium. Ustawienia:
 | `LOGIN_MAX_FAILURES`, `LOGIN_MAX_FAILURES_PER_ACCOUNT`, `LOGIN_LOCK_MINUTES` | `5`, `50`, `15` | Ile błędnych haseł wolno podać dla jednej nazwy użytkownika z jednego adresu klienta oraz dla konta ze wszystkich adresów łącznie w ciągu tylu minut; potem logowanie musi poczekać (429) |
 | `RECORDING_RETENTION_DAYS` | `0` | Usuwaj nagrania starsze niż tyle dni, przy starcie i potem codziennie; `0` przechowuje je, dopóki osoba ich nie usunie lub nie usunie konta. Przekazywane także przez Docker Compose |
 | `COOKIE_SECURE` | `true` | Wysyłaj ciasteczko logowania tylko przez HTTPS (przeglądarki dopuszczają też `http://localhost`). Ustaw `false` tylko do testów przez zwykłe HTTP na innym hoście. |
-| `DEBUG`, `HOST`, `PORT` | `true`, `0.0.0.0`, `8000` | Opcje serwera |
+| `DEBUG`, `HOST`, `PORT` | `false`, `0.0.0.0`, `8000` | Opcje serwera. `.env.template` włącza `DEBUG` na potrzeby pracy nad kodem (więcej szczegółów w dziennikach i automatyczne przeładowanie); w innych miejscach zostaw go wyłączonego |
 | `UPLOAD_DIR`, `MAX_UPLOAD_SIZE` | `./uploads`, 10 MB | Gdzie trafiają nagrania głosu |
 | `POSTGRES_PASSWORD`, `FRONTEND_PORT`, `BACKEND_PORT`, `PIP_CA_FILE` | | Tylko dla Docker Compose |
 
@@ -120,7 +120,7 @@ FastAPI udostępnia interaktywną dokumentację pod `/docs` i `/redoc`. Wszystki
 | Zgody | `GET`/`PUT /users/consents`: `recordings` i `speech_recognition`, każda `true`, `false` albo `null` (jeszcze nie pytano) |
 | Administrator | `GET /admin/stats`, `GET /admin/users`, `GET /admin/users/{id}/sessions`, `PUT /admin/users/{id}/activate`, `PUT /admin/users/{id}/deactivate` |
 
-`GET /health` odpowiada bez logowania.
+`GET /health` odpowiada bez logowania; `GET /health/detailed` sprawdza też bazę danych (503, gdy nie może się z nią połączyć) i nie pokazuje ustawień.
 
 ## Struktura projektu
 
