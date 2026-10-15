@@ -17,6 +17,33 @@ Newest entry first. One entry per iteration.
 
 ---
 
+### 2: 2026-10-15 04:33 UTC: P0-2 Backend can't start
+- **Baseline:** `check.sh` green (2 passed, 2 xfailed), same as entry 1. No human commits.
+- **Did:**
+  - Settings:
+    - `BACKEND_CORS_ORIGINS` stays a string; a `cors_origins` property gives the list.
+    - `.env` is read from the repo root, where both READMEs and docker compose put it, whatever the working directory.
+    - Unknown keys are ignored.
+    - `ENV_FILE` overrides the location; the tests point it at a missing file so they stay hermetic.
+  - Renamed the reserved `UserBadge.metadata` column, and the matching `BadgeResponse` field, to `details`.
+  - Pinned `email-validator==2.3.0`.
+  - Deleted the strict-xfail marker.
+  - New tests: `test_config.py` (5) and `test_schemas.py` (1).
+  - New `scripts/smoke.sh`: the README quick start in a scratch copy of the working tree, polling `/health`. `check.sh` runs it.
+- **Verified:**
+  ```
+  check.sh: ruff "All checks passed!" · pytest "10 passed, 14 warnings in 1.17s"
+            "README quick start: the backend answered /health" · real 0m18.5s (incl. installing email-validator)
+  ```
+  - On the previous commit, in a temporary worktree:
+    - the new tests give `3 errors during collection` (`ValidationError: 1 validation error for Settings`);
+    - `smoke.sh` gives `The backend exited while starting: ValidationError: 2 validation errors for Settings`.
+- **Commit:** a22b9fb (pushed: yes), plus this log/backlog commit.
+- **Discovered:**
+  - The 14 warnings are 5 kinds of deprecation, now P3-10. passlib's dependency on `crypt` will break on Python 3.13.
+  - `.env.template`'s `SMTP_*` keys "for notifications" are unused. Added to P0-9.
+- **Next:** P0-3. Every authenticated request returns 401 (integer JWT `sub`). The harness can now reproduce it in a test.
+
 ### 1: 2026-10-15 04:23 UTC: P0-1 Verification harness
 - **Baseline:** no `scripts/check.sh` yet, so P0-1 was the task by rule. No human commits since entry 0; no `loop/DONE`.
 - **Did:**

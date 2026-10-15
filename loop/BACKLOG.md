@@ -19,8 +19,8 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 
 | Gate | Status | Evidence |
 |------|--------|----------|
-| G1 Runs | 🔴 | `scripts/check.sh` passes, but only because the smoke tests are strict xfails: the backend still fails at import (P0-2) |
-| G2 Backend tests | 🔴 | Harness only (P0-1): 2 guard tests pass; no app code is testable until P0-2; coverage not measured |
+| G1 Runs | 🟡 | `scripts/check.sh` passes, including `scripts/smoke.sh`: the README backend quick start in a copy of the tree answers `/health`. Not yet covered: a from-scratch install in the copy (it reuses `.venv`) and the frontend half of the quick start (P0-7) |
+| G2 Backend tests | 🔴 | 10 tests pass and app code is now testable; coverage not measured |
 | G3 End-to-end | 🔴 | No e2e tests |
 | G4 Authorization | 🔴 | P1-3 |
 | G5 Security | 🔴 | P1-1, P1-2, P1-4 |
@@ -36,7 +36,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 ## P0: Make it run
 
 - [x] **P0-1 Verification harness.** (7240b2b) `scripts/check.sh` is the single entry point (exit 0 = green). It creates or reuses `.venv` at the repo root (kept out of the backend Docker build context), reinstalls `requirements.txt` + `requirements-dev.txt` only when they change, then runs `ruff check` (fatal rules only until P3-3) and `pytest`. The smoke tests (app imports, `GET /health` = 200) are strict xfails for the P0-2 crash, so the build is green without hiding it. Later items extend `check.sh`: coverage with pytest-cov (G2), pip-audit (P1-4), e2e (P0-7).
-- [ ] **P0-2 Backend can't start** ✅. There are three import-time crashes, each hidden behind the previous one:
+- [x] **P0-2 Backend can't start** ✅ (a22b9fb). Fixed all three crashes. `.env` is now read from the repo root wherever the app runs, and unused keys are ignored. `scripts/smoke.sh` (run by `check.sh`) follows the README quick start and checks `/health`. Original report:
   1. `app/core/config.py`: the `BACKEND_CORS_ORIGINS` validator turns the string into a list, which the `str` field then rejects (`Input should be a valid string`). This happens even with defaults, so the app never starts. Two related problems:
      - The README says to copy the template to the repo root (`cp ../.env.template ../.env`), but settings read `.env` from the working directory (`backend/`), so `SECRET_KEY` is reported missing.
      - Putting `.env` in `backend/` fails too, because `.env.template` contains `SMTP_*` keys that Settings forbids (`Extra inputs are not permitted`).
@@ -82,6 +82,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
   - Badges that are never awarded.
   - Links to `docs/API.md`, `docs/DEPLOYMENT.md` and `LICENSE`, none of which exist.
   - Invented contact details: `support@aphasia-therapy.app`, `@AphasiaTherapy`, a website.
+  - `.env.template` offers `SMTP_*` settings "for notifications", but nothing sends email and Settings ignores those keys. Remove them until P4-4 uses them.
 
   Replace them with an accurate status ("early development"), a "Known limitations" section, and links that resolve, in both languages.
 
@@ -162,6 +163,13 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 - [ ] **P3-7** API hygiene: server-side bounds for `num_exercises`, a consistent error schema, pagination limits, and a `/health` that checks the DB.
 - [ ] **P3-8** Performance: the "Inter" font is declared but never loaded; self-host it or drop it. Add a Lighthouse budget (G12).
 - [ ] **P3-9** PWA: the icons referenced by `manifest.json` don't exist.
+- [ ] **P3-10** Deprecation warnings in the test run ✅ (`pytest -W default`):
+  - FastAPI `@app.on_event` (`main.py:65`, `:73`) → a lifespan handler.
+  - pydantic class-based `Config` in 7 schemas → `model_config = ConfigDict(from_attributes=True)`.
+  - SQLAlchemy `declarative_base()` (`db/database.py:14`) → `sqlalchemy.orm.declarative_base`.
+  - passlib uses `crypt`, which Python 3.13 removes, and httpx's `app=` shortcut is deprecated. Both go away with P1-4.
+
+  Then set pytest's `filterwarnings = ["error"]`, so new deprecations fail the run instead of scrolling past.
 
 ## P4: Features (only when P0–P2 are green)
 
