@@ -177,8 +177,8 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
   - [x] **P2-4d Read aloud on the exercise screen** (U3; 28e8d8e). For the question, each hint and the feedback, only with voices the browser reports as local (`localService`); no button without one. The privacy notice says so.
   - [x] **P2-4d2 Read aloud elsewhere** (4e27b5a). Every text marked `data-read-aloud` (message bar, form messages, the Your-data and delete explanations, the leave and consent dialog texts) has its own button, hidden while the text is empty. Still without one: the empty-state lines in lists, and page headings.
   - [x] **P2-4g A compact header on phones** 🔎 (cbb7d36). Up to 640 px: not sticky, one row, the name kept for screen readers, Logout on the Account page (which now has one at every size). At 375 px the header is ≤ 100 px (it was 199), and the question isn't covered.
-  - [ ] **P2-4e Language and focus.** Update `<html lang>` when the language changes, and move the focus sensibly when pages change.
-  - [ ] **P2-4f Calm feedback** (U8). After a wrong answer, show the right answer (later with picture and audio), and let the person try again or move on; check the colors and copy.
+  - [x] **P2-4e Language and focus** (50ecfb6). `<html lang>` follows the chosen language (it was always "en"); the focus moves to each new page's heading and to each new exercise's question.
+  - [ ] **P2-4f Calm feedback** (U8). After a wrong answer, show the right answer (later with picture and audio), and let the person try again or move on; check the colors and copy. 🔎 Seen in a 390 px screenshot (iteration 55): a wrong answer shows a red box with red text, an alarm color that U8 rules out.
 
 - [ ] **P2-5 Forgiving answer checking** (U6). Normalize case, spacing and diacritics per language, accept synonyms from content, and give "almost" feedback for near misses. Unit tests include Polish (żółw/zolw, ł/l).
 - [ ] **P2-6 Answering without typing** (U6). Offer word choice, picture choice and letter tiles; typing becomes optional.

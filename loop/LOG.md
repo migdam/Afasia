@@ -19,6 +19,19 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 55: 2026-10-15 15:51 UTC: P2-4e Language and focus
+- **Baseline:** `check.sh` exit code 0: 240 backend tests, smoke, 85 e2e. No human commits. Tests were written in the scratchpad until it finished.
+- **Test first:** `e2e/test_language_and_focus.py`, 4 tests: all failed before.
+- **Did:**
+  - `i18n.updatePageTranslations` sets `document.documentElement.lang`.
+  - `ui.focusHeading`, used by `showPage` and for each exercise's question.
+  - No focus ring on headings with `tabindex -1`.
+- **Verified:** `scripts/check.sh` exit code 0: ruff, pip-audit "No known vulnerabilities found", 240 backend tests, smoke, 89 e2e.
+- **Also:** the user asked to see screenshots. I took a fresh set of the current app (390 px, Polish, nine screens) and sent it, rather than older shots from before later fixes. They show the red wrong-answer box; added to P2-4f.
+- **Commit:** 50ecfb6 (pushed: yes)
+- **Discovered:** the red wrong-answer feedback (P2-4f).
+- **Next:** P2-4f (calm feedback).
+
 ### 54: 2026-10-15 15:37 UTC: P2-4g A compact header on phones
 - **Baseline:** `check.sh` exit code 0: 240 backend tests, smoke, 81 e2e. No human commits. Tests were written in the scratchpad until it finished.
 - **Test first:** `e2e/test_phone_header.py`. The header-height test (199 > 100) and the Account-page Logout test failed. My first coverage test scrolled elements to the centre, which passed on the old layout; scrolling them to the top made the large-text case fail before the fix, as it should. The normal-text case can't scroll far enough to be covered, so it is a guard.
