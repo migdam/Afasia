@@ -17,6 +17,23 @@ Newest entry first. One entry per iteration.
 
 ---
 
+### 12: 2026-10-15 06:30 UTC: P0-7f Progress chart
+- **Baseline:** `check.sh` green (51 backend, smoke, 10 e2e). No human commits.
+- **Did:**
+  - `chart.js`: the line is one path, with the dots drawn after it. The old code called `beginPath()` per dot, so only the last dot was stroked.
+  - Colours come from the theme's CSS variables.
+  - The canvas is 300 px high via CSS; it had been the 150 px default.
+  - `ui.js` draws "No data available" for an empty history.
+  - New `e2e/test_progress.py`: two perfect sessions created through the API, dark theme, then pixel checks.
+- **Verified:**
+  ```
+  old code: "assert 150 >= 250" · with only the height fixed: midpoint "[0, 0, 0, 0]" (no line)
+  now:      backend "51 passed" · smoke OK · e2e "11 passed in 42.54s" (exit code checked directly)
+  ```
+- **Commit:** 190fc25 (pushed: yes), plus this log/backlog commit.
+- **Discovered:** nothing new. The y-axis scales to the highest value rather than 0–100%; that belongs with P2-11, the accessible chart.
+- **Next:** P0-7g, the whole flow in EN and PL.
+
 ### 11: 2026-10-15 06:20 UTC: P0-7e Unavailable content
 - **Baseline:** `check.sh` green (49 backend, smoke, 8 e2e). No human commits.
 - **Did:**

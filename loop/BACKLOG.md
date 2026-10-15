@@ -21,7 +21,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 |------|--------|----------|
 | G1 Runs | 🟡 | `scripts/check.sh` passes, including `scripts/smoke.sh`: the README backend quick start in a copy of the tree answers `/health`. Not yet covered: a from-scratch install in the copy (it reuses `.venv`) and the frontend half of the quick start (P0-7) |
 | G2 Backend tests | 🔴 | 51 tests pass, including register → login → profile and a full scored session; coverage not measured |
-| G3 End-to-end | 🟡 | 10 tests in Chromium (including: only exercise types with content are offered, and no broken media): sign-up, reload, logout and login; a whole sentence-completion session with feedback, the server's score and the first badge; double submit, carried-over answers, leaving during feedback; the admin list and deactivation. Not covered yet: the other exercise types, the progress page, export, and Polish (P0-7e–g) |
+| G3 End-to-end | 🟡 | 11 tests in Chromium (including: the progress chart's line and dark-theme colour; only exercise types with content are offered, and no broken media): sign-up, reload, logout and login; a whole sentence-completion session with feedback, the server's score and the first badge; double submit, carried-over answers, leaving during feedback; the admin list and deactivation. Not covered yet: the other exercise types, the progress page, export, and Polish (P0-7e–g) |
 | G4 Authorization | 🔴 | P1-3 |
 | G5 Security | 🔴 | P1-1, P1-2, P1-4 |
 | G6 Accessibility | 🔴 | Not measured |
@@ -73,7 +73,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
   - [x] **P0-7e Unavailable content** (ad4204c). The menus no longer offer Image Recognition. The 15 references to images and audio that don't exist are removed, and a content test requires any referenced asset to exist. Original report:
     - Both exercise-type dropdowns offer Image Recognition, which the server refuses (422) since P0-5. Hide it until P2-2 adds content.
     - The images and audio that exercises reference (`/assets/images/*.jpg`, `/assets/audio/*.mp3`) don't exist, so the UI shows broken media. Show nothing until there are assets (H2, H3).
-  - [ ] **P0-7f Progress chart.** It draws dots but no line (`beginPath()` inside the path loop), the canvas has no height, and its colors are hard-coded for the light theme.
+  - [x] **P0-7f Progress chart** (190fc25). The line is drawn, the canvas is 300 px high, colours follow the theme, and an empty history says so. Original report: It draws dots but no line (`beginPath()` inside the path loop), the canvas has no height, and its colors are hard-coded for the light theme.
   - [ ] **P0-7g The whole flow in EN and PL**, per the acceptance above.
 - [ ] **P0-8 Docker stack** 🔎:
   - No PostgreSQL driver in requirements, so the backend can't connect to the compose `db` service.
@@ -175,7 +175,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 - [ ] **P2-8 Adaptive difficulty and spaced repetition** (C3).
 - [ ] **P2-9 Motivation that doesn't punish** (U10). Use weekly goals or rest days. Streak days are UTC dates, not the user's local day: practice at 00:30 in Poland counts for the day before. Use the user's time zone. Three of the six badge types (perfectionist, dedicated, master) are never awarded; implement or remove them. The first-session badge counts unfinished sessions.
 - [ ] **P2-10 Full i18n** (G9). Remove the hard-coded English from JS: alerts, "Completed", "Activate"/"Deactivate", "Recording...", "Session complete", chart labels, badge names. Translate the CSV and PDF exports too. Add a key-parity test, Polish plurals (`Intl.PluralRules`) and localized dates (`Intl.DateTimeFormat`).
-- [ ] **P2-11 Accessible progress chart.** Draw the line correctly, use theme-aware colors, and provide a data-table alternative.
+- [ ] **P2-11 Accessible progress chart.** Provide a data-table alternative, and scale the y-axis to 0–100% (it scales to the highest value, so a steady 80% looks like the top of the chart). The line and theme colours were fixed in P0-7f.
 
 ## P3: Engineering quality
 
