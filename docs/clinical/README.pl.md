@@ -22,7 +22,7 @@ Każdy rodzaj ćwiczeń, który zna aplikacja: co robi dziś i na czym powinien 
 
 ### Nazywanie słów (`word_naming`)
 
-- **Dziś:** aplikacja pokazuje krótki opis, np. „A small pet that purrs and says meow”, a osoba wpisuje słowo. Ćwiczenia są na razie tylko po angielsku. Nie ma jeszcze obrazków (H2), więc opis zastępuje obrazek. Polecenie nigdy nie zawiera odpowiedzi (C4, sprawdza to `backend/tests/test_content.py`).
+- **Dziś:** aplikacja pokazuje krótki opis, np. „Małe zwierzę domowe, które mruczy i miauczy”, a osoba wpisuje słowo. Od P2-2a pojęcia są w `backend/content/concepts.json`, po polsku i po angielsku, a sesje są w języku danej osoby. Nie ma jeszcze obrazków (H2), więc opis zastępuje obrazek. Polecenie nigdy nie zawiera odpowiedzi (C4, sprawdza to `backend/tests/test_content.py`).
 - **Podstawa:** ćwiczenie nazywania przy trudnościach z odnajdywaniem słów (anomii), z pomocą podawaną stopniowo:
   - **Hierarchia podpowiedzi:** gdy słowo nie przychodzi, podaje się podpowiedzi po kolei, od najmniejszej do największej pomocy (Linebaugh, Shisler i Lehner, 2005). Zaplanowane jako backlog P2-3: podpowiedź znaczeniowa, potem pierwsza głoska lub litera, potem całe słowo do powtórzenia.
   - **Analiza cech semantycznych (SFA):** omawianie cech przedmiotu, takich jak kategoria, zastosowanie, miejsce i właściwości, by pomóc przywołać jego nazwę (Boyle i Coelho, 1995: opis jednego przypadku).

@@ -1,7 +1,7 @@
 """Pydantic schemas for request/response validation."""
 from datetime import datetime
 from typing import Annotated
-from typing import Optional, List
+from typing import List, Literal, Optional
 from pydantic import AfterValidator, BaseModel, ConfigDict, EmailStr, Field, PlainSerializer, StrictBool, field_validator
 from ...core.clock import as_utc, to_naive_utc
 from ...db.models import DifficultyLevel, ExerciseType, UserRole, BadgeType
@@ -144,7 +144,8 @@ class SessionCreate(BaseModel):
     description: Optional[str] = None
     exercise_type: ExerciseType
     difficulty: DifficultyLevel = DifficultyLevel.MEDIUM
-    language: str = "en"
+    # The language of the exercises (content exists in both).
+    language: Literal["en", "pl"] = "en"
     # At least one, or the session could never finish; at most 50, or one
     # request could tie up the server and fill the database (P1-9). The form
     # offers 5 to 50; the API also allows shorter sessions.

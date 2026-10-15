@@ -5,7 +5,7 @@
 A web app for practising words and sentences after a stroke or brain injury. People with aphasia use it on their own, alongside a speech-language therapist, and therapists can see who is practising. The interface is in English and Polish.
 
 > **Status: early development. Not for clinical use.**
-> The exercises are placeholders that no speech-language therapist has reviewed yet, the exercise content is English-only, and the security work listed under [Known limitations](#known-limitations) is not done. Progress is tracked in [`loop/BACKLOG.md`](loop/BACKLOG.md).
+> The exercises are placeholders that no speech-language therapist has reviewed yet, only the naming exercises exist in Polish so far, and the gaps listed under [Known limitations](#known-limitations) remain. Progress is tracked in [`loop/BACKLOG.md`](loop/BACKLOG.md).
 
 ## What works today
 
@@ -163,7 +163,7 @@ Before anyone relies on this app, at least these must be fixed. Each one is in [
   - The limits on wrong passwords are kept in memory: each server process counts on its own, and a restart forgets them. Behind a proxy, clients are told apart only if the server trusts the proxy's `X-Forwarded-For` (the Docker setup does); otherwise everyone shares one count per username. Whether 5 and 50 suit people with aphasia is an open question (backlog H7).
 - **Privacy:** recordings and speech recognition need the person's consent, asked in the app. People can download or delete all their data on the Account page. The privacy notice (`frontend/privacy.html`, EN and PL, linked from the login and Account pages) describes what the code does; who runs the app, the legal basis, where it is hosted and whom to contact are marked "[to be completed]" until someone decides them (backlog H4, H5). The app stores health information.
 - **Roles:** any therapist can see and deactivate every patient. Therapists aren't linked to their own patients yet (P1-3b).
-- **Clinical content:** a handful of English placeholder exercises, not reviewed by a speech-language therapist. There are no pictures or recordings. What each exercise type should be based on, with checked references, is in [`docs/clinical/README.md`](docs/clinical/README.md), also pending clinical review.
+- **Clinical content:** 30 naming concepts in Polish and English (`backend/content/concepts.json`, checked when the app starts) and a handful of English-only sentence and pronunciation items, all placeholders not reviewed by a speech-language therapist. There are no pictures or recordings. What each exercise type should be based on, with checked references, is in [`docs/clinical/README.md`](docs/clinical/README.md), also pending clinical review.
 - **Accessibility** has not been audited, and the aphasia-friendly design rules in [`loop/PROMPT.md`](loop/PROMPT.md) are not met yet. For example, the app still moves on automatically after 2 seconds.
 - **Legal:** whether the app counts as a medical device under EU rules has not been assessed.
 - **Delivery:** there is no continuous integration yet.

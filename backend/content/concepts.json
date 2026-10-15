@@ -1,0 +1,898 @@
+{
+  "version": 1,
+  "about": "Naming concepts (backlog P2-2a). Every concept is pending clinical review (C7). The difficulty bands and first sounds are the author's estimates (word length and everyday use), not measured frequency or imageability data. Polish and English are written natively, not translated word for word.",
+  "concepts": [
+    {
+      "id": "cat",
+      "difficulty": "easy",
+      "en": {
+        "word": "cat",
+        "synonyms": [],
+        "first_sound": "k",
+        "description": "A small pet that purrs and says meow.",
+        "features": {
+          "category": "animal",
+          "use": "a pet",
+          "location": "at home"
+        }
+      },
+      "pl": {
+        "word": "kot",
+        "synonyms": [],
+        "first_sound": "k",
+        "description": "Małe zwierzę domowe, które mruczy i miauczy.",
+        "features": {
+          "category": "zwierzę",
+          "use": "zwierzę domowe",
+          "location": "w domu"
+        }
+      },
+      "image": null,
+      "audio": null,
+      "review": "pending"
+    },
+    {
+      "id": "dog",
+      "difficulty": "easy",
+      "en": {
+        "word": "dog",
+        "synonyms": [],
+        "first_sound": "d",
+        "description": "A pet that barks and wags its tail.",
+        "features": {
+          "category": "animal",
+          "use": "a pet",
+          "location": "at home"
+        }
+      },
+      "pl": {
+        "word": "pies",
+        "synonyms": [],
+        "first_sound": "p",
+        "description": "Zwierzę, które szczeka i merda ogonem.",
+        "features": {
+          "category": "zwierzę",
+          "use": "zwierzę domowe",
+          "location": "w domu"
+        }
+      },
+      "image": null,
+      "audio": null,
+      "review": "pending"
+    },
+    {
+      "id": "house",
+      "difficulty": "easy",
+      "en": {
+        "word": "house",
+        "synonyms": [
+          "home"
+        ],
+        "first_sound": "h",
+        "description": "A building where a family lives.",
+        "features": {
+          "category": "building",
+          "use": "living in",
+          "location": "in a town or village"
+        }
+      },
+      "pl": {
+        "word": "dom",
+        "synonyms": [],
+        "first_sound": "d",
+        "description": "Budynek, w którym mieszka rodzina.",
+        "features": {
+          "category": "budynek",
+          "use": "mieszkanie",
+          "location": "w mieście lub na wsi"
+        }
+      },
+      "image": null,
+      "audio": null,
+      "review": "pending"
+    },
+    {
+      "id": "car",
+      "difficulty": "easy",
+      "en": {
+        "word": "car",
+        "synonyms": [],
+        "first_sound": "k",
+        "description": "You drive it on the road. It has four wheels.",
+        "features": {
+          "category": "vehicle",
+          "use": "travelling",
+          "location": "on the road"
+        }
+      },
+      "pl": {
+        "word": "samochód",
+        "synonyms": [
+          "auto"
+        ],
+        "first_sound": "s",
+        "description": "Jeździ się nim po drodze. Ma cztery koła.",
+        "features": {
+          "category": "pojazd",
+          "use": "podróżowanie",
+          "location": "na drodze"
+        }
+      },
+      "image": null,
+      "audio": null,
+      "review": "pending"
+    },
+    {
+      "id": "tree",
+      "difficulty": "easy",
+      "en": {
+        "word": "tree",
+        "synonyms": [],
+        "first_sound": "t",
+        "description": "A tall plant with a trunk, branches and leaves.",
+        "features": {
+          "category": "plant",
+          "use": "shade and fruit",
+          "location": "in a garden or forest"
+        }
+      },
+      "pl": {
+        "word": "drzewo",
+        "synonyms": [],
+        "first_sound": "d",
+        "description": "Wysoka roślina z pniem, gałęziami i liśćmi.",
+        "features": {
+          "category": "roślina",
+          "use": "cień i owoce",
+          "location": "w ogrodzie lub w lesie"
+        }
+      },
+      "image": null,
+      "audio": null,
+      "review": "pending"
+    },
+    {
+      "id": "apple",
+      "difficulty": "easy",
+      "en": {
+        "word": "apple",
+        "synonyms": [],
+        "first_sound": "æ",
+        "description": "A round fruit that is red or green. It grows on trees.",
+        "features": {
+          "category": "fruit",
+          "use": "eating",
+          "location": "in the kitchen"
+        }
+      },
+      "pl": {
+        "word": "jabłko",
+        "synonyms": [],
+        "first_sound": "j",
+        "description": "Okrągły owoc, czerwony albo zielony. Rośnie na drzewie.",
+        "features": {
+          "category": "owoc",
+          "use": "jedzenie",
+          "location": "w kuchni"
+        }
+      },
+      "image": null,
+      "audio": null,
+      "review": "pending"
+    },
+    {
+      "id": "bread",
+      "difficulty": "easy",
+      "en": {
+        "word": "bread",
+        "synonyms": [],
+        "first_sound": "b",
+        "description": "Food baked from flour. You cut it into slices.",
+        "features": {
+          "category": "food",
+          "use": "eating",
+          "location": "in the kitchen"
+        }
+      },
+      "pl": {
+        "word": "chleb",
+        "synonyms": [],
+        "first_sound": "x",
+        "description": "Jedzenie pieczone z mąki. Kroi się je na kromki.",
+        "features": {
+          "category": "jedzenie",
+          "use": "jedzenie",
+          "location": "w kuchni"
+        }
+      },
+      "image": null,
+      "audio": null,
+      "review": "pending"
+    },
+    {
+      "id": "cup",
+      "difficulty": "easy",
+      "en": {
+        "word": "cup",
+        "synonyms": [
+          "mug"
+        ],
+        "first_sound": "k",
+        "description": "You drink hot tea or coffee from it.",
+        "features": {
+          "category": "kitchen item",
+          "use": "drinking",
+          "location": "in the kitchen"
+        }
+      },
+      "pl": {
+        "word": "kubek",
+        "synonyms": [
+          "filiżanka"
+        ],
+        "first_sound": "k",
+        "description": "Pije się z niego gorącą herbatę albo kawę.",
+        "features": {
+          "category": "naczynie",
+          "use": "picie",
+          "location": "w kuchni"
+        }
+      },
+      "image": null,
+      "audio": null,
+      "review": "pending"
+    },
+    {
+      "id": "chair",
+      "difficulty": "easy",
+      "en": {
+        "word": "chair",
+        "synonyms": [],
+        "first_sound": "tʃ",
+        "description": "You sit on it at the table. It has four legs and a back.",
+        "features": {
+          "category": "furniture",
+          "use": "sitting",
+          "location": "at home"
+        }
+      },
+      "pl": {
+        "word": "krzesło",
+        "synonyms": [],
+        "first_sound": "k",
+        "description": "Siada się na nim przy stole. Ma cztery nogi i oparcie.",
+        "features": {
+          "category": "mebel",
+          "use": "siedzenie",
+          "location": "w domu"
+        }
+      },
+      "image": null,
+      "audio": null,
+      "review": "pending"
+    },
+    {
+      "id": "bed",
+      "difficulty": "easy",
+      "en": {
+        "word": "bed",
+        "synonyms": [],
+        "first_sound": "b",
+        "description": "You sleep in it at night.",
+        "features": {
+          "category": "furniture",
+          "use": "sleeping",
+          "location": "in the bedroom"
+        }
+      },
+      "pl": {
+        "word": "łóżko",
+        "synonyms": [],
+        "first_sound": "w",
+        "description": "Śpi się w nim w nocy.",
+        "features": {
+          "category": "mebel",
+          "use": "spanie",
+          "location": "w sypialni"
+        }
+      },
+      "image": null,
+      "audio": null,
+      "review": "pending"
+    },
+    {
+      "id": "book",
+      "difficulty": "easy",
+      "en": {
+        "word": "book",
+        "synonyms": [],
+        "first_sound": "b",
+        "description": "It has pages with words on them. You read it.",
+        "features": {
+          "category": "object",
+          "use": "reading",
+          "location": "on a shelf"
+        }
+      },
+      "pl": {
+        "word": "książka",
+        "synonyms": [],
+        "first_sound": "k",
+        "description": "Ma strony z tekstem. Czyta się ją.",
+        "features": {
+          "category": "przedmiot",
+          "use": "czytanie",
+          "location": "na półce"
+        }
+      },
+      "image": null,
+      "audio": null,
+      "review": "pending"
+    },
+    {
+      "id": "key",
+      "difficulty": "easy",
+      "en": {
+        "word": "key",
+        "synonyms": [],
+        "first_sound": "k",
+        "description": "You use it to lock and open a door.",
+        "features": {
+          "category": "object",
+          "use": "locking",
+          "location": "in a pocket"
+        }
+      },
+      "pl": {
+        "word": "klucz",
+        "synonyms": [],
+        "first_sound": "k",
+        "description": "Zamyka się nim i otwiera drzwi.",
+        "features": {
+          "category": "przedmiot",
+          "use": "zamykanie",
+          "location": "w kieszeni"
+        }
+      },
+      "image": null,
+      "audio": null,
+      "review": "pending"
+    },
+    {
+      "id": "bicycle",
+      "difficulty": "medium",
+      "en": {
+        "word": "bicycle",
+        "synonyms": [
+          "bike"
+        ],
+        "first_sound": "b",
+        "description": "It has two wheels and pedals. You ride it.",
+        "features": {
+          "category": "vehicle",
+          "use": "riding",
+          "location": "on the road"
+        }
+      },
+      "pl": {
+        "word": "rower",
+        "synonyms": [],
+        "first_sound": "r",
+        "description": "Ma dwa koła i pedały. Jeździ się na nim.",
+        "features": {
+          "category": "pojazd",
+          "use": "jazda",
+          "location": "na drodze"
+        }
+      },
+      "image": null,
+      "audio": null,
+      "review": "pending"
+    },
+    {
+      "id": "telephone",
+      "difficulty": "medium",
+      "en": {
+        "word": "telephone",
+        "synonyms": [
+          "phone"
+        ],
+        "first_sound": "t",
+        "description": "You use it to call people and talk to them.",
+        "features": {
+          "category": "device",
+          "use": "talking to people",
+          "location": "at home or in a pocket"
+        }
+      },
+      "pl": {
+        "word": "telefon",
+        "synonyms": [
+          "komórka"
+        ],
+        "first_sound": "t",
+        "description": "Dzwoni się z niego do ludzi, żeby z nimi porozmawiać.",
+        "features": {
+          "category": "urządzenie",
+          "use": "rozmowa",
+          "location": "w domu lub w kieszeni"
+        }
+      },
+      "image": null,
+      "audio": null,
+      "review": "pending"
+    },
+    {
+      "id": "umbrella",
+      "difficulty": "medium",
+      "en": {
+        "word": "umbrella",
+        "synonyms": [],
+        "first_sound": "ʌ",
+        "description": "You hold it over your head when it rains.",
+        "features": {
+          "category": "object",
+          "use": "keeping dry",
+          "location": "outside"
+        }
+      },
+      "pl": {
+        "word": "parasol",
+        "synonyms": [
+          "parasolka"
+        ],
+        "first_sound": "p",
+        "description": "Trzyma się go nad głową, gdy pada deszcz.",
+        "features": {
+          "category": "przedmiot",
+          "use": "ochrona przed deszczem",
+          "location": "na dworze"
+        }
+      },
+      "image": null,
+      "audio": null,
+      "review": "pending"
+    },
+    {
+      "id": "glasses",
+      "difficulty": "medium",
+      "en": {
+        "word": "glasses",
+        "synonyms": [
+          "spectacles"
+        ],
+        "first_sound": "g",
+        "description": "You wear them on your nose to see better.",
+        "features": {
+          "category": "object",
+          "use": "seeing",
+          "location": "on your face"
+        }
+      },
+      "pl": {
+        "word": "okulary",
+        "synonyms": [],
+        "first_sound": "ɔ",
+        "description": "Nosi się je na nosie, żeby lepiej widzieć.",
+        "features": {
+          "category": "przedmiot",
+          "use": "widzenie",
+          "location": "na twarzy"
+        }
+      },
+      "image": null,
+      "audio": null,
+      "review": "pending"
+    },
+    {
+      "id": "clock",
+      "difficulty": "medium",
+      "en": {
+        "word": "clock",
+        "synonyms": [],
+        "first_sound": "k",
+        "description": "It hangs on the wall and shows the time.",
+        "features": {
+          "category": "object",
+          "use": "telling the time",
+          "location": "on the wall"
+        }
+      },
+      "pl": {
+        "word": "zegar",
+        "synonyms": [],
+        "first_sound": "z",
+        "description": "Wisi na ścianie i pokazuje godzinę.",
+        "features": {
+          "category": "przedmiot",
+          "use": "odczytywanie czasu",
+          "location": "na ścianie"
+        }
+      },
+      "image": null,
+      "audio": null,
+      "review": "pending"
+    },
+    {
+      "id": "spoon",
+      "difficulty": "medium",
+      "en": {
+        "word": "spoon",
+        "synonyms": [],
+        "first_sound": "s",
+        "description": "You eat soup with it.",
+        "features": {
+          "category": "cutlery",
+          "use": "eating",
+          "location": "in the kitchen"
+        }
+      },
+      "pl": {
+        "word": "łyżka",
+        "synonyms": [],
+        "first_sound": "w",
+        "description": "Je się nią zupę.",
+        "features": {
+          "category": "sztućce",
+          "use": "jedzenie",
+          "location": "w kuchni"
+        }
+      },
+      "image": null,
+      "audio": null,
+      "review": "pending"
+    },
+    {
+      "id": "fork",
+      "difficulty": "medium",
+      "en": {
+        "word": "fork",
+        "synonyms": [],
+        "first_sound": "f",
+        "description": "It has prongs. You eat meat and vegetables with it.",
+        "features": {
+          "category": "cutlery",
+          "use": "eating",
+          "location": "in the kitchen"
+        }
+      },
+      "pl": {
+        "word": "widelec",
+        "synonyms": [],
+        "first_sound": "v",
+        "description": "Ma kilka ostrych zębów. Je się nim mięso i warzywa.",
+        "features": {
+          "category": "sztućce",
+          "use": "jedzenie",
+          "location": "w kuchni"
+        }
+      },
+      "image": null,
+      "audio": null,
+      "review": "pending"
+    },
+    {
+      "id": "knife",
+      "difficulty": "medium",
+      "en": {
+        "word": "knife",
+        "synonyms": [],
+        "first_sound": "n",
+        "description": "It is sharp. You cut food with it.",
+        "features": {
+          "category": "cutlery",
+          "use": "cutting",
+          "location": "in the kitchen"
+        }
+      },
+      "pl": {
+        "word": "nóż",
+        "synonyms": [],
+        "first_sound": "n",
+        "description": "Jest ostry. Kroi się nim jedzenie.",
+        "features": {
+          "category": "sztućce",
+          "use": "krojenie",
+          "location": "w kuchni"
+        }
+      },
+      "image": null,
+      "audio": null,
+      "review": "pending"
+    },
+    {
+      "id": "shoe",
+      "difficulty": "medium",
+      "en": {
+        "word": "shoe",
+        "synonyms": [],
+        "first_sound": "ʃ",
+        "description": "You wear it on your foot when you go outside.",
+        "features": {
+          "category": "clothing",
+          "use": "walking",
+          "location": "on your foot"
+        }
+      },
+      "pl": {
+        "word": "but",
+        "synonyms": [],
+        "first_sound": "b",
+        "description": "Nosi się go na stopie, gdy wychodzi się z domu.",
+        "features": {
+          "category": "obuwie",
+          "use": "chodzenie",
+          "location": "na stopie"
+        }
+      },
+      "image": null,
+      "audio": null,
+      "review": "pending"
+    },
+    {
+      "id": "window",
+      "difficulty": "medium",
+      "en": {
+        "word": "window",
+        "synonyms": [],
+        "first_sound": "w",
+        "description": "It is made of glass. You look outside through it.",
+        "features": {
+          "category": "part of a house",
+          "use": "letting in light",
+          "location": "in a wall"
+        }
+      },
+      "pl": {
+        "word": "okno",
+        "synonyms": [],
+        "first_sound": "ɔ",
+        "description": "Jest ze szkła. Patrzy się przez nie na zewnątrz.",
+        "features": {
+          "category": "część domu",
+          "use": "wpuszczanie światła",
+          "location": "w ścianie"
+        }
+      },
+      "image": null,
+      "audio": null,
+      "review": "pending"
+    },
+    {
+      "id": "scissors",
+      "difficulty": "hard",
+      "en": {
+        "word": "scissors",
+        "synonyms": [],
+        "first_sound": "s",
+        "description": "You cut paper with them. They have two blades.",
+        "features": {
+          "category": "tool",
+          "use": "cutting",
+          "location": "in a drawer"
+        }
+      },
+      "pl": {
+        "word": "nożyczki",
+        "synonyms": [],
+        "first_sound": "n",
+        "description": "Tnie się nimi papier. Mają dwa ostrza.",
+        "features": {
+          "category": "narzędzie",
+          "use": "cięcie",
+          "location": "w szufladzie"
+        }
+      },
+      "image": null,
+      "audio": null,
+      "review": "pending"
+    },
+    {
+      "id": "toothbrush",
+      "difficulty": "hard",
+      "en": {
+        "word": "toothbrush",
+        "synonyms": [],
+        "first_sound": "t",
+        "description": "You clean your teeth with it every morning and evening.",
+        "features": {
+          "category": "bathroom item",
+          "use": "cleaning teeth",
+          "location": "in the bathroom"
+        }
+      },
+      "pl": {
+        "word": "szczoteczka do zębów",
+        "synonyms": [
+          "szczoteczka"
+        ],
+        "first_sound": "ʂ",
+        "description": "Myje się nią zęby rano i wieczorem.",
+        "features": {
+          "category": "przybór toaletowy",
+          "use": "mycie zębów",
+          "location": "w łazience"
+        }
+      },
+      "image": null,
+      "audio": null,
+      "review": "pending"
+    },
+    {
+      "id": "kettle",
+      "difficulty": "hard",
+      "en": {
+        "word": "kettle",
+        "synonyms": [],
+        "first_sound": "k",
+        "description": "You boil water in it to make tea.",
+        "features": {
+          "category": "kitchen item",
+          "use": "boiling water",
+          "location": "in the kitchen"
+        }
+      },
+      "pl": {
+        "word": "czajnik",
+        "synonyms": [],
+        "first_sound": "t͡ʂ",
+        "description": "Gotuje się w nim wodę na herbatę.",
+        "features": {
+          "category": "sprzęt kuchenny",
+          "use": "gotowanie wody",
+          "location": "w kuchni"
+        }
+      },
+      "image": null,
+      "audio": null,
+      "review": "pending"
+    },
+    {
+      "id": "wallet",
+      "difficulty": "hard",
+      "en": {
+        "word": "wallet",
+        "synonyms": [
+          "purse"
+        ],
+        "first_sound": "w",
+        "description": "You keep money and cards in it.",
+        "features": {
+          "category": "object",
+          "use": "carrying money",
+          "location": "in a pocket or bag"
+        }
+      },
+      "pl": {
+        "word": "portfel",
+        "synonyms": [],
+        "first_sound": "p",
+        "description": "Trzyma się w nim pieniądze i karty.",
+        "features": {
+          "category": "przedmiot",
+          "use": "noszenie pieniędzy",
+          "location": "w kieszeni lub torbie"
+        }
+      },
+      "image": null,
+      "audio": null,
+      "review": "pending"
+    },
+    {
+      "id": "comb",
+      "difficulty": "hard",
+      "en": {
+        "word": "comb",
+        "synonyms": [],
+        "first_sound": "k",
+        "description": "You tidy your hair with it. It has many thin teeth.",
+        "features": {
+          "category": "bathroom item",
+          "use": "doing your hair",
+          "location": "in the bathroom"
+        }
+      },
+      "pl": {
+        "word": "grzebień",
+        "synonyms": [],
+        "first_sound": "g",
+        "description": "Układa się nim włosy. Ma wiele cienkich zębów.",
+        "features": {
+          "category": "przybór toaletowy",
+          "use": "czesanie",
+          "location": "w łazience"
+        }
+      },
+      "image": null,
+      "audio": null,
+      "review": "pending"
+    },
+    {
+      "id": "ladder",
+      "difficulty": "hard",
+      "en": {
+        "word": "ladder",
+        "synonyms": [],
+        "first_sound": "l",
+        "description": "You climb it to reach something high.",
+        "features": {
+          "category": "tool",
+          "use": "climbing",
+          "location": "in a shed"
+        }
+      },
+      "pl": {
+        "word": "drabina",
+        "synonyms": [],
+        "first_sound": "d",
+        "description": "Wchodzi się po niej, żeby sięgnąć wysoko.",
+        "features": {
+          "category": "narzędzie",
+          "use": "wchodzenie",
+          "location": "w szopie"
+        }
+      },
+      "image": null,
+      "audio": null,
+      "review": "pending"
+    },
+    {
+      "id": "envelope",
+      "difficulty": "hard",
+      "en": {
+        "word": "envelope",
+        "synonyms": [],
+        "first_sound": "ɛ",
+        "description": "You put a letter in it before you post it.",
+        "features": {
+          "category": "object",
+          "use": "sending letters",
+          "location": "at the post office"
+        }
+      },
+      "pl": {
+        "word": "koperta",
+        "synonyms": [],
+        "first_sound": "k",
+        "description": "Wkłada się do niej list przed wysłaniem.",
+        "features": {
+          "category": "przedmiot",
+          "use": "wysyłanie listów",
+          "location": "na poczcie"
+        }
+      },
+      "image": null,
+      "audio": null,
+      "review": "pending"
+    },
+    {
+      "id": "hammer",
+      "difficulty": "hard",
+      "en": {
+        "word": "hammer",
+        "synonyms": [],
+        "first_sound": "h",
+        "description": "You hit nails into wood with it.",
+        "features": {
+          "category": "tool",
+          "use": "hammering nails",
+          "location": "in a toolbox"
+        }
+      },
+      "pl": {
+        "word": "młotek",
+        "synonyms": [],
+        "first_sound": "m",
+        "description": "Wbija się nim gwoździe w drewno.",
+        "features": {
+          "category": "narzędzie",
+          "use": "wbijanie gwoździ",
+          "location": "w skrzynce z narzędziami"
+        }
+      },
+      "image": null,
+      "audio": null,
+      "review": "pending"
+    }
+  ]
+}

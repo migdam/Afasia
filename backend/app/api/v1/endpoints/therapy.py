@@ -9,6 +9,7 @@ from ....db.models import (
     User, TherapySession, Exercise, Progress, UserBadge,
     DifficultyLevel, ExerciseType, BadgeType
 )
+from ....content import accepted_answers, naming_items
 from ....core.clock import utcnow
 from ....core.security import get_current_user_id
 from ..schemas import (
@@ -26,27 +27,8 @@ router = APIRouter()
 EXERCISE_DATA = {
     # There are no pictures or recordings yet (backlog H2, H3), so items have
     # no "image" or "audio"; any added must exist under frontend/
-    # (tests/test_content.py). Naming items describe the thing to name; once
-    # there are pictures, show the picture alone and offer the description
-    # as the first hint (backlog P2-3).
-    ExerciseType.WORD_NAMING: {
-        DifficultyLevel.EASY: [
-            {"question": "What is it? A small pet that purrs and says meow.", "answer": "cat"},
-            {"question": "What is it? A pet that barks and wags its tail.", "answer": "dog"},
-            {"question": "What is it? A building where a family lives.", "answer": "house"},
-            {"question": "What is it? You drive it on the road. It has four wheels.", "answer": "car"},
-            {"question": "What is it? A tall plant with a trunk, branches and leaves.", "answer": "tree"},
-        ],
-        DifficultyLevel.MEDIUM: [
-            {"question": "What is it? It has two wheels and pedals. You ride it.", "answer": "bicycle"},
-            {"question": "What is it? A small computer that folds shut.", "answer": "laptop"},
-            {"question": "What is it? You use it to call people and talk to them.", "answer": "telephone"},
-        ],
-        DifficultyLevel.HARD: [
-            {"question": "What is it? A doctor puts it in their ears to listen to your heart.", "answer": "stethoscope"},
-            {"question": "What is it? A flower with many thin petals that blooms in autumn.", "answer": "chrysanthemum"},
-        ],
-    },
+    # (tests/test_content.py). Naming items come from content/concepts.json
+    # (app/content.py), in the session's language; see below.
     ExerciseType.SENTENCE_COMPLETION: {
         DifficultyLevel.EASY: [
             {"question": "The sky is ___", "answer": "blue", "options": ["blue", "green", "red", "yellow"]},
@@ -76,14 +58,24 @@ EXERCISE_DATA = {
     },
 }
 
+# Naming, from the content file (read and checked here, when the app
+# starts). EXERCISE_DATA keeps the English items, so every type with content
+# is listed in one place; sessions use their own language (generate_exercises).
+EXERCISE_DATA[ExerciseType.WORD_NAMING] = {d: naming_items(d, "en") for d in DifficultyLevel}
 
-def generate_exercises(exercise_type: ExerciseType, difficulty: DifficultyLevel, count: int) -> List[dict]:
+
+def generate_exercises(
+    exercise_type: ExerciseType, difficulty: DifficultyLevel, count: int, language: str = "en",
+) -> List[dict]:
     """Pick random exercises of a type and difficulty, repeating items if needed.
 
     Raises LookupError when there is no content for that type and difficulty,
     rather than substituting another difficulty or looping forever.
     """
-    available = EXERCISE_DATA.get(exercise_type, {}).get(difficulty, [])
+    if exercise_type == ExerciseType.WORD_NAMING:
+        available = naming_items(difficulty, language)
+    else:
+        available = EXERCISE_DATA.get(exercise_type, {}).get(difficulty, [])
     if not available:
         raise LookupError(f"no {exercise_type.value} exercises at {difficulty.value} difficulty")
 
@@ -207,7 +199,8 @@ def create_session(
         exercise_templates = generate_exercises(
             session_data.exercise_type,
             session_data.difficulty,
-            session_data.num_exercises
+            session_data.num_exercises,
+            session_data.language,
         )
     except LookupError:
         raise HTTPException(
@@ -337,7 +330,12 @@ def submit_answer(
         )
 
     # Check answer
-    is_correct = answer_data.answer.lower().strip() == exercise.correct_answer.lower().strip()
+    given = answer_data.answer.lower().strip()
+    if exercise.exercise_type == ExerciseType.WORD_NAMING:
+        # The word or any of its synonyms (content/concepts.json).
+        is_correct = given in accepted_answers(session.language, exercise.correct_answer.strip())
+    else:
+        is_correct = given == exercise.correct_answer.lower().strip()
 
     # One answer per exercise, claimed atomically: of two answers sent at the
     # same moment only one can change the exercise from unanswered, so

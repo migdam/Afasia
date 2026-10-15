@@ -3,21 +3,23 @@
 Sign up, do one session of each exercise type that works, get feedback in
 the chosen language, and find the right scores on the dashboard and the
 progress page. Pronunciation is left out: it needs a microphone and speech
-recognition, and is redesigned in backlog P2-7. The exercise content itself
-is still English-only (P2-2).
+recognition, and is redesigned in backlog P2-7. Naming comes in the chosen
+language (P2-2a); sentence completion is still English-only (P2-2b).
 """
+import json
+from pathlib import Path
+
 import pytest
 from playwright.sync_api import expect
 from test_sessions import ANSWERS as SENTENCE_ANSWERS
 from test_sessions import record_dialogs
 
-# The easy word-naming items in backend/app/api/v1/endpoints/therapy.py.
+# The naming concepts, in both languages: question → answer.
+CONCEPTS = json.loads((Path(__file__).resolve().parents[1] / "backend/content/concepts.json").read_text())["concepts"]
+QUESTION = {"en": "What is it?", "pl": "Co to jest?"}
 NAMING_ANSWERS = {
-    "What is it? A small pet that purrs and says meow.": "cat",
-    "What is it? A pet that barks and wags its tail.": "dog",
-    "What is it? A building where a family lives.": "house",
-    "What is it? You drive it on the road. It has four wheels.": "car",
-    "What is it? A tall plant with a trunk, branches and leaves.": "tree",
+    f"{QUESTION[language]} {concept[language]['description']}": concept[language]["word"]
+    for concept in CONCEPTS for language in ("en", "pl")
 }
 TEXT = {
     "en": {"label": "EN", "right": "Correct! Well done!", "wrong": "Not quite. Correct answer: {}"},
@@ -36,6 +38,7 @@ def play_session(page, exercise_type, text, wrong_first):
         question = page.inner_text("#exercise-question-text")
         wrong = wrong_first and number == 1
         if exercise_type == "word_naming":
+            assert question.startswith(QUESTION[text["label"].lower()]), question  # in the chosen language
             right = NAMING_ANSWERS[question]
             page.fill("#answer-input", "not it" if wrong else right)
         else:

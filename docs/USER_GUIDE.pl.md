@@ -18,7 +18,7 @@ Przyciski w prawym górnym rogu każdego ekranu:
 
 Przeglądarka zapamiętuje oba wybory.
 
-Same ćwiczenia są na razie po angielsku, w obu wersjach językowych. Po wybraniu polskiego kilka komunikatów nadal jest też po angielsku: okienka z komunikatami, „Completed” na liście sesji i przyciski w panelu administratora.
+Ćwiczenia nazywania są w wybranym języku. Pozostałe ćwiczenia są na razie po angielsku w obu wersjach językowych. Po wybraniu polskiego kilka komunikatów nadal jest też po angielsku: okienka z komunikatami, „Completed” na liście sesji i przyciski w panelu administratora.
 
 ## Twoje konto
 

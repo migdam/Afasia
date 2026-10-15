@@ -22,7 +22,7 @@ Each type the app knows, what it does today, and what it should be based on.
 
 ### Word naming (`word_naming`)
 
-- **Today:** the app shows a short description, for example "A small pet that purrs and says meow", and the person types the word. The items are in English only for now. There are no pictures yet (H2), so the description stands in for one. The prompt never contains the answer (C4, checked by `backend/tests/test_content.py`).
+- **Today:** the app shows a short description, for example "A small pet that purrs and says meow", and the person types the word. Since P2-2a the concepts are in `backend/content/concepts.json`, in Polish and English, and sessions use the person's language. There are no pictures yet (H2), so the description stands in for one. The prompt never contains the answer (C4, checked by `backend/tests/test_content.py`).
 - **Basis:** naming practice for word-finding difficulty (anomia), with help given in steps:
   - **Cueing hierarchy:** when a word doesn't come, give cues one at a time, from least to most help (Linebaugh, Shisler & Lehner, 2005). Planned as backlog P2-3: meaning cue, then first sound or letter, then the whole word to repeat.
   - **Semantic Feature Analysis (SFA):** talking through the features of the item, such as its group, use, place and properties, to help retrieve its name (Boyle & Coelho, 1995: a single-case study).
