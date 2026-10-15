@@ -19,6 +19,26 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 77: 2026-10-15 23:36 UTC: P3-3a ESLint
+- **Baseline:** `check.sh` exit code 0: 325 backend tests, smoke, 128 e2e. No human commits. CI runs for the last two pushes passed.
+- **Split:** P3-3 became a (ESLint), b (`ruff format`) and c (mypy).
+- **Audit first:** ESLint 10 with the recommended rules, run in the scratchpad on a copy of `frontend/`, found 8 problems (7 unused `catch (error)` bindings and a useless initial value) and no undefined names.
+- **Did:**
+  - `package.json` (development only, exact pins: eslint 10.12.0, @eslint/js 10.0.1, globals 17.13.0) with a committed `package-lock.json` (it was in `.gitignore`).
+  - `eslint.config.js`: browser globals, the scripts' shared globals declared, `no-unused-vars` for local names, service-worker globals for `sw.js`.
+  - `scripts/check.sh` runs `npm ci` only when the lockfile changes, then ESLint. Without npm it warns and skips.
+  - Fixed the 8 findings.
+  - `test_requirements.py` checks that the Node tools are pinned and locked.
+  - The READMEs (EN/PL) list the linters.
+- **Verified:**
+  - ESLint fails on the old scripts (exit code 1) and passes now.
+  - `scripts/check.sh` exit code 0: ruff, ESLint, pip-audit "No known vulnerabilities found", 326 backend tests, smoke, 128 e2e.
+  - CI for 328a5f2: check.sh, with ESLint, passed on GitHub. The Docker job failed 6 seconds into its step after three passing runs.
+  - b55358e makes that job annotate its failures too. Its run (38823691214) passed both jobs.
+- **Commits:** 328a5f2, b55358e (pushed: yes)
+- **Discovered:** a second unexplained, short-lived CI failure, added to P3-11. Both jobs now report the reason in an annotation.
+- **Next:** P3-3b (`ruff format`).
+
 ### 76: 2026-10-15 22:57 UTC: P3-2 Continuous integration
 - **Baseline:** `check.sh` exit code 0: 321 backend tests, smoke, 128 e2e. No human commits.
 - **Test first:** `backend/tests/test_ci.py`. All 4 tests failed before, as there was no workflow. They check that it runs on every push and PR, runs check.sh and docker-smoke.sh, uses the Docker image's Python 3.11, pins every action to a 40-character commit, and has read-only permissions.
