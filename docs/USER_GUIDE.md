@@ -241,8 +241,7 @@ After submitting an answer:
 
 ❌ **Incorrect Answer:**
 - Red feedback box
-- Shows correct answer
-- Explanation (if available)
+- "Not quite. Correct answer: …", with the right answer in bold
 - Automatic progression after 2 seconds
 
 ### Completing a Session

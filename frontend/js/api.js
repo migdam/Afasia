@@ -173,13 +173,9 @@ class APIClient {
         });
     }
 
-    async completeSession(sessionId, score, duration) {
+    async completeSession(sessionId) {
         return this.request(`/therapy/sessions/${sessionId}/complete`, {
             method: 'POST',
-            body: JSON.stringify({
-                score: score,
-                duration_seconds: duration,
-            }),
         });
     }
 

@@ -12,7 +12,7 @@ from ....db.models import (
 from ....core.security import get_current_user_id
 from ..schemas import (
     SessionCreate, SessionResponse,
-    ExerciseResponse, ExerciseAnswer, BadgeResponse
+    ExerciseResponse, ExerciseAnswer, AnswerResult, BadgeResponse
 )
 import random
 
@@ -304,7 +304,7 @@ def get_exercises(
     return [ExerciseResponse.model_validate(e) for e in exercises]
 
 
-@router.post("/exercises/{exercise_id}/answer", response_model=ExerciseResponse)
+@router.post("/exercises/{exercise_id}/answer", response_model=AnswerResult)
 def submit_answer(
     exercise_id: int,
     answer_data: ExerciseAnswer,
@@ -357,7 +357,7 @@ def submit_answer(
     db.commit()
     db.refresh(exercise)
 
-    return ExerciseResponse.model_validate(exercise)
+    return AnswerResult.model_validate(exercise)
 
 
 @router.post("/sessions/{session_id}/complete", response_model=SessionResponse)

@@ -11,12 +11,14 @@ import subprocess
 import sys
 import time
 import urllib.request
+import uuid
 from pathlib import Path
 
 import pytest
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import expect, sync_playwright
 
 ROOT = Path(__file__).resolve().parents[1]
+PASSWORD = "correct horse battery staple"
 
 
 def free_port():
@@ -95,3 +97,16 @@ def page(browser, servers):
     yield page
     context.close()
     assert not errors, f"JavaScript errors: {errors}"
+
+
+@pytest.fixture
+def account(page):
+    """Sign up a new user in the browser; returns the username."""
+    username = f"pat{uuid.uuid4().hex[:8]}"
+    page.click("#show-register")
+    page.fill("#register-email", f"{username}@example.com")
+    page.fill("#register-username", username)
+    page.fill("#register-password", PASSWORD)
+    page.click("#register-form-submit button[type=submit]")
+    expect(page.locator("#dashboard-page")).to_be_visible()
+    return username

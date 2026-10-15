@@ -241,8 +241,7 @@ Po przesłaniu odpowiedzi:
 
 ❌ **Niepoprawna Odpowiedź:**
 - Czerwone pole opinii
-- Pokazuje poprawną odpowiedź
-- Wyjaśnienie (jeśli dostępne)
+- „Nie tym razem. Prawidłowa odpowiedź: …”, z prawidłową odpowiedzią pogrubioną
 - Automatyczne przejście po 2 sekundach
 
 ### Ukończenie Sesji

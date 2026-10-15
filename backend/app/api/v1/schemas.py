@@ -78,6 +78,11 @@ class ExerciseAnswer(BaseModel):
     time_taken_seconds: int
 
 
+class AnswerResult(ExerciseResponse):
+    """An answered exercise. Only now is the right answer shown, as feedback."""
+    correct_answer: str
+
+
 # Session schemas
 class SessionCreate(BaseModel):
     title: str

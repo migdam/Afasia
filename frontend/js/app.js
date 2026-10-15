@@ -9,7 +9,6 @@ class AphasiaApp {
         this.currentExercises = [];
         this.currentExerciseIndex = 0;
         this.exerciseStartTime = null;
-        this.sessionStartTime = null;
         this.timerInterval = null;
         this.recordedAudio = null;
     }
@@ -250,7 +249,6 @@ class AphasiaApp {
             // Load exercises
             this.currentExercises = await api.getExercises(this.currentSession.id);
             this.currentExerciseIndex = 0;
-            this.sessionStartTime = Date.now();
 
             // Show exercise page
             ui.showPage('exercise');
@@ -377,8 +375,12 @@ class AphasiaApp {
                 feedback.className = 'feedback correct';
                 feedback.textContent = i18n.translate('correct');
             } else {
+                // One calm message, with the right answer emphasized.
                 feedback.className = 'feedback incorrect';
-                feedback.textContent = `${i18n.translate('incorrect')} ${i18n.translate('correct')}: ${exercise.correct_answer}`;
+                feedback.textContent = `${i18n.translate('incorrect')} ${i18n.translate('correctAnswer')}: `;
+                const rightAnswer = document.createElement('strong');
+                rightAnswer.textContent = result.correct_answer;
+                feedback.append(rightAnswer);
             }
 
             // Move to next exercise after delay
@@ -418,17 +420,12 @@ class AphasiaApp {
     }
 
     async completeSession() {
-        const duration = Math.floor((Date.now() - this.sessionStartTime) / 1000);
-
-        // Calculate score
-        const correctAnswers = this.currentExercises.filter(e => e.is_correct).length;
-        const score = (correctAnswers / this.currentExercises.length) * 100;
-
         try {
-            await api.completeSession(this.currentSession.id, score, duration);
+            // The server scored the session when the last answer arrived.
+            const session = await api.completeSession(this.currentSession.id);
 
             this.stopTimer();
-            alert(`Session complete! Score: ${Math.round(score)}%`);
+            alert(`Session complete! Score: ${Math.round(session.score)}%`);
 
             // Return to dashboard
             ui.showPage('dashboard');

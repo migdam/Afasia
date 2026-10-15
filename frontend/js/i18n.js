@@ -50,7 +50,8 @@ const translations = {
         submit: "Submit",
         record: "Record",
         correct: "Correct! Well done!",
-        incorrect: "Incorrect. Try again!",
+        incorrect: "Not quite.",
+        correctAnswer: "Correct answer",
 
         // Progress
         myProgress: "My Progress",
@@ -136,7 +137,8 @@ const translations = {
         submit: "Zatwierdź",
         record: "Nagraj",
         correct: "Poprawnie! Świetna robota!",
-        incorrect: "Niepoprawnie. Spróbuj ponownie!",
+        incorrect: "Nie tym razem.",
+        correctAnswer: "Prawidłowa odpowiedź",
 
         // Progress
         myProgress: "Mój postęp",

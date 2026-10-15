@@ -81,6 +81,15 @@ def test_a_type_without_content_is_refused_and_creates_nothing(client, auth, mon
     assert client.get("/api/v1/therapy/sessions", headers=auth).json() == []
 
 
+def test_the_right_answer_is_revealed_only_once_answered(client, auth):
+    _, exercises = start_session(client, auth)
+    assert all("correct_answer" not in exercise for exercise in exercises)
+
+    response = answer(client, auth, exercises[0], correct=False)
+
+    assert response.json()["correct_answer"] == ANSWERS[exercises[0]["question"]]
+
+
 def test_the_last_answer_completes_and_scores_the_session(client, auth):
     session_id, exercises = start_session(client, auth)
 
