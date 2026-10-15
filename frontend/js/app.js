@@ -307,9 +307,11 @@ class AphasiaApp {
             // Multiple choice
             const optionsContainer = document.getElementById('exercise-options');
             optionsContainer.style.display = 'grid';
-            optionsContainer.innerHTML = exercise.options.map(option => `
-                <button class="option-btn" data-answer="${option}">${option}</button>
-            `).join('');
+            optionsContainer.replaceChildren(...exercise.options.map(option => {
+                const button = el('button', 'option-btn', option);
+                button.dataset.answer = option;
+                return button;
+            }));
 
             // Add click handlers
             optionsContainer.querySelectorAll('.option-btn').forEach(btn => {
@@ -421,13 +423,15 @@ class AphasiaApp {
 
             audioRecorder.startRecording();
             recordBtn.classList.add('recording');
-            recordBtn.innerHTML = '<span class="record-icon">⏹️</span><span>Stop</span>';
+            recordBtn.replaceChildren(el('span', 'record-icon', '⏹️'), el('span', '', 'Stop'));
             statusEl.textContent = 'Recording...';
         } else {
             // Stop recording
             this.recordedAudio = await audioRecorder.stopRecording();
             recordBtn.classList.remove('recording');
-            recordBtn.innerHTML = '<span class="record-icon">🎤</span><span data-i18n="record">Record</span>';
+            const label = el('span', '', i18n.translate('record'));
+            label.dataset.i18n = 'record';
+            recordBtn.replaceChildren(el('span', 'record-icon', '🎤'), label);
             statusEl.textContent = 'Recording saved. Click submit when ready.';
         }
     }

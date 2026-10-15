@@ -3,6 +3,24 @@
  * Handles user interface updates and interactions
  */
 
+/**
+ * Make an element. Text always goes in as textContent, never as HTML, so
+ * whatever people typed (titles, names) can't become page markup.
+ */
+function el(tag, className, text) {
+    const element = document.createElement(tag);
+    if (className) element.className = className;
+    if (text !== undefined) element.textContent = text;
+    return element;
+}
+
+/** Show a translated "nothing here yet" message in a list. */
+function showEmpty(container, key) {
+    const message = el('p', 'empty-state', i18n.translate(key));
+    message.dataset.i18n = key;
+    container.replaceChildren(message);
+}
+
 class UIManager {
     constructor() {
         this.currentPage = 'auth';
@@ -78,12 +96,11 @@ class UIManager {
             const container = document.getElementById('recent-sessions');
 
             if (sessions.length === 0) {
-                container.innerHTML = `<p class="empty-state" data-i18n="noSessions">${i18n.translate('noSessions')}</p>`;
+                showEmpty(container, 'noSessions');
                 return;
             }
 
-            container.innerHTML = sessions.map(session => this.renderSessionItem(session)).join('');
-            i18n.updatePageTranslations();
+            container.replaceChildren(...sessions.map(session => this.renderSessionItem(session)));
         } catch (error) {
             console.error('Failed to load sessions:', error);
         }
@@ -95,59 +112,57 @@ class UIManager {
             const container = document.getElementById('scheduled-list');
 
             if (sessions.length === 0) {
-                container.innerHTML = `<p class="empty-state" data-i18n="noScheduled">${i18n.translate('noScheduled')}</p>`;
+                showEmpty(container, 'noScheduled');
                 return;
             }
 
-            container.innerHTML = sessions.map(session => this.renderScheduledItem(session)).join('');
-            i18n.updatePageTranslations();
+            container.replaceChildren(...sessions.map(session => this.renderScheduledItem(session)));
         } catch (error) {
             console.error('Failed to load scheduled sessions:', error);
         }
     }
 
     renderSessionItem(session) {
-        const date = new Date(session.started_at).toLocaleDateString();
-        const difficultyClass = `badge-${session.difficulty}`;
-        const statusClass = session.is_completed ? 'badge-completed' : '';
+        const meta = el('div', 'session-meta');
+        meta.append(
+            el('span', '', new Date(session.started_at).toLocaleDateString()),
+            el('span', `badge badge-${session.difficulty}`, session.difficulty)
+        );
+        if (session.is_completed) {
+            meta.append(el('span', 'badge badge-completed', 'Completed'));
+        }
 
-        return `
-            <div class="session-item">
-                <div class="session-header">
-                    <div>
-                        <div class="session-title">${session.title}</div>
-                        <div class="session-meta">
-                            <span>${date}</span>
-                            <span class="badge ${difficultyClass}">${session.difficulty}</span>
-                            ${session.is_completed ? `<span class="badge ${statusClass}">Completed</span>` : ''}
-                        </div>
-                    </div>
-                    ${session.is_completed ? `<div class="session-score">${Math.round(session.score)}%</div>` : ''}
-                </div>
-            </div>
-        `;
+        const details = el('div');
+        details.append(el('div', 'session-title', session.title), meta);
+        const header = el('div', 'session-header');
+        header.append(details);
+        if (session.is_completed) {
+            header.append(el('div', 'session-score', `${Math.round(session.score)}%`));
+        }
+
+        const item = el('div', 'session-item');
+        item.append(header);
+        return item;
     }
 
     renderScheduledItem(session) {
-        const dateTime = new Date(session.scheduled_time).toLocaleString();
-        const difficultyClass = `badge-${session.difficulty}`;
+        const meta = el('div', 'session-meta');
+        meta.append(
+            el('span', '', `📅 ${new Date(session.scheduled_time).toLocaleString()}`),
+            el('span', `badge badge-${session.difficulty}`, session.difficulty)
+        );
 
-        return `
-            <div class="session-item">
-                <div class="session-header">
-                    <div>
-                        <div class="session-title">${session.title}</div>
-                        <div class="session-meta">
-                            <span>📅 ${dateTime}</span>
-                            <span class="badge ${difficultyClass}">${session.difficulty}</span>
-                        </div>
-                    </div>
-                    <button class="btn btn-sm btn-secondary" onclick="ui.deleteSchedule(${session.id})">
-                        ${i18n.translate('delete')}
-                    </button>
-                </div>
-            </div>
-        `;
+        const details = el('div');
+        details.append(el('div', 'session-title', session.title), meta);
+        const remove = el('button', 'btn btn-sm btn-secondary', i18n.translate('delete'));
+        remove.dataset.i18n = 'delete';
+        remove.addEventListener('click', () => this.deleteSchedule(session.id));
+        const header = el('div', 'session-header');
+        header.append(details, remove);
+
+        const item = el('div', 'session-item');
+        item.append(header);
+        return item;
     }
 
     async deleteSchedule(sessionId) {
@@ -191,7 +206,7 @@ class UIManager {
         const container = document.getElementById('badges-container');
 
         if (badges.length === 0) {
-            container.innerHTML = `<p class="empty-state" data-i18n="noBadges">${i18n.translate('noBadges')}</p>`;
+            showEmpty(container, 'noBadges');
             return;
         }
 
@@ -204,13 +219,15 @@ class UIManager {
             master: '👑',
         };
 
-        container.innerHTML = badges.map(badge => `
-            <div class="badge-item">
-                <div class="badge-icon">${badgeIcons[badge.badge_type] || '🏅'}</div>
-                <div class="badge-name">${badge.badge_type.replace('_', ' ')}</div>
-                <div class="badge-date">${new Date(badge.earned_at).toLocaleDateString()}</div>
-            </div>
-        `).join('');
+        container.replaceChildren(...badges.map(badge => {
+            const item = el('div', 'badge-item');
+            item.append(
+                el('div', 'badge-icon', badgeIcons[badge.badge_type] || '🏅'),
+                el('div', 'badge-name', badge.badge_type.replace('_', ' ')),
+                el('div', 'badge-date', new Date(badge.earned_at).toLocaleDateString())
+            );
+            return item;
+        }));
     }
 
     async loadAdminDashboard() {

@@ -10,6 +10,7 @@ const urlsToCache = [
     '/css/styles.css',
     '/css/dark-mode.css',
     '/js/app.js',
+    '/js/sw-register.js',
     '/js/config.js',
     '/js/api.js',
     '/js/i18n.js',
