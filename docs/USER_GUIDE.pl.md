@@ -261,8 +261,8 @@ Po ukończeniu wszystkich ćwiczeń:
 ### 1. Ćwiczenia Nazywania Słów
 
 **Jak to działa:**
-1. Pojawia się obraz na ekranie
-2. Poniżej obrazu jest pytanie: "Co to jest?"
+1. Pojawia się krótki opis codziennej rzeczy (obrazki zostaną dodane później)
+2. Pytanie brzmi: „Co to jest?”
 3. Wpisujesz słowo lub wybierasz z opcji
 4. Przesyłasz swoją odpowiedź
 

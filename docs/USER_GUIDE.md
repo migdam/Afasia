@@ -261,8 +261,8 @@ When you finish all exercises:
 ### 1. Word Naming Exercises
 
 **How it works:**
-1. An image appears on screen
-2. Below the image is a question: "What is this?"
+1. A short description of an everyday thing appears (pictures will be added later)
+2. The question is: "What is it?"
 3. You type the word or select from options
 4. Submit your answer
 

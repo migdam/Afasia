@@ -51,7 +51,7 @@ Aphasia is a communication disorder that affects a person's ability to speak, un
 ### Core Functionality
 
 #### 🎯 **Interactive Therapy Sessions**
-- **Word Naming**: Visual recognition and naming exercises with images
+- **Word Naming**: Name an everyday thing from a short description (pictures are planned)
 - **Sentence Completion**: Fill-in-the-blank exercises with multiple choice options
 - **Image Recognition**: Match images to correct words (not available yet: there are no exercises of this type)
 - **Pronunciation Practice**: Record and evaluate speech patterns

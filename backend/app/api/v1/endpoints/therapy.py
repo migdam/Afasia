@@ -19,24 +19,29 @@ import random
 router = APIRouter()
 
 
-# Sample exercise data
+# Sample exercise data: placeholder items, pending clinical review
+# (loop/PROMPT.md, C7). A prompt must not contain its answer, except in
+# repetition (pronunciation); tests/test_content.py checks this.
 EXERCISE_DATA = {
+    # The pictures don't exist yet, so each item describes the thing to name.
+    # Once there are pictures, show the picture alone and offer the
+    # description as the first hint (backlog P2-3).
     ExerciseType.WORD_NAMING: {
         DifficultyLevel.EASY: [
-            {"question": "What is this? (cat)", "answer": "cat", "image": "/assets/images/cat.jpg"},
-            {"question": "What is this? (dog)", "answer": "dog", "image": "/assets/images/dog.jpg"},
-            {"question": "What is this? (house)", "answer": "house", "image": "/assets/images/house.jpg"},
-            {"question": "What is this? (car)", "answer": "car", "image": "/assets/images/car.jpg"},
-            {"question": "What is this? (tree)", "answer": "tree", "image": "/assets/images/tree.jpg"},
+            {"question": "What is it? A small pet that purrs and says meow.", "answer": "cat", "image": "/assets/images/cat.jpg"},
+            {"question": "What is it? A pet that barks and wags its tail.", "answer": "dog", "image": "/assets/images/dog.jpg"},
+            {"question": "What is it? A building where a family lives.", "answer": "house", "image": "/assets/images/house.jpg"},
+            {"question": "What is it? You drive it on the road. It has four wheels.", "answer": "car", "image": "/assets/images/car.jpg"},
+            {"question": "What is it? A tall plant with a trunk, branches and leaves.", "answer": "tree", "image": "/assets/images/tree.jpg"},
         ],
         DifficultyLevel.MEDIUM: [
-            {"question": "What is this? (bicycle)", "answer": "bicycle", "image": "/assets/images/bicycle.jpg"},
-            {"question": "What is this? (laptop)", "answer": "laptop", "image": "/assets/images/laptop.jpg"},
-            {"question": "What is this? (telephone)", "answer": "telephone", "image": "/assets/images/telephone.jpg"},
+            {"question": "What is it? It has two wheels and pedals. You ride it.", "answer": "bicycle", "image": "/assets/images/bicycle.jpg"},
+            {"question": "What is it? A small computer that folds shut.", "answer": "laptop", "image": "/assets/images/laptop.jpg"},
+            {"question": "What is it? You use it to call people and talk to them.", "answer": "telephone", "image": "/assets/images/telephone.jpg"},
         ],
         DifficultyLevel.HARD: [
-            {"question": "What is this? (stethoscope)", "answer": "stethoscope", "image": "/assets/images/stethoscope.jpg"},
-            {"question": "What is this? (chrysanthemum)", "answer": "chrysanthemum", "image": "/assets/images/chrysanthemum.jpg"},
+            {"question": "What is it? A doctor puts it in their ears to listen to your heart.", "answer": "stethoscope", "image": "/assets/images/stethoscope.jpg"},
+            {"question": "What is it? A flower with many thin petals that blooms in autumn.", "answer": "chrysanthemum", "image": "/assets/images/chrysanthemum.jpg"},
         ],
     },
     ExerciseType.SENTENCE_COMPLETION: {
