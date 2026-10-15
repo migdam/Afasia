@@ -19,6 +19,20 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 63: 2026-10-15 18:28 UTC: P2-8c Suggest another level
+- **Baseline:** `check.sh` exit code 0: 280 backend tests, smoke, 103 e2e. No human commits. The tests and the patch were written in the scratchpad until the baseline finished.
+- **Test first:**
+  - `backend/tests/test_level_suggestion.py`: all 7 failed before.
+  - `e2e/test_level_suggestion.py`: 2 of 3 failed with the old frontend (checked by stashing `frontend/`). The third, "a new account gets no suggestion", is a guard.
+- **Did:**
+  - `GET /therapy/level-suggestion` and `LevelSuggestion`. The new settings `LEVEL_WINDOW`/`LEVEL_UP_SCORE`/`LEVEL_DOWN_SCORE` are passed through Docker and listed in `.env.template` and the README tables.
+  - Dashboard note `#level-suggestion` (read aloud, "Switch to: …"). It reloads with the dashboard and when the type or level changes, and ignores stale answers. It is retranslated when the language changes.
+  - Updated the user guides and clinical docs (EN/PL).
+- **Verified:** `scripts/check.sh` exit code 0: ruff "All checks passed!", pip-audit "No known vulnerabilities found", 288 backend tests, smoke, 106 e2e (axe included). A 390 px screenshot in Polish was sent to the user.
+- **Commit:** 8674f87 (pushed: yes)
+- **Discovered:** nothing new.
+- **Next:** P2-9 (motivation that doesn't punish). It is large (streak race, time zone, rest days or weekly goals, unawarded badges), so split it first.
+
 ### 62: 2026-10-15 18:13 UTC: P2-8b Spaced intervals
 - **Baseline:** `check.sh` exit code 0: 277 backend tests, smoke, 103 e2e. No human commits. The tests and the patch were written in the scratchpad until the baseline finished.
 - **Test first:** `backend/tests/test_spaced_review.py`. All 3 tests failed before the change. Time is moved with a monkeypatched `therapy.utcnow`.
