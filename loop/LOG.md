@@ -19,6 +19,20 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 24: 2026-10-15 08:33 UTC: P1-5c1 Login cookie on the server
+- **Baseline:** green at the end of iteration 23, with the same code (only `loop/` changed since): 115 backend, smoke, 17 e2e. No human commits.
+- **Split:** P1-5c became c1 (the server side), c2 (the web app switches to the cookie) and c3 (the follow-ups on the wrong-password limit). Docker runs one uvicorn worker, so the shared-count item is only needed if that changes.
+- **Test first:** `backend/tests/test_cookie_login.py`, 6 tests. On the old code: 5 failed, and the Bearer test passed (it's a regression guard). I first expected 201 from creating a session; the endpoint answers 200, and I fixed the test.
+- **Did:**
+  - `security.py`: `get_token` takes the Bearer header, or else the `access_token` cookie. A change made through the cookie must carry `X-Requested-With`, or it gets 403. Helpers set and clear the cookie (httpOnly, `SameSite=Strict`, path `/api`, Secure unless `COOKIE_SECURE=false`).
+  - `auth.py`: register, login and refresh set the cookie; new public `POST /auth/logout` clears it.
+  - READMEs (EN/PL): API section, endpoint table, `COOKIE_SECURE`, Known limitations; `.env.template`. The endpoint table now lists `/auth/refresh`, which I missed in iteration 23.
+  - `tests/test_docs.py`: "csrf" removed from the known-false claims, since the guard now exists and is tested.
+- **Verified:** `scripts/check.sh` exit code 0: ruff, pip-audit "No known vulnerabilities found", 121 backend tests, smoke, 17 e2e. The first run failed on the docs test (the README now mentions CSRF); fixed as above. `scripts/docker-smoke.sh` was not run, because nothing in the Docker setup changed; P1-5c2 runs it.
+- **Commit:** e17c94e (pushed: yes)
+- **Discovered:** people with aphasia may mistype often enough to lock themselves out after 5 wrong passwords; added to P1-5c3.
+- **Next:** P1-5c2.
+
 ### 23: 2026-10-15 08:15 UTC: P1-5b Stay logged in while active
 - **Baseline:** `check.sh` green (110 backend, smoke, 15 e2e). No human commits.
 - **Split:** P1-5b (renewal and idle timeout) and P1-5c (tokens out of `localStorage`, plus the two limiter follow-ups from P1-5a).
