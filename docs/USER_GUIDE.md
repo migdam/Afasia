@@ -122,7 +122,12 @@ At the moment every therapist sees every patient. Signing up always makes a pati
 
 ## Your data
 
-Everything you do is stored on the server that runs the app: your account, your answers and your scores. Recordings are kept only if you agree. The first time you click **Record**, the app asks whether it may keep your recordings; if you say no, the microphone stays off. Before using your browser's speech recognition, which may send your voice to the company that made the browser, it asks separately. You can change both answers at any time under **Your choices** on the **Account** page. A privacy notice and ways to export or delete all your data are planned but not available yet. Ask whoever runs the app if you need your data removed.
+Everything you do is stored on the server that runs the app: your account, your answers and your scores. Recordings are kept only if you agree. The first time you click **Record**, the app asks whether it may keep your recordings; if you say no, the microphone stays off. Before using your browser's speech recognition, which may send your voice to the company that made the browser, it asks separately. You can change both answers at any time under **Your choices** on the **Account** page. Under **Your data** on the **Account** page you can:
+
+- **Download my data:** saves everything the app keeps about you as one file (JSON).
+- **Delete my account:** after you type your password, deletes your account, answers, scores and recordings. This can't be undone.
+
+A privacy notice is planned but not available yet.
 
 ## When something goes wrong
 

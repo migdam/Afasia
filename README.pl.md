@@ -156,7 +156,7 @@ Zanim ktokolwiek zacznie polegać na tej aplikacji, trzeba naprawić co najmniej
 - **Bezpieczeństwo**
   - Nie ma resetu „nie pamiętam hasła” ani sposobu na wylogowanie naraz ze wszystkich urządzeń bez zmiany hasła.
   - Limity błędnych haseł są trzymane w pamięci: każdy proces serwera liczy osobno, a restart je kasuje. Za serwerem pośredniczącym klienci są rozróżniani tylko wtedy, gdy serwer ufa jego nagłówkowi `X-Forwarded-For` (konfiguracja Docker tak robi); w przeciwnym razie wszyscy dzielą jeden licznik na nazwę użytkownika. Czy wartości 5 i 50 pasują osobom z afazją, to otwarte pytanie (backlog H7).
-- **Prywatność:** nagrania i rozpoznawanie mowy wymagają zgody, o którą aplikacja pyta. Brak jeszcze informacji o prywatności (P1-6d). Eksport i usunięcie swoich danych działają przez API, ale aplikacja w przeglądarce nie ma jeszcze do tego przycisków (P1-6c2). Aplikacja przechowuje dane o zdrowiu.
+- **Prywatność:** nagrania i rozpoznawanie mowy wymagają zgody, o którą aplikacja pyta. Na stronie Konto można pobrać lub usunąć wszystkie swoje dane. Brak jeszcze informacji o prywatności (P1-6d). Aplikacja przechowuje dane o zdrowiu.
 - **Role:** każdy terapeuta widzi i może dezaktywować wszystkich pacjentów. Terapeuci nie są jeszcze powiązani ze swoimi pacjentami (P1-3b).
 - **Treść kliniczna:** kilka tymczasowych ćwiczeń po angielsku, niesprawdzonych przez logopedę. Nie ma obrazków ani nagrań.
 - **Dostępność** nie została zbadana, a zasady projektowania przyjaznego osobom z afazją z [`loop/PROMPT.md`](loop/PROMPT.md) nie są jeszcze spełnione. Na przykład aplikacja nadal sama przechodzi dalej po 2 sekundach.

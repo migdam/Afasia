@@ -71,6 +71,30 @@ class AphasiaApp {
             });
         });
 
+        document.getElementById('download-data').addEventListener('click', async () => {
+            try {
+                ui.downloadFile(await api.exportMyData(), 'afasia-my-data.json');
+            } catch {
+                ui.showFormMessage('data-message', 'error', 'error');
+            }
+        });
+
+        const deleteDialog = document.getElementById('delete-dialog');
+        document.getElementById('delete-account').addEventListener('click', () => {
+            deleteDialog.showModal();
+            document.getElementById('delete-password').focus();
+        });
+        document.getElementById('delete-cancel').addEventListener('click', () => deleteDialog.close());
+        // However it closes (Cancel, Escape, or done), nothing typed stays behind.
+        deleteDialog.addEventListener('close', () => {
+            document.getElementById('delete-form').reset();
+            ui.clearFormMessage('delete-message');
+        });
+        document.getElementById('delete-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await this.handleDeleteAccount();
+        });
+
         document.getElementById('password-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             await this.handleChangePassword();
@@ -261,6 +285,20 @@ class AphasiaApp {
         } catch {
             ui.showFormMessage('consent-message', 'error', 'error');
         }
+    }
+
+    async handleDeleteAccount() {
+        try {
+            await api.deleteAccount(document.getElementById('delete-password').value);
+        } catch (error) {
+            const key = { 400: 'passwordNotRight', 429: 'tooManyAttempts' }[error.status] || 'error';
+            ui.showFormMessage('delete-message', key, 'error');
+            return;
+        }
+        document.getElementById('delete-dialog').close();
+        this.leaveExercise();
+        this.consents = null;
+        ui.showAuthPage();
     }
 
     async handleChangePassword() {

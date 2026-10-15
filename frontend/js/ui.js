@@ -83,15 +83,20 @@ class UIManager {
         });
     }
 
+    clearFormMessage(id) {
+        const message = document.getElementById(id);
+        message.textContent = '';
+        message.removeAttribute('data-i18n');
+        message.removeAttribute('role');
+    }
+
     showAuthPage() {
         // Start again from an empty login form, so nothing typed earlier (a
         // password included) is left on screen for the next person.
         document.getElementById('login-form-submit').reset();
         document.getElementById('register-form-submit').reset();
         document.getElementById('password-form').reset();
-        const passwordMessage = document.getElementById('password-message');
-        passwordMessage.textContent = '';
-        passwordMessage.removeAttribute('data-i18n');
+        ['password-message', 'consent-message', 'data-message'].forEach((id) => this.clearFormMessage(id));
         document.getElementById('register-form').style.display = 'none';
         document.getElementById('login-form').style.display = 'block';
         this.showPage('auth');

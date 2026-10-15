@@ -156,7 +156,7 @@ Before anyone relies on this app, at least these must be fixed. Each one is in [
 - **Security**
   - There is no "forgot password" reset, and no way to log out on all devices at once without changing the password.
   - The limits on wrong passwords are kept in memory: each server process counts on its own, and a restart forgets them. Behind a proxy, clients are told apart only if the server trusts the proxy's `X-Forwarded-For` (the Docker setup does); otherwise everyone shares one count per username. Whether 5 and 50 suit people with aphasia is an open question (backlog H7).
-- **Privacy:** recordings and speech recognition need the person's consent, asked in the app. There is no privacy notice yet (P1-6d). Exporting and deleting your data work through the API, but the web app has no buttons for them yet (P1-6c2). The app stores health information.
+- **Privacy:** recordings and speech recognition need the person's consent, asked in the app. People can download or delete all their data on the Account page. There is no privacy notice yet (P1-6d). The app stores health information.
 - **Roles:** any therapist can see and deactivate every patient. Therapists aren't linked to their own patients yet (P1-3b).
 - **Clinical content:** a handful of English placeholder exercises, not reviewed by a speech-language therapist. There are no pictures or recordings.
 - **Accessibility** has not been audited, and the aphasia-friendly design rules in [`loop/PROMPT.md`](loop/PROMPT.md) are not met yet. For example, the app still moves on automatically after 2 seconds.

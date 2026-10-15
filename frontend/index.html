@@ -299,10 +299,36 @@
                 </div>
                 <p id="consent-message" class="form-message"></p>
             </div>
+
+            <div class="card">
+                <h3 data-i18n="yourData">Your data</h3>
+                <p data-i18n="yourDataText">Download everything the app keeps about you, or delete your account.</p>
+                <div class="data-actions">
+                    <button type="button" id="download-data" class="btn btn-secondary" data-i18n="downloadData">Download my data</button>
+                    <button type="button" id="delete-account" class="btn btn-danger" data-i18n="deleteAccount">Delete my account</button>
+                </div>
+                <p id="data-message" class="form-message"></p>
+            </div>
         </div>
 
+        <dialog id="delete-dialog" class="app-dialog" aria-labelledby="delete-title">
+            <form id="delete-form">
+                <h3 id="delete-title" data-i18n="deleteTitle">Delete your account?</h3>
+                <p data-i18n="deleteText">This deletes your account, your answers, your scores and your recordings. It cannot be undone. Type your password to confirm.</p>
+                <div class="form-group">
+                    <label for="delete-password" data-i18n="password">Password</label>
+                    <input type="password" id="delete-password" required autocomplete="current-password">
+                </div>
+                <p id="delete-message" class="form-message"></p>
+                <div class="modal-actions">
+                    <button type="button" id="delete-cancel" class="btn btn-secondary" data-i18n="cancel">Cancel</button>
+                    <button type="submit" id="delete-confirm" class="btn btn-danger" data-i18n="deleteForGood">Delete for good</button>
+                </div>
+            </form>
+        </dialog>
+
         <!-- Asked before the first recording and before speech recognition -->
-        <dialog id="consent-dialog" class="consent-dialog" aria-labelledby="consent-title" aria-describedby="consent-text">
+        <dialog id="consent-dialog" class="app-dialog" aria-labelledby="consent-title" aria-describedby="consent-text">
             <h3 id="consent-title"></h3>
             <p id="consent-text"></p>
             <div class="modal-actions">

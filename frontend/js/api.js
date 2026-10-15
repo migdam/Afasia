@@ -123,6 +123,22 @@ class APIClient {
         });
     }
 
+    async exportMyData() {
+        const response = await this.fetch('/users/me/export');
+        if (!response.ok) {
+            throw new Error('Export failed');
+        }
+        return response.blob();
+    }
+
+    async deleteAccount(password) {
+        await this.request('/users/me', {
+            method: 'DELETE',
+            body: JSON.stringify({ password }),
+        });
+        this.tokenTimes = null;
+    }
+
     // User endpoints
     async getProfile() {
         return this.request('/users/profile');

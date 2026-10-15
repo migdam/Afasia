@@ -105,6 +105,16 @@ const translations = {
         consentNo: "No",
         recordingOff: "Recording is off. You can turn it on on the Account page.",
 
+        // Your data
+        yourData: "Your data",
+        yourDataText: "Download everything the app keeps about you, or delete your account.",
+        downloadData: "Download my data",
+        deleteAccount: "Delete my account",
+        deleteTitle: "Delete your account?",
+        deleteText: "This deletes your account, your answers, your scores and your recordings. It cannot be undone. Type your password to confirm.",
+        deleteForGood: "Delete for good",
+        passwordNotRight: "The password is not right.",
+
         // Common
         save: "Save",
         delete: "Delete",
@@ -215,6 +225,16 @@ const translations = {
         speech_recognitionConsentYes: "Tak, używaj",
         consentNo: "Nie",
         recordingOff: "Nagrywanie jest wyłączone. Możesz je włączyć na stronie Konto.",
+
+        // Your data
+        yourData: "Twoje dane",
+        yourDataText: "Pobierz wszystko, co aplikacja o Tobie przechowuje, albo usuń swoje konto.",
+        downloadData: "Pobierz moje dane",
+        deleteAccount: "Usuń moje konto",
+        deleteTitle: "Usunąć Twoje konto?",
+        deleteText: "To usunie Twoje konto, odpowiedzi, wyniki i nagrania. Nie da się tego cofnąć. Wpisz hasło, aby potwierdzić.",
+        deleteForGood: "Usuń na zawsze",
+        passwordNotRight: "Hasło jest nieprawidłowe.",
 
         // Common
         save: "Zapisz",

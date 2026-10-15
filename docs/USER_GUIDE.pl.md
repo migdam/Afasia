@@ -122,7 +122,12 @@ Na razie każdy terapeuta widzi wszystkich pacjentów. Rejestracja zawsze tworzy
 
 ## Twoje dane
 
-Wszystko, co robisz, jest zapisywane na serwerze, na którym działa aplikacja: konto, odpowiedzi i wyniki. Nagrania są przechowywane tylko za Twoją zgodą. Gdy pierwszy raz klikniesz **Nagraj**, aplikacja zapyta, czy może przechowywać nagrania; jeśli odpowiesz „Nie”, mikrofon pozostanie wyłączony. Przed użyciem rozpoznawania mowy przeglądarki, które może wysłać Twój głos do firmy, która stworzyła przeglądarkę, aplikacja zapyta osobno. Obie odpowiedzi możesz w każdej chwili zmienić w części **Twoje zgody** na stronie **Konto**. Informacja o prywatności oraz możliwość pobrania lub usunięcia wszystkich swoich danych są planowane, ale jeszcze ich nie ma. Jeśli chcesz usunąć swoje dane, poproś o to osobę, która uruchamia aplikację.
+Wszystko, co robisz, jest zapisywane na serwerze, na którym działa aplikacja: konto, odpowiedzi i wyniki. Nagrania są przechowywane tylko za Twoją zgodą. Gdy pierwszy raz klikniesz **Nagraj**, aplikacja zapyta, czy może przechowywać nagrania; jeśli odpowiesz „Nie”, mikrofon pozostanie wyłączony. Przed użyciem rozpoznawania mowy przeglądarki, które może wysłać Twój głos do firmy, która stworzyła przeglądarkę, aplikacja zapyta osobno. Obie odpowiedzi możesz w każdej chwili zmienić w części **Twoje zgody** na stronie **Konto**. W części **Twoje dane** na stronie **Konto** możesz:
+
+- **Pobierz moje dane:** zapisuje wszystko, co aplikacja o Tobie przechowuje, w jednym pliku (JSON).
+- **Usuń moje konto:** po wpisaniu hasła usuwa konto, odpowiedzi, wyniki i nagrania. Nie da się tego cofnąć.
+
+Informacja o prywatności jest planowana, ale jeszcze jej nie ma.
 
 ## Gdy coś nie działa
 

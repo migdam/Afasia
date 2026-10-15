@@ -756,7 +756,8 @@ body {
 /* Responsive Design */
 @media (max-width: 768px) {
     .container {
-        padding: 1rem;
+        /* keep the bottom clear of the fixed bottom nav, as on wide screens */
+        padding: 1rem 1rem 6rem;
     }
 
     .auth-card {
@@ -836,8 +837,8 @@ body {
     border-left-color: var(--error-color);
 }
 
-/* The consent question (ui.askConsent) */
-.consent-dialog {
+/* In-app dialogs: the consent question (ui.askConsent), account deletion */
+.app-dialog {
     max-width: 32rem;
     width: calc(100% - 2rem);
     margin: auto;  /* centred; the global reset removes the browser's default */
@@ -849,11 +850,11 @@ body {
     box-shadow: var(--shadow-lg);
 }
 
-.consent-dialog::backdrop {
+.app-dialog::backdrop {
     background-color: rgba(0, 0, 0, 0.5);
 }
 
-.consent-dialog p {
+.app-dialog p {
     font-size: 1.1rem;
     line-height: 1.5;
 }
@@ -871,4 +872,19 @@ body {
     flex-shrink: 0;
     width: 1.5rem;
     height: 1.5rem;
+}
+
+.btn-danger {
+    background-color: #B91C1C;  /* white text on it: 6.5:1 */
+    color: #FFFFFF;
+}
+
+.btn-danger:hover {
+    background-color: #991B1B;
+}
+
+.data-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
 }
