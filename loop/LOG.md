@@ -19,6 +19,22 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 31: 2026-10-15 09:49 UTC: P1-6b1 Consent kept on the server
+- **Baseline:** `check.sh` exit code 0: 136 backend tests, smoke, 29 e2e. No human commits. Tests were written in the scratchpad until it finished.
+- **Split:** P1-6b became b1 (store the answers, and enforce them where only the server can, on uploads) and b2 (the questions and the Account page switches).
+- **Test first:** `backend/tests/test_consent.py`, 5 tests: all failed before.
+- **Did:**
+  - `Consents` schema: strict booleans or null, unknown keys forbidden.
+  - New `consents` table, with no foreign key; P1-6c must delete its rows.
+  - `GET`/`PUT /users/consents`.
+  - The upload checks ownership first (404), then consent (403).
+  - `test_recordings.py`'s fixture grants consent first. That is new required setup; what those tests check is unchanged.
+  - READMEs and user guides (EN/PL): the web app keeps no recordings until it can ask.
+- **Verified:** `scripts/check.sh` exit code 0: ruff, pip-audit "No known vulnerabilities found", 143 backend tests, smoke, 29 e2e.
+- **Commit:** 2ebb758 (pushed: yes)
+- **Discovered:** whether withdrawing consent should delete existing recordings is a legal question. It is noted in P1-6b2 for H4.
+- **Next:** P1-6b2.
+
 ### 30: 2026-10-15 09:36 UTC: P1-6a Release the microphone
 - **Baseline:** `check.sh` exit code 0: 136 backend tests, smoke, 25 e2e. No human commits. Tests were written in the scratchpad until the baseline finished.
 - **Split:** P1-6 became a–f: the microphone, consent, export and deletion, the privacy notice, retention, and third parties and logs.
