@@ -19,6 +19,24 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 73: 2026-10-15 21:36 UTC: P2-12 Every screen fits a phone, with larger text too
+- **Baseline:** `check.sh` exit code 0: 317 backend tests, smoke, 122 e2e. No human commits.
+- **Order:** the last status said P2-11 came next. In the backlog, P2-12 sits above P2-11 (I inserted it there in iteration 69), and the protocol goes top to bottom, so P2-12 came first.
+- **Audit first:** a temporary walk through every screen at 390 px in Polish with larger text found the card header ("Dodaj harmonogram" 110 px of content in an 85 px button) and session cards (long words 152 px in 136–142 px).
+- **Test first:** `e2e/test_larger_text_fits.py`. It walks login, sign-up, dashboard, progress, account, admin (with patients), a naming exercise with a hint, feedback, the leave dialog, sentence completion and pronunciation, in 3 cases: PL larger, EN larger, PL normal. On each screen it checks that no element's content is wider than the element, that nothing reaches past the screen, and that the page doesn't scroll sideways. All 3 cases failed on the old CSS, with 14–16 findings each.
+  - It found what the audit missed (its admin list was empty): every patient row on the admin page was 400–465 px wide in a 270–290 px card, even with normal text. The page scrolled sideways and "Deactivate" was off the screen.
+  - A 3 px finding on the header was a hovered icon button's `scale(1.1)`. The test moves the pointer away before measuring.
+- **Cause:** `button, .btn { min-width: 48px }` (the 48 px targets, U5) replaces flex items' `min-width: auto`, so buttons in flex rows can shrink below their label. Email addresses have no break points.
+- **Did:** CSS only.
+  - `.card-header` and `.user-item` wrap, with gaps.
+  - `.user-info` gets `flex: 1 1 12rem; min-width: 0; overflow-wrap: anywhere`.
+  - The session details get `flex: 1 1 8rem`, so the score or button moves under them only when there isn't room. The basis is in rem, so it grows with the text.
+  - `.session-title` gets `overflow-wrap: anywhere`.
+- **Verified:** `scripts/check.sh` exit code 0: ruff "All checks passed!", pip-audit "No known vulnerabilities found", 317 backend tests, smoke, 125 e2e. Screenshots at 390 px (dashboard with larger text, admin page) were sent to the user.
+- **Commit:** b6ead72 (pushed: yes)
+- **Discovered:** nothing new. `min-width: 48px` on buttons may matter in other flex rows added later; the new test would catch it.
+- **Next:** P2-11 (an accessible progress chart).
+
 ### 72: 2026-10-15 21:16 UTC: P2-10c2 The PDF report in Polish
 - **Baseline:** `check.sh` exit code 0: 309 backend tests, smoke, 121 e2e. No human commits. The module, tests, credits and license file were written in the scratchpad until the baseline finished.
 - **Test first:**
