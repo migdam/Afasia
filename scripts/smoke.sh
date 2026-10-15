@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # Follow the README quick start in a scratch copy of the working tree and
-# check that the backend starts and answers /health. Reuses the .venv that
-# scripts/check.sh creates instead of reinstalling the requirements.
+# check that the backend starts and answers /health. Reuses the .venv-check
+# that scripts/check.sh creates instead of reinstalling the requirements.
 set -euo pipefail
 
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-python="$root/.venv/bin/python"
+python="$root/.venv-check/bin/python"
 if [[ ! -x "$python" ]]; then
-  echo "No .venv yet; run scripts/check.sh first." >&2
+  echo "No .venv-check yet; run scripts/check.sh first." >&2
   exit 1
 fi
 
@@ -22,7 +22,7 @@ cleanup() {
 }
 trap cleanup EXIT
 
-# Copy tracked and new files, but nothing ignored (.env, .venv, databases).
+# Copy tracked and new files, but nothing ignored (.env, venvs, databases).
 mkdir "$work/repo"
 (cd "$root" && git ls-files -z --cached --others --exclude-standard |
   while IFS= read -r -d '' f; do

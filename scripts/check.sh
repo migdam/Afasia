@@ -3,16 +3,17 @@
 #
 #   scripts/check.sh
 #
-# Creates or reuses .venv at the repository root, installs the pinned backend
-# requirements (only when they change), then runs the linter, the tests, and
-# the README quick start (scripts/smoke.sh).
+# Creates or reuses .venv-check at the repository root (rebuilt when the pinned
+# backend requirements change), then runs the linter, the tests, and the
+# README quick start (scripts/smoke.sh).
 # Set PYTHON to choose the interpreter (default: python3.11, else python3).
 set -euo pipefail
 
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 backend="$root/backend"
-# Kept outside backend/ so it never ends up in the backend's Docker build context.
-venv="$root/.venv"
+# Owned by this script, so it can be deleted and rebuilt (a .venv of your own
+# is left alone). Kept outside backend/, out of the Docker build context.
+venv="$root/.venv-check"
 
 python="${PYTHON:-}"
 if [[ -z "$python" ]]; then
@@ -23,15 +24,18 @@ if [[ -z "$python" ]]; then
   exit 1
 fi
 
-if [[ ! -x "$venv/bin/python" ]]; then
-  echo "== Creating .venv with $("$python" --version)"
-  "$python" -m venv "$venv"
-fi
-
-# Reinstall only when a requirements file changes.
+# Rebuild from scratch when a requirements file changes, so a package that was
+# removed from them can't linger and hide a missing requirement.
 stamp="$venv/.requirements-stamp"
 want="$(cat "$backend/requirements.txt" "$backend/requirements-dev.txt" | cksum)"
-if [[ "$(cat "$stamp" 2>/dev/null)" != "$want" ]]; then
+if [[ -d "$venv" && "$(cat "$stamp" 2>/dev/null)" != "$want" ]]; then
+  echo "== Requirements changed; rebuilding .venv-check"
+  rm -rf "$venv"
+fi
+
+if [[ ! -d "$venv" ]]; then
+  echo "== Creating .venv-check with $("$python" --version)"
+  "$python" -m venv "$venv"
   echo "== Installing backend requirements"
   "$venv/bin/python" -m pip install --quiet --disable-pip-version-check \
     -r "$backend/requirements.txt" -r "$backend/requirements-dev.txt"

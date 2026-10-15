@@ -10,10 +10,27 @@ import os
 import shutil
 import tempfile
 
+import pytest
+
 _tmp = tempfile.mkdtemp(prefix="afasia-tests-")
 atexit.register(shutil.rmtree, _tmp, ignore_errors=True)
 
 os.environ["ENV_FILE"] = os.path.join(_tmp, "absent.env")
-os.environ["SECRET_KEY"] = "test-secret-key"
+# HS256 keys need at least 32 bytes (RFC 7518); PyJWT warns about shorter ones.
+os.environ["SECRET_KEY"] = "test-secret-key-that-is-at-least-32-bytes"
 os.environ["DATABASE_URL"] = f"sqlite:///{_tmp}/test.db"
 os.environ["UPLOAD_DIR"] = os.path.join(_tmp, "uploads")
+
+
+@pytest.fixture
+def client():
+    """A test client for the app, on an empty database."""
+    from fastapi.testclient import TestClient
+
+    from app.db.database import Base, engine
+    from app.main import app
+
+    Base.metadata.drop_all(bind=engine)
+    Base.metadata.create_all(bind=engine)
+    with TestClient(app) as test_client:
+        yield test_client

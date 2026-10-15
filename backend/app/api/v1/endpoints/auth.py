@@ -1,5 +1,4 @@
 """Authentication endpoints."""
-from datetime import timedelta
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from ....db.database import get_db
@@ -9,7 +8,6 @@ from ....core.security import (
     get_password_hash,
     create_access_token,
 )
-from ....core.config import settings
 from ..schemas import UserCreate, UserLogin, TokenResponse, UserResponse
 
 router = APIRouter()
@@ -44,14 +42,8 @@ def register(user_data: UserCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(user)
 
-    # Create access token
-    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": user.id}, expires_delta=access_token_expires
-    )
-
     return TokenResponse(
-        access_token=access_token,
+        access_token=create_access_token(user.id),
         user=UserResponse.model_validate(user)
     )
 
@@ -74,13 +66,7 @@ def login(credentials: UserLogin, db: Session = Depends(get_db)):
             detail="Inactive user"
         )
 
-    # Create access token
-    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": user.id}, expires_delta=access_token_expires
-    )
-
     return TokenResponse(
-        access_token=access_token,
+        access_token=create_access_token(user.id),
         user=UserResponse.model_validate(user)
     )
