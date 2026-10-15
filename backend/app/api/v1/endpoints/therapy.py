@@ -40,13 +40,31 @@ EXERCISE_DATA = {
 REVIEW_SHARE = 0.5
 
 
-def missed_items(db: Session, user_id: int, exercise_type: ExerciseType,
-                 difficulty: DifficultyLevel, language: str) -> List[tuple]:
-    """The items whose last answer was wrong, most recently missed first, as
-    (question, answer) pairs (C3, backlog P2-8a). Only this person's answers,
-    for the same type, difficulty and language."""
+# Days until an item answered right comes back, by how many times in a row
+# it was found alone (no hints, list or letter tiles): one found with help
+# waits the first gap, one found alone once the second, and so on, up to the
+# last. Placeholders, pending clinical review (C3, C7).
+REVIEW_GAP_DAYS = (1, 2, 4, 8, 16)
+
+
+def found_alone(exercise: Exercise) -> bool:
+    return bool(exercise.is_correct) and not (
+        exercise.cue_level or exercise.choices_shown or exercise.tiles_used
+    )
+
+
+def review_plan(db: Session, user_id: int, exercise_type: ExerciseType,
+                difficulty: DifficultyLevel, language: str) -> tuple:
+    """What to bring back, from this person's answers of the same type,
+    difficulty and language (C3, backlog P2-8a, P2-8b).
+
+    Returns (due, waiting): due lists the items to review now, as (question,
+    answer) pairs: missed ones first, most recent first, then ones whose gap
+    has passed, longest overdue first. waiting holds the items answered right
+    whose gap hasn't passed yet; they come only after new items.
+    """
     answered = (
-        db.query(Exercise.question, Exercise.correct_answer, Exercise.is_correct)
+        db.query(Exercise)
         .join(TherapySession, Exercise.session_id == TherapySession.id)
         .filter(
             TherapySession.user_id == user_id,
@@ -57,22 +75,36 @@ def missed_items(db: Session, user_id: int, exercise_type: ExerciseType,
         )
         .order_by(Exercise.completed_at, Exercise.id)
     )
-    last = {}
-    for question, answer, is_correct in answered:
-        last.pop((question, answer), None)
-        last[(question, answer)] = is_correct
-    return [item for item, is_correct in reversed(last.items()) if not is_correct]
+    # Per item: its last answer, and how many times in a row it was found alone.
+    history = {}
+    for exercise in answered:
+        key = (exercise.question, exercise.correct_answer)
+        _, streak = history.pop(key, (None, 0))
+        history[key] = (exercise, streak + 1 if found_alone(exercise) else 0)
+
+    now = utcnow()
+    missed, overdue, waiting = [], [], set()
+    for key, (last, streak) in reversed(history.items()):
+        if not last.is_correct:
+            missed.append(key)
+            continue
+        due_at = last.completed_at + timedelta(days=REVIEW_GAP_DAYS[min(streak, len(REVIEW_GAP_DAYS) - 1)])
+        if due_at <= now:
+            overdue.append((due_at, key))
+        else:
+            waiting.add(key)
+    return missed + [key for _, key in sorted(overdue)], waiting
 
 
 def generate_exercises(
     exercise_type: ExerciseType, difficulty: DifficultyLevel, count: int, language: str = "en",
-    review: List[tuple] = (),
+    review: List[tuple] = (), waiting: set = frozenset(),
 ) -> List[dict]:
     """Pick random exercises of a type and difficulty, repeating items if needed.
 
     Items in review, (question, answer) pairs, come first, up to
-    REVIEW_SHARE of the session (at least one); the rest are drawn at random
-    from the other items.
+    REVIEW_SHARE of the session (at least one). The rest are drawn at random
+    from the other items, those in waiting last.
 
     Raises LookupError when there is no content for that type and difficulty,
     rather than substituting another difficulty or looping forever.
@@ -84,13 +116,14 @@ def generate_exercises(
         raise LookupError(f"no {exercise_type.value} exercises at {difficulty.value} difficulty")
 
     by_key = {(item["question"], item["answer"]): item for item in available}
-    missed = [by_key[key] for key in review if key in by_key]
-    due = missed[:max(1, int(count * REVIEW_SHARE))]
-    # Fill up with items not missed, and only then with the other missed ones.
-    fresh = [item for item in available if item not in missed]
-    exercises = due + random.sample(fresh, min(len(fresh), count - len(due)))
-    rest = missed[len(due):]
-    exercises += random.sample(rest, min(len(rest), count - len(exercises)))
+    to_review = [by_key[key] for key in review if key in by_key]
+    later = [by_key[key] for key in waiting if key in by_key]
+    exercises = to_review[:max(1, int(count * REVIEW_SHARE))]
+    # Fill up with new items, then with ones not due yet, and only then with
+    # the other ones due for review.
+    fresh = [item for item in available if item not in to_review and item not in later]
+    for pool in (fresh, later, to_review[len(exercises):]):
+        exercises += random.sample(pool, min(len(pool), count - len(exercises)))
     random.shuffle(exercises)
 
     # Repeat if needed
@@ -239,7 +272,7 @@ def create_session(
             session_data.difficulty,
             session_data.num_exercises,
             session_data.language,
-            missed_items(db, user_id, session_data.exercise_type, session_data.difficulty,
+            *review_plan(db, user_id, session_data.exercise_type, session_data.difficulty,
                          session_data.language),
         )
     except LookupError:

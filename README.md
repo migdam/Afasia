@@ -16,7 +16,7 @@ Accounts, practice sessions, feedback, scores, the progress chart and the admin 
   - *Word naming*: read a short description ("A pet that barks and wags its tail") and type the word.
   - *Sentence completion*: choose the word that completes a sentence.
 
-  After each answer you see "Correct! Well done!" or the right answer. The server scores the session when the last answer arrives. Items you got wrong come back in your next session of the same type, difficulty and language, up to half of it.
+  After each answer you see "Correct! Well done!" or the right answer. The server scores the session when the last answer arrives. Items you got wrong come back in your next session of the same type, difficulty and language, up to half of it. Items you got right come back after growing gaps (2, 4, 8, then 16 days), or after 1 day if you needed help.
 - **Progress.** Points per correct answer, daily streaks, three badges (first session, 7-day and 30-day streaks), a progress page with totals and an accuracy chart, and export as CSV or PDF.
 - **Planning.** Schedule future sessions. Nothing reminds you of them yet.
 - **Therapist/admin page.** See all patients and activate or deactivate accounts. Signing up always makes a patient account; staff accounts are made on the server (see [Staff accounts](#staff-accounts)).

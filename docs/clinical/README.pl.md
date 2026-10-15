@@ -49,7 +49,7 @@ Każdy rodzaj ćwiczeń, który zna aplikacja: co robi dziś i na czym powinien 
 
 ### Pomylone ćwiczenia wracają
 
-Od P2-8a ćwiczenie, na które ostatnia odpowiedź była błędna, wraca w następnej sesji tej osoby tego samego rodzaju, poziomu i języka i zajmuje w niej najwyżej połowę (`REVIEW_SHARE`, wartość tymczasowa, oczekuje na ocenę). To pierwszy krok w stronę zasady C3 (utrzymać wysoki odsetek sukcesów: dostosowywać trudność i przywracać pomylone ćwiczenia w odstępach czasu). Dłuższych odstępów dla ćwiczeń z dobrą odpowiedzią i dopasowania trudności jeszcze nie ma (backlog P2-8b, P2-8c). Podstawa powtórek w odstępach oraz właściwy udział i odstępy: [citation needed].
+Od P2-8a ćwiczenie, na które ostatnia odpowiedź była błędna, wraca w następnej sesji tej osoby tego samego rodzaju, poziomu i języka i zajmuje w niej najwyżej połowę (`REVIEW_SHARE`, wartość tymczasowa, oczekuje na ocenę). To pierwszy krok w stronę zasady C3 (utrzymać wysoki odsetek sukcesów: dostosowywać trudność i przywracać pomylone ćwiczenia w odstępach czasu). Od P2-8b ćwiczenie z dobrą odpowiedzią wraca po przerwie, która rośnie z każdą kolejną samodzielną odpowiedzią z rzędu (`REVIEW_GAP_DAYS`: 1 dzień po odpowiedzi z podpowiedzią, z listy albo z kafelków, potem 2, 4, 8 i 16 dni; wartości tymczasowe, oczekują na ocenę). Ćwiczenia do powtórki mają pierwszeństwo przed nowymi, a te, na które jeszcze nie pora, idą po nowych. Dopasowania trudności jeszcze nie ma (backlog P2-8c). Podstawa powtórek w odstępach oraz właściwy udział i odstępy: [citation needed].
 
 ### Planowane: trening skryptów
 

@@ -70,6 +70,8 @@ After the last exercise, click **See my result**: you return to the dashboard, a
 
 What you got wrong comes back: your next session of the same type, difficulty and language includes those exercises, mixed in with others. They make up at most half of it, so a session is never only the hard ones. Once you get one right, it stops coming back first.
 
+What you got right comes back too, after a gap: the first time you find a word on your own, it waits 2 days; each time again on your own, the gap doubles, up to 16 days. A word found with a hint, from the list of words or from letter tiles comes back after 1 day. Until then, sessions bring words you haven't practised yet.
+
 ### Word Naming
 
 You read a short description of an everyday thing, such as "A pet that barks and wags its tail". Type its name (**dog**) in the box and click **Submit**.

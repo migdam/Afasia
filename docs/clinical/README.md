@@ -49,7 +49,7 @@ Each type the app knows, what it does today, and what it should be based on.
 
 ### Missed items come back
 
-Since P2-8a, an item whose last answer was wrong comes back in the person's next session of the same type, difficulty and language, taking up at most half of it (`REVIEW_SHARE`, a placeholder pending review). This is a first step towards principle C3 (keep success high: adapt difficulty and bring missed items back with spaced repetition). Longer gaps for items answered right, and adapting the difficulty, are not built yet (backlog P2-8b, P2-8c). The basis for spacing, and the right share and intervals: [citation needed].
+Since P2-8a, an item whose last answer was wrong comes back in the person's next session of the same type, difficulty and language, taking up at most half of it (`REVIEW_SHARE`, a placeholder pending review). This is a first step towards principle C3 (keep success high: adapt difficulty and bring missed items back with spaced repetition). Since P2-8b, an item answered right comes back after a gap that grows with each answer found alone in a row (`REVIEW_GAP_DAYS`: 1 day after an answer found with a hint, from the list or from letter tiles, then 2, 4, 8 and 16 days; placeholders pending review). Items due for review come before new ones, and items not yet due after them. Adapting the difficulty is not built yet (backlog P2-8c). The basis for spacing, and the right share and intervals: [citation needed].
 
 ### Planned: script training
 

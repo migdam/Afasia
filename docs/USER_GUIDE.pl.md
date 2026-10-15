@@ -70,6 +70,8 @@ Po ostatnim ćwiczeniu kliknij **Zobacz wynik**: wracasz na tablicę, a komunika
 
 To, co się nie udało, wraca: następna sesja tego samego rodzaju, poziomu i języka zawiera te ćwiczenia, wymieszane z innymi. Stanowią najwyżej połowę sesji, więc sesja nigdy nie składa się z samych trudnych ćwiczeń. Gdy odpowiesz na nie dobrze, przestają mieć pierwszeństwo.
 
+To, co się udało, też wraca, ale po przerwie: gdy pierwszy raz znajdziesz słowo samodzielnie, wraca po 2 dniach, a za każdym kolejnym razem przerwa się podwaja, aż do 16 dni. Słowo znalezione z podpowiedzią, z listy słów albo z kafelków wraca po 1 dniu. Do tego czasu sesje przynoszą słowa, których jeszcze w nich nie było.
+
 ### Nazywanie słów
 
 Czytasz krótki opis codziennej rzeczy, np. „Zwierzę, które szczeka i merda ogonem”. Wpisz jej nazwę (**pies**) w polu i kliknij **Zatwierdź**.
