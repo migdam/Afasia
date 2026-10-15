@@ -19,6 +19,24 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 36: 2026-10-15 10:58 UTC: P1-6e Retention for recordings
+- **Baseline:** `check.sh` exit code 0: 149 backend tests, smoke, 44 e2e. No human commits. Tests were written in the scratchpad until it finished.
+- **Test first:** `backend/tests/test_retention.py`, 3 tests: all failed before.
+- **Did:**
+  - `app/retention.py`: `delete_old_recordings` deletes rows and files.
+  - Start-up runs a clean-up and then starts a daily loop, but only when `RECORDING_RETENTION_DAYS` is above 0, the new setting (default 0).
+  - CLI `delete-old-recordings [--days N]`.
+  - Compose passes the setting through; `.env.template`, READMEs.
+  - Privacy notice (EN/PL): the period is "[to be completed]".
+- **Problem on the way:** the first version started the start-up clean-up as a background task. The test passed, but it could have checked before the thread finished. Start-up now awaits the first run, and the daily loop starts after it. The tests ran 3 times in a row.
+- **Verified:**
+  - `scripts/check.sh` exit code 0: ruff, pip-audit "No known vulnerabilities found", 152 backend tests, smoke, 44 e2e.
+  - `docker compose config` shows `RECORDING_RETENTION_DAYS` reaching the backend ("0" by default, "30" when set).
+  - `docker-smoke.sh` was not run; only one environment line changed.
+- **Commit:** 369a4cd (pushed: yes)
+- **Discovered:** Docker passes only some settings to the backend, so most `.env` settings have no effect there. Added to P1-8.
+- **Next:** P1-6f (no third-party requests, no personal data in logs).
+
 ### 35: 2026-10-15 10:46 UTC: P1-6d Privacy notice
 - **Baseline:** `check.sh` exit code 0: 149 backend tests, smoke, 40 e2e. No human commits. Tests were written in the scratchpad until it finished.
 - **Facts checked before writing:**

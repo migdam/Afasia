@@ -149,7 +149,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
   - [x] **P1-6c1 Export and delete, API** (f69b1cc). `GET /users/me/export` (JSON download; no password hash or file locations) and `DELETE /users/me` with the password (all rows and recording files; the cookie is cleared). Checked on PostgreSQL by `docker-smoke.sh`.
   - [x] **P1-6c2 Export and delete, web app** (1ccd0ab). On the Account page: "Download my data", and "Delete my account" with an in-app password dialog, in EN and PL. Also fixed: on phones, the bottom of every page was hidden behind the bottom nav.
   - [x] **P1-6d Privacy notice** (52854da). `frontend/privacy.html` (no scripts), EN and PL, linked from the login and Account pages in the current language. Only facts the code supports; the operator's parts are marked "[to be completed]". **Keep it true:** any change to what is stored or who can see it must update this page in both languages.
-  - [ ] **P1-6e Retention for recordings.** A configurable retention period after which recordings are deleted (a scheduled clean-up or a CLI command). The default needs a decision (H4).
+  - [x] **P1-6e Retention for recordings** (369a4cd). `RECORDING_RETENTION_DAYS` (default 0: keep until deleted). With a limit, the clean-up runs at start-up and then daily; `python -m app.cli delete-old-recordings [--days N]` runs it at once. The actual period is H4's decision; the privacy notice marks it "[to be completed]".
   - [ ] **P1-6f No third-party requests, no personal data in logs.** Check that the app loads nothing from other origins (the CSP can enforce it), and that the logs carry no usernames, emails, answers or tokens. Add tests for both.
 - [ ] **P1-7 Users would never receive fixes** 🔎. The service worker serves app code cache-first, and nginx marks JS/CSS `immutable` for a year without hashed filenames. Switch app code to network-first, or to stale-while-revalidate with versioned assets. Never cache API responses containing personal data. Either build real offline support or remove the offline claims.
 - [ ] **P1-8 Safe defaults** 🔎:
@@ -157,6 +157,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
   - The app should refuse to start with the template `SECRET_KEY`, or with one shorter than 32 bytes (RFC 7518; PyJWT warns about it), outside development.
   - `/health/detailed` exposes configuration.
   - Datetimes are naive (`datetime.utcnow()`, deprecated in Python 3.12).
+  - Docker Compose passes only a fixed list of settings to the backend 🔎 (found in iteration 36), and the container gets no `.env`. So `ACCESS_TOKEN_EXPIRE_MINUTES`, `LOGIN_MAX_HOURS`, `COOKIE_SECURE` and the `LOGIN_*` limits set in `.env` have no effect in Docker, although the README's settings table implies they do. `DEBUG` is hard-coded to `"true"` there. Pass them all through (or use `env_file`), and test that a value set in `.env` reaches the container.
 
 - [ ] **P1-9 Unbounded session size** ✅. `num_exercises` has no limits. Measured on 2026-10-15:
   - 0 and -5 are accepted, creating sessions that can never complete (`total_exercises=-5`).
