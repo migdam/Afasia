@@ -19,6 +19,20 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 54: 2026-10-15 15:37 UTC: P2-4g A compact header on phones
+- **Baseline:** `check.sh` exit code 0: 240 backend tests, smoke, 81 e2e. No human commits. Tests were written in the scratchpad until it finished.
+- **Test first:** `e2e/test_phone_header.py`. The header-height test (199 > 100) and the Account-page Logout test failed. My first coverage test scrolled elements to the centre, which passed on the old layout; scrolling them to the top made the large-text case fail before the fix, as it should. The normal-text case can't scroll far enough to be covered, so it is a guard.
+- **Did:**
+  - A phone media query: static, one-row header; brand name visually hidden but still read; header Logout hidden.
+  - `#account-logout` on the Account page.
+  - Guides (EN/PL).
+- **Verified:**
+  - `scripts/check.sh` exit code 0: ruff, pip-audit "No known vulnerabilities found", 240 backend tests, smoke, 85 e2e.
+  - Screenshots at 375 px, normal and large text.
+- **Commit:** cbb7d36 (pushed: yes)
+- **Discovered:** nothing new.
+- **Next:** P2-4e (language and focus).
+
 ### 53: 2026-10-15 15:22 UTC: P2-4d2 Read aloud elsewhere
 - **Baseline:** `check.sh` exit code 0: 240 backend tests, smoke, 77 e2e. No human commits. Tests were written in the scratchpad until it finished.
 - **Test first:** `e2e/test_read_aloud_more.py`, 4 tests with the fake speech engine: all failed before.
