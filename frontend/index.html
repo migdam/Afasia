@@ -309,7 +309,17 @@
 
             <div class="card">
                 <h3 data-i18n="progressChart">Progress Over Time</h3>
-                <canvas id="progress-chart"></canvas>
+                <canvas id="progress-chart" role="img" data-i18n-label="noChartData" aria-label="No results yet."></canvas>
+                <!-- The chart's numbers, for anyone who can't see or read it (P2-11) -->
+                <details id="progress-table-box" class="chart-table" hidden>
+                    <summary data-i18n="showNumbers">Show the numbers</summary>
+                    <table id="progress-table">
+                        <thead>
+                            <tr><th scope="col" data-i18n="tableDate">Date</th><th scope="col" data-i18n="tableScore">Score</th></tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </details>
             </div>
 
             <div class="card">

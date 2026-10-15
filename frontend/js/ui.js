@@ -360,18 +360,36 @@ class UIManager {
 
             // Draw chart
             // Oldest first; with no history the chart says there's no data.
+            // The scale runs from 0 to 100%, so a steady 80% doesn't look
+            // like the top (P2-11).
             const chart = new SimpleChart('progress-chart');
             const history = [...(progress.progress_history || [])].reverse();
             chart.drawLineChart(
                 history.map(p => i18n.formatShortDate(p.date)),
-                [{ label: 'Accuracy %', data: history.map(p => p.accuracy_rate) }]
+                [{ label: 'Accuracy %', data: history.map(p => p.accuracy_rate) }],
+                { max: 100, yLabel: (value) => i18n.formatPercent(value) }
             );
+            this.showChartNumbers(history);
 
             // Load badges
             this.loadBadges(badges);
         } catch (error) {
             console.error('Failed to load progress:', error);
         }
+    }
+
+    // The chart's name, and its numbers as a table (P2-11).
+    showChartNumbers(history) {
+        const canvas = document.getElementById('progress-chart');
+        const key = history.length ? 'chartLabel' : 'noChartData';
+        canvas.dataset.i18nLabel = key;
+        canvas.setAttribute('aria-label', i18n.translate(key));
+        document.getElementById('progress-table-box').hidden = !history.length;
+        document.querySelector('#progress-table tbody').replaceChildren(...history.map((p) => {
+            const row = el('tr');
+            row.append(el('td', '', i18n.formatDate(p.date)), el('td', '', i18n.formatPercent(p.accuracy_rate)));
+            return row;
+        }));
     }
 
     loadBadges(badges) {

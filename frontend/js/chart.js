@@ -107,7 +107,9 @@ class SimpleChart {
         }
     }
 
-    drawLineChart(labels, datasets) {
+    // options.max fixes the top of the scale (otherwise it is the highest
+    // value), and options.yLabel writes the scale's numbers.
+    drawLineChart(labels, datasets, options = {}) {
         this.labels = labels;
 
         if (!this.canvas || !this.ctx) return;
@@ -143,12 +145,14 @@ class SimpleChart {
         const chartWidth = rect.width - padding * 2;
         const chartHeight = rect.height - padding * 2;
 
-        // Find max value across all datasets
-        let maxValue = 1;
-        datasets.forEach(dataset => {
-            const max = Math.max(...dataset.data);
-            if (max > maxValue) maxValue = max;
-        });
+        // The top of the scale: fixed, or the highest value across datasets
+        let maxValue = options.max || 1;
+        if (!options.max) {
+            datasets.forEach(dataset => {
+                const max = Math.max(...dataset.data);
+                if (max > maxValue) maxValue = max;
+            });
+        }
 
         // Draw axes
         ctx.strokeStyle = themeColor('--border-color');
@@ -212,7 +216,7 @@ class SimpleChart {
         for (let i = 0; i <= 5; i++) {
             const value = Math.round((maxValue / 5) * i);
             const y = rect.height - padding - (i / 5 * chartHeight);
-            ctx.fillText(value.toString(), padding - 10, y + 4);
+            ctx.fillText(options.yLabel ? options.yLabel(value) : value.toString(), padding - 10, y + 4);
         }
 
         // Draw legend

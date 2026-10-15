@@ -84,6 +84,7 @@ def test_every_screen_fits_a_phone(page, servers, polish, larger):
 
     page.click(".bottom-nav [data-page='progress']")
     expect(page.locator(".badge-item")).to_have_count(1)
+    page.click("#progress-table-box summary")  # the chart's numbers (P2-11)
     found += spills(page, "progress")
     page.click(".bottom-nav [data-page='account']")
     expect(page.locator("#account-page")).to_be_visible()

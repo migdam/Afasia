@@ -119,7 +119,7 @@ Click **Progress** in the bottom bar. You'll see:
 - **Average Accuracy:** the share of all your answers that were right.
 - **Total Time:** the time from the start of each finished session to its last answer: in minutes, or in hours from one hour up.
 - **Longest Streak.**
-- **Progress Over Time:** a chart of each session's score over the last 30 days.
+- **Progress Over Time:** a chart of each session's score over the last 30 days, from 0 to 100%. **Show the numbers**, under it, opens a table with each session's date and score.
 - **Earned Badges.**
 
 **Export CSV** downloads every finished session as a spreadsheet file, in the language on screen and with times in your time zone. **Export PDF** downloads a short report with your totals and your last 10 sessions, in the language on screen. It says that these are results of practice in the app, not a clinical assessment. You can give either one to your therapist.

@@ -118,7 +118,7 @@ Kliknij **Postęp** na dolnym pasku. Zobaczysz:
 - **Średnią dokładność:** jaka część wszystkich odpowiedzi była poprawna.
 - **Całkowity czas:** czas od początku każdej ukończonej sesji do ostatniej odpowiedzi: w minutach, a od godziny wzwyż w godzinach.
 - **Najdłuższą serię.**
-- **Postęp w czasie:** wykres wyników sesji z ostatnich 30 dni.
+- **Postęp w czasie:** wykres wyników sesji z ostatnich 30 dni, od 0 do 100%. **Pokaż liczby**, pod wykresem, otwiera tabelę z datą i wynikiem każdej sesji.
 - **Zdobyte odznaki.**
 
 **Eksportuj CSV** pobiera wszystkie ukończone sesje jako plik arkusza kalkulacyjnego, w języku ekranu i z czasem w Twojej strefie czasowej. **Eksportuj PDF** pobiera krótki raport z podsumowaniem i 10 ostatnimi sesjami, w języku ekranu. Raport zaznacza, że to wyniki ćwiczeń w aplikacji, a nie ocena kliniczna. Każdy z nich możesz przekazać logopedzie.

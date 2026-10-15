@@ -1116,6 +1116,42 @@ h2[tabindex="-1"]:focus {
     margin: 0 0 0.5rem;
 }
 
+/* The progress chart's numbers (P2-11) */
+.chart-table {
+    margin-top: 1rem;
+}
+
+.chart-table summary {
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+/* An arrow that shows it opens, as the browser's own marker is gone */
+.chart-table summary::before {
+    content: "▸";
+    margin-right: 0.5rem;
+}
+
+.chart-table[open] summary::before {
+    content: "▾";
+}
+
+.chart-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.chart-table th,
+.chart-table td {
+    padding: 0.5rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
 .heard {
     margin-top: 0.75rem;
     color: var(--text-secondary);
