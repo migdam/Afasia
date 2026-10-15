@@ -19,6 +19,25 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 32: 2026-10-15 10:02 UTC: P1-6b2 Consent questions in the app
+- **Baseline:** `check.sh` exit code 0: 143 backend tests, smoke, 29 e2e. No human commits. Tests were written in the scratchpad until it finished.
+- **Test first:** `e2e/test_consent_questions.py`, 6 tests. A fake `SpeechRecognition` counts its starts, and `COUNT_STREAMS` counts the microphone streams. On the old frontend, 5 failed; "recognition used with consent" is a guard and passed both times.
+- **Did:**
+  - `index.html`: the consent `<dialog>` and a "Your choices" card.
+  - `ui.askConsent` (yes, no, or null on Escape).
+  - `app.js`: `hasConsent`, `saveConsent` and `showConsents`. The recording start is gated, and recognition is gated separately.
+  - A recording is now uploaded whenever there is one. Before, it was uploaded only when recognition succeeded.
+  - Consents are forgotten at logout.
+  - `api.js`: `getConsents`/`setConsents`. `i18n.js`: 14 keys, EN and PL. CSS for the dialog and the choices.
+  - `test_microphone.py` gives consent through the API first.
+  - User guides and READMEs.
+- **Verified:**
+  - `scripts/check.sh` exit code 0: ruff, pip-audit "No known vulnerabilities found", 143 backend tests, smoke, 35 e2e.
+  - Screenshots at 375 px. The first look showed the dialog stuck to the top (the global margin reset) and a shrunken checkbox. Both were fixed and checked again in PL/dark.
+- **Commit:** 12af361 (pushed: yes)
+- **Discovered:** nothing new. The open H4 question about deleting recordings on withdrawal is noted on P1-6b2.
+- **Next:** P1-6c (export and delete your data).
+
 ### 31: 2026-10-15 09:49 UTC: P1-6b1 Consent kept on the server
 - **Baseline:** `check.sh` exit code 0: 136 backend tests, smoke, 29 e2e. No human commits. Tests were written in the scratchpad until it finished.
 - **Split:** P1-6b became b1 (store the answers, and enforce them where only the server can, on uploads) and b2 (the questions and the Account page switches).
