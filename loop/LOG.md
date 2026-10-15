@@ -19,6 +19,23 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 33: 2026-10-15 10:16 UTC: P1-6c1 Export and delete (API)
+- **Baseline:** `check.sh` exit code 0: 143 backend tests, smoke, 35 e2e. No human commits. Tests were written in the scratchpad until it finished.
+- **Split:** P1-6c became c1 (the API) and c2 (the Account page buttons).
+- **Test first:** `backend/tests/test_your_data.py`, 4 tests. 3 failed before. "No secrets, nobody else's data" passed trivially on the old 404 and checks real output now. My first draft counted every file in the shared upload folder; I changed it to count before and after.
+- **Did:**
+  - `as_data()` turns rows into JSON-ready data.
+  - `GET /users/me/export` returns a download, without `hashed_password` or `file_path`.
+  - `DELETE /users/me`: password check, using the login limit. It deletes consents and login cut-offs by hand (they have no foreign key), the user with its cascades, and then the files.
+  - `docker-smoke.sh` checks export and deletion on PostgreSQL.
+  - READMEs (EN/PL).
+- **Verified:**
+  - `scripts/check.sh` exit code 0: ruff, pip-audit "No known vulnerabilities found", 149 backend tests, smoke, 35 e2e.
+  - `docker-smoke.sh` exit code 0, including "export, and deleting an account with a recording, work on PostgreSQL".
+- **Commit:** f69b1cc (pushed: yes)
+- **Discovered:** nothing new.
+- **Next:** P1-6c2.
+
 ### 32: 2026-10-15 10:02 UTC: P1-6b2 Consent questions in the app
 - **Baseline:** `check.sh` exit code 0: 143 backend tests, smoke, 29 e2e. No human commits. Tests were written in the scratchpad until it finished.
 - **Test first:** `e2e/test_consent_questions.py`, 6 tests. A fake `SpeechRecognition` counts its starts, and `COUNT_STREAMS` counts the microphone streams. On the old frontend, 5 failed; "recognition used with consent" is a guard and passed both times.
