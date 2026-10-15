@@ -19,6 +19,22 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 37: 2026-10-15 11:10 UTC: P1-6f No third parties, no personal data in logs
+- **Baseline:** `check.sh` exit code 0: 152 backend tests, smoke, 44 e2e. No human commits. Tests were written in the scratchpad until it finished.
+- **Audit:**
+  - The app logs only start, stop and the retention count.
+  - The frontend `console` calls carry server error messages, not personal data.
+  - Uvicorn's access log has the time, the client address and the path (ids only).
+  - No code loads anything from other origins.
+- **Tests:** these were new checks of behaviour that was already right, so they passed from the start. To show they can fail, I planted a `logger.info(..., email=...)` in register: `test_logs.py` failed on it, and the plant was removed (`git status` clean). `test_logs.py` also fails if nothing at all is logged.
+- **Did:**
+  - `backend/tests/test_logs.py` and `e2e/test_no_third_parties.py`. The latter also reads the e2e run's real `api.log`.
+  - Privacy notice (EN/PL): what the logs hold; their retention is "[to be completed]".
+- **Verified:** `scripts/check.sh` exit code 0: ruff, pip-audit "No known vulnerabilities found", 153 backend tests, smoke, 46 e2e.
+- **Commit:** 2d75caf (pushed: yes)
+- **Discovered:** the CSP `connect-src` wildcard. Added to P1-8.
+- **Next:** P1-7 (service-worker caching).
+
 ### 36: 2026-10-15 10:58 UTC: P1-6e Retention for recordings
 - **Baseline:** `check.sh` exit code 0: 149 backend tests, smoke, 44 e2e. No human commits. Tests were written in the scratchpad until it finished.
 - **Test first:** `backend/tests/test_retention.py`, 3 tests: all failed before.
