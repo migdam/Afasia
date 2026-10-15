@@ -140,7 +140,8 @@ class UserBadge(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     badge_type = Column(Enum(BadgeType), nullable=False)
     earned_at = Column(DateTime, default=datetime.utcnow)
-    metadata = Column(JSON)  # Additional badge information
+    # Additional badge information ("metadata" is reserved by SQLAlchemy)
+    details = Column(JSON)
 
     # Relationships
     user = relationship("User", back_populates="badges")

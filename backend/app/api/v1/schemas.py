@@ -143,7 +143,7 @@ class BadgeResponse(BaseModel):
     id: int
     badge_type: BadgeType
     earned_at: datetime
-    metadata: Optional[dict]
+    details: Optional[dict]
 
     class Config:
         from_attributes = True

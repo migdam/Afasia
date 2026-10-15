@@ -4,7 +4,8 @@
 #   scripts/check.sh
 #
 # Creates or reuses .venv at the repository root, installs the pinned backend
-# requirements (only when they change), then runs the linter and the tests.
+# requirements (only when they change), then runs the linter, the tests, and
+# the README quick start (scripts/smoke.sh).
 # Set PYTHON to choose the interpreter (default: python3.11, else python3).
 set -euo pipefail
 
@@ -42,4 +43,6 @@ echo "== Lint: ruff"
 "$venv/bin/ruff" check .
 echo "== Tests: pytest"
 "$venv/bin/python" -m pytest
+echo "== Smoke: README quick start"
+"$root/scripts/smoke.sh"
 echo "== All checks passed"
