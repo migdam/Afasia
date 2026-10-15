@@ -19,6 +19,25 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 39: 2026-10-15 11:38 UTC: P1-8a Debug off, no guessable keys
+- **Baseline:** `check.sh` exit code 0: 153 backend tests, smoke, 48 e2e. No human commits. Tests were written in the scratchpad until it finished.
+- **Split:** P1-8 became a (debug, keys, health), b (Docker settings), c (CSP) and d (aware datetimes).
+- **Test first:** `backend/tests/test_safe_defaults.py`, 5 tests: all failed before.
+- **Did:**
+  - `DEBUG` defaults to false; Compose uses `${DEBUG:-false}`.
+  - A `SECRET_KEY` validator refuses the template key and keys under 32 bytes, saying how to make one.
+  - `/health/detailed` runs `SELECT 1`, returns 503 when the database is down, and shows no settings.
+  - `smoke.sh` sets a key, as the README says to.
+  - Two `test_config.py` tests got valid keys; what they check is unchanged.
+  - READMEs (EN/PL).
+- **Verified:**
+  - `scripts/check.sh` exit code 0: ruff, pip-audit "No known vulnerabilities found", 158 backend tests, smoke, 48 e2e.
+  - `docker-smoke.sh` exit code 0 with DEBUG off.
+  - Starting with the template key prints the new message.
+- **Commit:** fc2e1a0 (pushed: yes)
+- **Discovered:** nothing new.
+- **Next:** P1-8b (Docker gets all the settings).
+
 ### 38: 2026-10-15 11:23 UTC: P1-7 Retire the caching service worker
 - **Baseline:** `check.sh` exit code 0: 153 backend tests, smoke, 46 e2e. No human commits. Tests were written in the scratchpad until it finished.
 - **Found while reading:**
