@@ -17,6 +17,22 @@ Newest entry first. One entry per iteration.
 
 ---
 
+### 23: 2026-10-15 10:30 UTC: P1-5b Stay logged in while active
+- **Baseline:** `check.sh` green (110 backend, smoke, 15 e2e). No human commits.
+- **Split:** P1-5b (renewal and idle timeout) and P1-5c (tokens out of `localStorage`, plus the two limiter follow-ups from P1-5a).
+- **Test first:**
+  - `backend/tests/test_login_renewal.py`, 4 tests: 4 failed on the old code.
+  - `e2e/test_login_renewal.py`, 2 tests: the renewal test failed on the old frontend (timeout waiting for a new token); the "fresh token is left alone" test passed both times.
+- **Did:**
+  - Tokens carry `iat` and `auth_time`. `exp` is capped at `auth_time + LOGIN_MAX_HOURS` (new setting, default 12).
+  - `POST /api/v1/auth/refresh` (logged-in only, so the authorization test covers it automatically): same `auth_time`, new `exp`. 401 for tokens without `auth_time` or past the maximum.
+  - `frontend/js/api.js`: after any successful non-auth call, renew in the background once the token is past half its life. A refused renewal is remembered for that token; a renewal that finishes after logout is ignored.
+  - READMEs (feature line, config table, Known limitations), user guides (EN/PL) and `.env.template` updated. Fixed "szyfrowane" → "haszowane" in README.pl.md (bcrypt hashes; it doesn't encrypt).
+- **Verified:** `scripts/check.sh` exit code 0: ruff, pip-audit "No known vulnerabilities found", 115 backend tests, smoke, 17 e2e.
+- **Commit:** 032db35 (pushed: yes)
+- **Discovered:** whether 30 minutes idle and 12 hours maximum suit this population is a human decision; added to H7.
+- **Next:** P1-5c (cookies with CSRF) if it fits one iteration; otherwise split it, or take P1-6.
+
 ### 22: 2026-10-15 09:50 UTC: P1-5a Login safety
 - **Baseline:** `check.sh` green (102 backend, smoke, 15 e2e). No human commits.
 - **Split:** P1-5 became P1-5a (per-request account check, login limit, minimum password length) and P1-5b (cookies or refresh tokens, idle timeout).
