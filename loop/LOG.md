@@ -19,6 +19,20 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 69: 2026-10-15 20:18 UTC: P1-11 Session cards fit a phone
+- **Baseline:** `check.sh` exit code 0: 305 backend tests, smoke, 112 e2e. No human commits. The test and the patch were written in the scratchpad until the baseline finished.
+- **Test first:** `e2e/test_session_lists_fit.py`, at 390 px with two finished sessions and a long planned title. It checks that no title, badge, score or button sticks out of its card, that no card scrolls, and that every score is on screen. All 4 cases (EN/PL × normal/larger text) failed before. With larger text the Delete button stuck out too.
+- **Did:** CSS only.
+  - `.session-meta` wraps.
+  - `.session-header` has a gap.
+  - Its first child gets `min-width: 0`, so the details shrink and wrap.
+  - `.session-score` doesn't shrink.
+  - README EN/PL: the "not tested yet" note now matches the tests. Planned sessions and parts of the phone layout are tested; the CSV and PDF exports are not.
+- **Verified:** `scripts/check.sh` exit code 0: ruff "All checks passed!", pip-audit "No known vulnerabilities found", 305 backend tests, smoke, 116 e2e. Screenshots at 390 px (normal and larger text) and 1280 px look right.
+- **Commit:** cca78ba (pushed: yes)
+- **Discovered:** P2-12. With A+ at 390 px, "Dodaj harmonogram" spills out of its button in the card header. Other screens may have the same problem with larger text, so it is an audit item.
+- **Next:** P2-10b (dates and numbers via `Intl`, Polish plurals).
+
 ### 68: 2026-10-15 20:01 UTC: P2-10a No English on Polish screens
 - **Baseline:** `check.sh` exit code 0: 305 backend tests, smoke, 107 e2e. No human commits.
 - **Split:** P2-10 became a (UI text), b (dates, numbers, plurals via `Intl`) and c (exports, which need a font with Polish letters).
