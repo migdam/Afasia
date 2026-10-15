@@ -19,7 +19,7 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
-### 24: 2026-10-15 08:33 UTC: P1-5c1 Login cookie on the server
+### 24: 2026-10-15 08:24 UTC: P1-5c1 Login cookie on the server
 - **Baseline:** green at the end of iteration 23, with the same code (only `loop/` changed since): 115 backend, smoke, 17 e2e. No human commits.
 - **Split:** P1-5c became c1 (the server side), c2 (the web app switches to the cookie) and c3 (the follow-ups on the wrong-password limit). Docker runs one uvicorn worker, so the shared-count item is only needed if that changes.
 - **Test first:** `backend/tests/test_cookie_login.py`, 6 tests. On the old code: 5 failed, and the Bearer test passed (it's a regression guard). I first expected 201 from creating a session; the endpoint answers 200, and I fixed the test.
