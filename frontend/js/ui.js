@@ -166,6 +166,11 @@ class UIManager {
 
         this.updateUserStats(user);
         this.loadBadgeCount();
+        // Streak days follow the person's own midnight (P2-9b).
+        const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        if (timeZone) {
+            api.setTimeZone(timeZone).catch((error) => console.error('Failed to save the time zone:', error));
+        }
     }
 
     async loadBadgeCount() {

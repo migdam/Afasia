@@ -44,6 +44,24 @@ class PasswordChange(BaseModel):
     _password_rules = field_validator("new_password")(check_new_password)
 
 
+class TimeZoneChoice(BaseModel):
+    """An IANA time zone name, such as Europe/Warsaw; null when not known."""
+    model_config = ConfigDict(extra="forbid")
+
+    time_zone: Optional[str] = Field(default=None, max_length=64)
+
+    @field_validator("time_zone")
+    @classmethod
+    def a_real_time_zone(cls, value):
+        if value is not None:
+            from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+            try:
+                ZoneInfo(value)
+            except (ZoneInfoNotFoundError, ValueError):
+                raise ValueError("not a known time zone") from None
+        return value
+
+
 class Consents(BaseModel):
     """Yes (true), no (false) or not asked yet (null), for each kind of processing.
 

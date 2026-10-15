@@ -10,7 +10,7 @@ from sqlalchemy import func
 from ....db.database import get_db
 from ....db.models import (
     User, TherapySession, Exercise, Progress, UserBadge,
-    ScheduledSession, AudioRecording, LoginCutoff, Consent
+    ScheduledSession, AudioRecording, LoginCutoff, Consent, TimeZoneSetting
 )
 from ....core.clock import as_utc, utcnow
 from ....core.config import settings
@@ -21,7 +21,7 @@ from ....core.security import (
 )
 from .auth import login_response
 from ..schemas import (
-    AccountDeletion, Consents, PasswordChange, TokenResponse, UserResponse, UserUpdate, ProgressResponse, ProgressStats,
+    AccountDeletion, Consents, TimeZoneChoice, PasswordChange, TokenResponse, UserResponse, UserUpdate, ProgressResponse, ProgressStats,
     BadgeResponse, ScheduledSessionCreate, ScheduledSessionResponse,
     AudioRecordingResponse
 )
@@ -103,6 +103,32 @@ def update_consents(
     return get_consents(db, user_id)
 
 
+@router.get("/time-zone", response_model=TimeZoneChoice)
+def read_time_zone(user_id: int = Depends(get_current_user_id), db: Session = Depends(get_db)):
+    row = db.get(TimeZoneSetting, user_id)
+    return TimeZoneChoice(time_zone=row.time_zone if row else None)
+
+
+@router.put("/time-zone", response_model=TimeZoneChoice)
+def update_time_zone(
+    choice: TimeZoneChoice,
+    user_id: int = Depends(get_current_user_id),
+    db: Session = Depends(get_db),
+):
+    """Your time zone, sent by the browser, so streak days follow your own
+    midnight (P2-9b). Null forgets it: days are then counted in UTC."""
+    row = db.get(TimeZoneSetting, user_id)
+    if choice.time_zone is None:
+        if row:
+            db.delete(row)
+    elif row:
+        row.time_zone = choice.time_zone
+    else:
+        db.add(TimeZoneSetting(user_id=user_id, time_zone=choice.time_zone))
+    db.commit()
+    return choice
+
+
 def as_data(row, leave_out=()) -> dict:
     """A database row as plain JSON-ready data, without the columns left out."""
     data = {}
@@ -130,6 +156,7 @@ def export_my_data(user_id: int = Depends(get_current_user_id), db: Session = De
         "exported_at": as_utc(utcnow()).isoformat(),
         "account": as_data(user, leave_out={"hashed_password"}),
         "consents": get_consents(db, user_id).model_dump(),
+        "time_zone": read_time_zone(user_id, db).time_zone,
         "sessions": [
             {**as_data(session), "exercises": [
                 {**as_data(e), "cue_level": e.cue_level, "choices_shown": e.choices_shown,
@@ -175,6 +202,7 @@ def delete_my_account(
     files = [Path(r.file_path) for r in user.audio_recordings]
     # Rows without a foreign key to users go by hand; the rest follow the user.
     db.query(Consent).filter(Consent.user_id == user_id).delete()
+    db.query(TimeZoneSetting).filter(TimeZoneSetting.user_id == user_id).delete()
     db.query(LoginCutoff).filter(LoginCutoff.user_id == user_id).delete()
     db.delete(user)
     db.commit()

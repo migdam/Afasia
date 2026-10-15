@@ -257,6 +257,17 @@ class LoginCutoff(Base):
     not_before = Column(Integer, nullable=False)  # Unix time
 
 
+class TimeZoneSetting(Base):
+    """The person's time zone (IANA name, from their browser), so streak days
+    follow their own midnight (backlog P2-9b). Its own table, as there are
+    no migrations yet (P3-1); no foreign key, like consents, so deleting an
+    account deletes it by hand."""
+    __tablename__ = "time_zones"
+
+    user_id = Column(Integer, primary_key=True)
+    time_zone = Column(String(64), nullable=False)
+
+
 class Consent(Base):
     """A person's yes or no to one kind of processing, and when they said it.
 

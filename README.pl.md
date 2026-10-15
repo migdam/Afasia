@@ -124,6 +124,7 @@ FastAPI udostępnia interaktywną dokumentację pod `/docs` i `/redoc`. Wszystki
 | Planowanie | `GET`/`POST /users/scheduled-sessions`, `DELETE /users/scheduled-sessions/{id}` |
 | Nagrania | `POST /users/audio/upload` (tylko po wyrażeniu zgody, inaczej 403), `GET /users/audio/{id}` |
 | Twoje dane | `GET /users/me/export`: wszystko, co jest o Tobie zapisane, jako plik JSON do pobrania (bez skrótu hasła i ścieżek plików); `DELETE /users/me` z `{"password": ...}`: usuwa konto i wszystko, co jest o Tobie zapisane, łącznie z plikami nagrań |
+| Strefa czasowa | `GET`/`PUT /users/time-zone`: `{"time_zone": "Europe/Warsaw"}` (nazwa IANA albo `null`), wysyłana przez przeglądarkę; według niej liczy się dni serii, a gdy jej brak, według UTC |
 | Zgody | `GET`/`PUT /users/consents`: `recordings` i `speech_recognition`, każda `true`, `false` albo `null` (jeszcze nie pytano) |
 | Administrator | `GET /admin/stats`, `GET /admin/users`, `GET /admin/users/{id}/sessions`, `PUT /admin/users/{id}/activate`, `PUT /admin/users/{id}/deactivate` |
 

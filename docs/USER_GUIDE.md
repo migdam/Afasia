@@ -109,7 +109,7 @@ Not available yet: there are no exercises of this type, so the app doesn't offer
 ## Points, streaks and badges
 
 - **Points:** every correct answer earns 10 points on Easy, 20 on Medium and 30 on Hard. They're added when you finish the session.
-- **Streak:** finishing a session on consecutive days builds a streak. Days are counted in UTC, so just after midnight in Poland may still count as the day before.
+- **Streak:** finishing a session on consecutive days builds a streak. Days follow the time zone of your device, which the app keeps for this.
 - **Badges:** you earn one for your first finished session, for a 7-day streak and for a 30-day streak.
 
 ## Your progress

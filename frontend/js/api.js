@@ -111,6 +111,14 @@ class APIClient {
         return data;
     }
 
+    // The browser's time zone, so streak days follow the person's own midnight.
+    async setTimeZone(timeZone) {
+        return this.request('/users/time-zone', {
+            method: 'PUT',
+            body: JSON.stringify({ time_zone: timeZone }),
+        });
+    }
+
     // Consent: { recordings, speech_recognition }, each true, false or null (not asked)
     async getConsents() {
         return this.request('/users/consents');

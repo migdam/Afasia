@@ -1,17 +1,19 @@
 """Therapy session and exercise endpoints."""
 from typing import List
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from ....db.database import get_db
 from ....db.models import (
     User, TherapySession, Exercise, Progress, UserBadge,
-    DifficultyLevel, ExerciseType, BadgeType, ExerciseCue, ExerciseChoice, ExerciseTiles
+    DifficultyLevel, ExerciseType, BadgeType, ExerciseCue, ExerciseChoice, ExerciseTiles,
+    TimeZoneSetting,
 )
 from ....answers import is_near_miss, matches
 from ....content import MAX_CUE_LEVEL, accepted_answers, choice_words, content_items, letter_tiles, naming_cue
-from ....core.clock import utcnow
+from ....core.clock import as_utc, utcnow
 from ....core.security import get_current_user_id
 from ..schemas import (
     SessionCreate, SessionResponse,
@@ -249,15 +251,28 @@ def finish_session(db: Session, session: TherapySession):
 
     # Streaks come from the days with a finished session, read afresh, not
     # from the counters: a session finishing at the same time as another
-    # may have read the person before the other one finished (P2-9a).
-    days = {now.date()} | {
-        finished.date() for (finished,) in db.query(TherapySession.completed_at).filter(
+    # may have read the person before the other one finished (P2-9a). Days
+    # are the person's own, in their time zone if known (P2-9b).
+    setting = db.get(TimeZoneSetting, user.id)
+    zone = timezone.utc
+    if setting:
+        try:
+            zone = ZoneInfo(setting.time_zone)
+        except (ZoneInfoNotFoundError, ValueError):
+            pass  # a zone no longer known: count in UTC rather than fail the answer
+
+    def local_day(moment):
+        return as_utc(moment).astimezone(zone).date()
+
+    today = local_day(now)
+    days = {today} | {
+        local_day(finished) for (finished,) in db.query(TherapySession.completed_at).filter(
             TherapySession.user_id == user.id,
             TherapySession.is_completed.is_(True),
             TherapySession.completed_at.isnot(None),
         )
     }
-    current, longest = streaks(days, now.date())
+    current, longest = streaks(days, today)
     user.current_streak = current
     user.longest_streak = max(user.longest_streak or 0, longest)
     user.last_activity_date = now

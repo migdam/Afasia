@@ -108,7 +108,7 @@ Jeszcze niedostępne: nie ma ćwiczeń tego typu, więc aplikacja ich nie oferuj
 ## Punkty, serie i odznaki
 
 - **Punkty:** każda poprawna odpowiedź daje 10 punktów na poziomie Łatwym, 20 na Średnim i 30 na Trudnym. Punkty dolicza się po ukończeniu sesji.
-- **Seria:** kończenie sesji w kolejne dni buduje serię. Dni liczy się według czasu UTC, więc tuż po północy w Polsce może to być jeszcze poprzedni dzień.
+- **Seria:** kończenie sesji w kolejne dni buduje serię. Dni liczy się według strefy czasowej Twojego urządzenia, którą aplikacja w tym celu zapamiętuje.
 - **Odznaki:** za pierwszą ukończoną sesję, za serię 7 dni i za serię 30 dni.
 
 ## Twój postęp
