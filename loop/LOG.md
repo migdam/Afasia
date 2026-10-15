@@ -2,6 +2,8 @@
 
 Newest entry first. One entry per iteration.
 
+Times in entries 13–23 were first written as estimates that ran up to 2¼ hours ahead of the clock; they were corrected to the time each entry was committed. Take times from `date -u`, not from memory.
+
 ## Entry template
 
 ```
@@ -17,7 +19,7 @@ Newest entry first. One entry per iteration.
 
 ---
 
-### 23: 2026-10-15 10:30 UTC: P1-5b Stay logged in while active
+### 23: 2026-10-15 08:15 UTC: P1-5b Stay logged in while active
 - **Baseline:** `check.sh` green (110 backend, smoke, 15 e2e). No human commits.
 - **Split:** P1-5b (renewal and idle timeout) and P1-5c (tokens out of `localStorage`, plus the two limiter follow-ups from P1-5a).
 - **Test first:**
@@ -33,7 +35,7 @@ Newest entry first. One entry per iteration.
 - **Discovered:** whether 30 minutes idle and 12 hours maximum suit this population is a human decision; added to H7.
 - **Next:** P1-5c (cookies with CSRF) if it fits one iteration; otherwise split it, or take P1-6.
 
-### 22: 2026-10-15 09:50 UTC: P1-5a Login safety
+### 22: 2026-10-15 08:05 UTC: P1-5a Login safety
 - **Baseline:** `check.sh` green (102 backend, smoke, 15 e2e). No human commits.
 - **Split:** P1-5 became P1-5a (per-request account check, login limit, minimum password length) and P1-5b (cookies or refresh tokens, idle timeout).
 - **Test first:** `backend/tests/test_login_safety.py`, 4 tests. On the old code: 3 failed, 1 passed (`assert 200 == 429`; a deactivated user's token still got 200).
@@ -49,7 +51,7 @@ Newest entry first. One entry per iteration.
   - The limit is per username, so an attacker can lock someone out for 15 minutes. That is accepted for now and noted in P1-5b's scope for review.
 - **Next:** P1-5b if it fits one iteration, otherwise P1-6.
 
-### 21: 2026-10-15 09:05 UTC: P1-4 Dependency health
+### 21: 2026-10-15 07:54 UTC: P1-4 Dependency health
 - **Baseline:** `check.sh` green (102 backend, smoke, 15 e2e). No human commits.
 - **Audit of the old pins** (pip-audit in a scratch venv): 67 known vulnerabilities.
   - pillow 31, python-multipart 16, starlette 14, python-dotenv 2, anyio 2, fastapi 1.
@@ -77,7 +79,7 @@ Newest entry first. One entry per iteration.
 - **Protocol notes:** after any dependency upgrade, compare the test count with the previous run. A drop or new skips means tests stopped running.
 - **Next:** P1-5, login sessions.
 
-### 20: 2026-10-15 08:40 UTC: P1-3a Staff accounts and authorization tests
+### 20: 2026-10-15 07:40 UTC: P1-3a Staff accounts and authorization tests
 - **Baseline:** `check.sh` green (71 backend, smoke, 15 e2e). No human commits.
 - **Split:** P1-3 became P1-3a (done here) and P1-3b. P1-3b needs product decisions (H7): how therapists and patients get linked, and how the patient consents.
 - **Did:**
@@ -96,7 +98,7 @@ Newest entry first. One entry per iteration.
 - **Discovered:** nothing new.
 - **Next:** P1-3b needs H7's decisions, so take P1-4 (dependency health) first. Then P1-5 onwards.
 
-### 19: 2026-10-15 08:20 UTC: P1-2 Private voice recordings
+### 19: 2026-10-15 07:30 UTC: P1-2 Private voice recordings
 - **Baseline:** `check.sh` green (67 backend, smoke, 15 e2e). No human commits.
 - **Did:**
   - Removed the public `/uploads` mount.
@@ -120,7 +122,7 @@ Newest entry first. One entry per iteration.
 - **Discovered:** nothing new. Recordings are still kept forever and uploaded without a consent step; both are already in P1-6.
 - **Next:** P1-3, the therapist/admin model.
 
-### 18: 2026-10-15 08:05 UTC: P1-1 No user input as HTML; CSP
+### 18: 2026-10-15 07:20 UTC: P1-1 No user input as HTML; CSP
 - **Baseline:** `check.sh` green (65 backend, smoke, 13 e2e). No human commits.
 - **Did:**
   - Replaced every `innerHTML` and inline `onclick` in `ui.js` (recent and scheduled sessions, badges, empty states) and `app.js` (options, record button) with DOM methods. Two helpers, `el()` and `showEmpty()`, put all text in via `textContent`.
@@ -140,7 +142,7 @@ Newest entry first. One entry per iteration.
 - **Discovered:** nothing new.
 - **Next:** P1-2, recordings served without authentication.
 
-### 17: 2026-10-15 07:50 UTC: P1-10 Simultaneous answers
+### 17: 2026-10-15 07:11 UTC: P1-10 Simultaneous answers
 - **Baseline:** `check.sh` green (63 backend, smoke, 13 e2e). No human commits.
 - **Did:**
   - The answer is claimed with `UPDATE … WHERE is_correct IS NULL` (no row changed: 409) and committed.
@@ -162,7 +164,7 @@ Newest entry first. One entry per iteration.
 - **Discovered:** the streak update in `finish_session` is still read-modify-write. Two sessions of the same user finishing in the same instant could miscount the streak by one. That's low impact; noted for P2-9, which redesigns streaks.
 - **Next:** P1-1, rendering user data without `innerHTML`.
 
-### 16: 2026-10-15 07:35 UTC: P0-9b User guides (all P0 items done)
+### 16: 2026-10-15 07:02 UTC: P0-9b User guides (all P0 items done)
 - **Baseline:** `check.sh` green (61 backend, smoke, 13 e2e). No human commits.
 - **Did:**
   - Rewrote `docs/USER_GUIDE.md` and `docs/USER_GUIDE.pl.md` from the actual screens, labels (the Polish labels from `i18n.js`) and behaviour.
@@ -180,7 +182,7 @@ Newest entry first. One entry per iteration.
 - **Discovered:** nothing new.
 - **Next:** the P1 list, top to bottom, starting with P1-10 (simultaneous answers are all accepted).
 
-### 15: 2026-10-15 07:20 UTC: P0-9a READMEs describe only what exists
+### 15: 2026-10-15 06:53 UTC: P0-9a READMEs describe only what exists
 - **Baseline:** `check.sh` green (51 backend, smoke, 13 e2e). No human commits.
 - **Split:** P0-9 covers about 3,600 lines of docs, so it became P0-9a (READMEs, done here) and P0-9b (user guides and `.env.template`).
 - **Did:**
@@ -206,7 +208,7 @@ Newest entry first. One entry per iteration.
 - **Discovered:** nothing new.
 - **Next:** P0-9b, the user guides.
 
-### 14: 2026-10-15 07:05 UTC: P0-8 Docker stack
+### 14: 2026-10-15 06:43 UTC: P0-8 Docker stack
 - **Baseline:** `check.sh` green (51 backend, smoke, 13 e2e). No human commits.
 - **Environment:**
   - No Docker daemon was running. I started `dockerd`, which works as root here and is still running in this container.
@@ -233,7 +235,7 @@ Newest entry first. One entry per iteration.
 - **Discovered:** nothing new. `DEBUG` is still `"true"` in Compose (P1-8).
 - **Next:** P0-9, honest docs.
 
-### 13: 2026-10-15 06:40 UTC: P0-7g The whole flow in EN and PL (P0-7 done)
+### 13: 2026-10-15 06:30 UTC: P0-7g The whole flow in EN and PL (P0-7 done)
 - **Baseline:** `check.sh` green (51 backend, smoke, 11 e2e). No human commits.
 - **Did:** added `e2e/test_full_flow.py`, parametrized over EN and PL. Each run signs up, switches language, then does:
   - a word-naming session with typed answers, one of them wrong (80%);
