@@ -19,6 +19,27 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 42: 2026-10-15 12:20 UTC: P1-8d Times in UTC, with an offset
+- **Baseline:** `check.sh` exit code 0: 162 backend tests, smoke, 50 e2e. No human commits. Tests were written in the scratchpad until it finished.
+- **The user-visible bug:** the API sent naive UTC times, which browsers read as local. In Warsaw, a session planned for 10:00 showed at 08:00.
+- **Test first:**
+  - `backend/tests/test_times.py`, 4 tests: all failed before.
+  - `e2e/test_time_zone.py`, a Europe/Warsaw browser context: it failed before.
+  - My guard test first matched the new `utcnow()` helper too. I narrowed it to `datetime.utcnow`, and it still fails on the old code.
+- **Did:**
+  - `app/core/clock.py`.
+  - `schemas.UTCDateTime` (AfterValidator to naive UTC; PlainSerializer adding `+00:00`) on every response time and on `scheduled_time` input.
+  - The export uses `as_utc`.
+  - 21 uses of `datetime.utcnow` replaced; export file names and the PDF time in UTC.
+  - READMEs (EN/PL).
+- **Verified:**
+  - `scripts/check.sh` exit code 0: ruff, pip-audit "No known vulnerabilities found", 166 backend tests, smoke, 51 e2e.
+  - `docker-smoke.sh` exit code 0 (PostgreSQL).
+- **Gate:** G5 Security is now 🟢: every criterion in `loop/PROMPT.md` is met.
+- **Commit:** e94cf91 (pushed: yes)
+- **Discovered:** nothing new.
+- **Next:** P1-9 (bounds on `num_exercises`).
+
 ### 41: 2026-10-15 12:04 UTC: P1-8c A tighter CSP (and a flaky test)
 - **Baseline:** red. 161 backend tests and smoke passed, but 1 e2e failed: `test_on_a_phone_the_last_button_is_not_hidden_behind_the_menu` (684.6 > 654). The page hadn't changed since it last passed. Cause: `mouse.wheel` scrolls asynchronously, so the test measured mid-scroll. Per the protocol, I fixed that first (e857fb0): the test now scrolls instantly and waits a frame. It passed 6 runs in a row, and still fails with the old padding put back (658.4 > 654).
 - **Test first (CSP):** `e2e/test_csp.py`: a fetch to another site must raise a `connect-src` violation. It failed before, with none. A unit check in `test_frontend_safety.py` that `connect-src` has no `http:`, `https:` or `*` also failed before.
