@@ -19,7 +19,7 @@ The buttons at the top right of every screen:
 
 Your browser remembers these choices.
 
-The exercises come in the language you choose. When Polish is chosen, the PDF export is still in English. Dates are written in words, such as "15 October 2026", in the chosen language.
+The exercises and the exports come in the language you choose. Dates are written in words, such as "15 October 2026".
 
 ## Your account
 
@@ -122,7 +122,7 @@ Click **Progress** in the bottom bar. You'll see:
 - **Progress Over Time:** a chart of each session's score over the last 30 days.
 - **Earned Badges.**
 
-**Export CSV** downloads every finished session as a spreadsheet file, in the language on screen and with times in your time zone. **Export PDF** downloads a short report with your totals and your last 10 sessions. You can give either one to your therapist.
+**Export CSV** downloads every finished session as a spreadsheet file, in the language on screen and with times in your time zone. **Export PDF** downloads a short report with your totals and your last 10 sessions, in the language on screen. It says that these are results of practice in the app, not a clinical assessment. You can give either one to your therapist.
 
 ## Planning sessions
 

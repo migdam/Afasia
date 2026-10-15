@@ -19,7 +19,7 @@ Przyciski w prawym górnym rogu każdego ekranu:
 
 Przeglądarka zapamiętuje te wybory.
 
-Ćwiczenia są w wybranym języku. Po wybraniu polskiego eksport PDF jest jeszcze po angielsku. Daty są zapisane słownie, np. „15 października 2026”, w wybranym języku.
+Ćwiczenia i eksporty są w wybranym języku. Daty są zapisane słownie, np. „15 października 2026”.
 
 ## Twoje konto
 
@@ -121,7 +121,7 @@ Kliknij **Postęp** na dolnym pasku. Zobaczysz:
 - **Postęp w czasie:** wykres wyników sesji z ostatnich 30 dni.
 - **Zdobyte odznaki.**
 
-**Eksportuj CSV** pobiera wszystkie ukończone sesje jako plik arkusza kalkulacyjnego, w języku ekranu i z czasem w Twojej strefie czasowej. **Eksportuj PDF** pobiera krótki raport z podsumowaniem i 10 ostatnimi sesjami. Każdy z nich możesz przekazać logopedzie.
+**Eksportuj CSV** pobiera wszystkie ukończone sesje jako plik arkusza kalkulacyjnego, w języku ekranu i z czasem w Twojej strefie czasowej. **Eksportuj PDF** pobiera krótki raport z podsumowaniem i 10 ostatnimi sesjami, w języku ekranu. Raport zaznacza, że to wyniki ćwiczeń w aplikacji, a nie ocena kliniczna. Każdy z nich możesz przekazać logopedzie.
 
 ## Planowanie sesji
 

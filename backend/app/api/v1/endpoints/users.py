@@ -14,6 +14,7 @@ from ....db.models import (
 )
 from ....core.clock import as_utc, utcnow
 from ....export_text import CSV_DELIMITER, TEXTS, decimal, language_of, local_time
+from ....progress_report import report_lines, report_pdf
 from ....core.config import settings
 from ....core import login_limit
 from ....core.security import (
@@ -32,9 +33,6 @@ import csv
 import io
 import uuid
 from pathlib import Path
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
-from reportlab.lib.utils import simpleSplit
 
 router = APIRouter()
 
@@ -445,62 +443,22 @@ def export_progress_csv(
 
 @router.get("/progress/export/pdf")
 def export_progress_pdf(
+    lang: Optional[Literal["en", "pl"]] = None,
     user_id: int = Depends(get_current_user_id),
     db: Session = Depends(get_db)
 ):
-    """Export progress report as PDF."""
-    user = db.query(User).filter(User.id == user_id).first()
+    """A short progress report as a PDF (A4), in the language asked for (or
+    the account's), with dates in your time zone (backlog P2-10c2)."""
+    user = db.get(User, user_id)
+    setting = db.get(TimeZoneSetting, user_id)
     progress_records = db.query(Progress).filter(
         Progress.user_id == user_id
     ).order_by(Progress.date.desc()).limit(10).all()
 
-    # Create PDF in memory
-    buffer = io.BytesIO()
-    c = canvas.Canvas(buffer, pagesize=letter)
-    width, height = letter
-
-    # Title
-    c.setFont("Helvetica-Bold", 24)
-    c.drawString(50, height - 50, "Aphasia Therapy Progress Report")
-
-    # User info
-    c.setFont("Helvetica", 12)
-    c.drawString(50, height - 80, f"User: {user.username}")
-    c.drawString(50, height - 100, f"Generated: {utcnow().strftime('%Y-%m-%d %H:%M:%S')} UTC")
-
-    # Stats
-    c.setFont("Helvetica-Bold", 14)
-    c.drawString(50, height - 140, "Overall Statistics")
-
-    c.setFont("Helvetica", 12)
-    y = height - 170
-    c.drawString(50, y, f"Total Points: {user.total_points}")
-    y -= 20
-    c.drawString(50, y, f"Current Streak: {user.streak_now} days")
-    y -= 20
-    c.drawString(50, y, f"Longest Streak: {user.longest_streak} days")
-    y -= 40
-
-    # Recent progress
-    c.setFont("Helvetica-Bold", 14)
-    c.drawString(50, y, "Recent Progress (Last 10 Sessions)")
-    y -= 30
-
-    c.setFont("Helvetica", 10)
-    for record in progress_records:
-        text = f"{record.date.strftime('%Y-%m-%d')}: {record.exercises_completed} exercises, {round(record.accuracy_rate, 1)}% accuracy, {record.points_earned} points"
-        c.drawString(50, y, text)
-        y -= 20
-
-        if y < 50:  # New page if needed
-            c.showPage()
-            y = height - 50
-
-    c.save()
-    buffer.seek(0)
-
-    return StreamingResponse(
-        buffer,
+    lines = report_lines(user, progress_records, language_of(lang, user.language),
+                         setting.time_zone if setting else None, utcnow())
+    return Response(
+        content=report_pdf(lines),
         media_type="application/pdf",
         headers={"Content-Disposition": f"attachment; filename=progress_report_{utcnow().strftime('%Y%m%d')}.pdf"}
     )

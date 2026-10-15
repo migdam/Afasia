@@ -114,6 +114,9 @@ assert call("POST", f"/api/v1/therapy/exercises/{naming_exercise['id']}/choices"
 assert call("POST", f"/api/v1/therapy/exercises/{naming_exercise['id']}/tiles", token=token)[0] == 200, "tiles"
 status, body = call("GET", "/api/v1/users/me/export", token=token)
 assert status == 200 and len(json.loads(body)["recordings"]) == 1, "export"
+status, body = call("GET", "/api/v1/users/progress/export/pdf?lang=pl", token=token)
+assert status == 200 and body.startswith(b"%PDF") and b"DejaVuSans" in body, \
+    "the Polish PDF report needs its font in the image (backend/app/fonts)"
 status, _ = call("DELETE", "/api/v1/users/me", {"password": account["password"]}, token=token)
 assert status == 204, f"delete: {status}"
 try:

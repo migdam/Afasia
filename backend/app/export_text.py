@@ -46,3 +46,46 @@ def decimal(value: float, language: str) -> str:
 def local_time(moment: datetime, zone_name: Optional[str]) -> str:
     """A (naive UTC) time in the person's time zone, such as 2026-03-03 00:30."""
     return as_utc(moment).astimezone(zone(zone_name)).strftime("%Y-%m-%d %H:%M")
+
+
+MONTHS = {
+    "en": ["January", "February", "March", "April", "May", "June", "July", "August",
+           "September", "October", "November", "December"],
+    "pl": ["stycznia", "lutego", "marca", "kwietnia", "maja", "czerwca", "lipca", "sierpnia",
+           "września", "października", "listopada", "grudnia"],
+}
+
+
+def date_in_words(moment: datetime, zone_name: Optional[str], language: str) -> str:
+    """A (naive UTC) time's date in the person's time zone, in words, such as
+    "3 marca 2026"."""
+    local = as_utc(moment).astimezone(zone(zone_name))
+    return f"{local.day} {MONTHS[language][local.month - 1]} {local.year}"
+
+
+# Counts in words, by plural category: the web app uses the same forms
+# (frontend/js/i18n.js).
+COUNTS = {
+    "day": {"en": {"one": "{n} day", "other": "{n} days"},
+            "pl": {"one": "{n} dzień", "few": "{n} dni", "many": "{n} dni"}},
+    "exercise": {"en": {"one": "{n} exercise", "other": "{n} exercises"},
+                 "pl": {"one": "{n} ćwiczenie", "few": "{n} ćwiczenia", "many": "{n} ćwiczeń"}},
+    "point": {"en": {"one": "{n} point", "other": "{n} points"},
+              "pl": {"one": "{n} punkt", "few": "{n} punkty", "many": "{n} punktów"}},
+}
+
+
+def plural_category(n: int, language: str) -> str:
+    """The plural category of a whole number (Unicode CLDR's rules)."""
+    if language == "pl":
+        if n == 1:
+            return "one"
+        if n % 10 in (2, 3, 4) and n % 100 not in (12, 13, 14):
+            return "few"
+        return "many"
+    return "one" if n == 1 else "other"
+
+
+def count(n: int, unit: str, language: str) -> str:
+    """A whole number with its unit in the right form: "1 dzień", "2 dni", "5 dni"."""
+    return COUNTS[unit][language][plural_category(n, language)].format(n=n)

@@ -9,7 +9,7 @@ Aplikacja internetowa do ćwiczenia słów i zdań po udarze lub urazie mózgu. 
 
 ## Co już działa
 
-Konta, sesje ćwiczeń, informacja zwrotna, wyniki, wykres postępów, planowanie sesji i panel administratora są sprawdzane testami automatycznymi (zob. [Rozwój](#rozwój)), podobnie jak część układu na telefon: górny pasek i listy sesji. Eksport do PDF nie ma jeszcze testów.
+Konta, sesje ćwiczeń, informacja zwrotna, wyniki, wykres postępów, planowanie sesji, eksporty i panel administratora są sprawdzane testami automatycznymi (zob. [Rozwój](#rozwój)), podobnie jak część układu na telefon: górny pasek i listy sesji.
 
 - **Konta.** Rejestracja, logowanie, wylogowanie i zmiana hasła na stronie Konto. Odświeżenie strony nie kończy zalogowania. Hasła są haszowane algorytmem bcrypt, a logowanie korzysta z tokenów JWT. Zalogowanie kończy się po 30 minutach bez korzystania z aplikacji, a najpóźniej 12 godzin po zalogowaniu.
 - **Sesje ćwiczeń** po 5–50 ćwiczeń, na poziomie łatwym, średnim lub trudnym:
@@ -121,7 +121,7 @@ FastAPI udostępnia interaktywną dokumentację pod `/docs` i `/redoc`. Wszystki
 | Podpowiedzi | `POST /therapy/exercises/{id}/hint`: kolejna podpowiedź do nazywania (1 do czego służy, 2 pierwsza litera, 3 całe słowo); mniej punktów za każdą użytą podpowiedź (proporcje oczekują na ocenę kliniczną) |
 | Odpowiedzi | `POST /therapy/exercises/{id}/answer` (wyrozumiale: wielkość liter, spacje, interpunkcja i brak polskich znaków się nie liczą; `almost` oznacza drobną pomyłkę): jedna odpowiedź na ćwiczenie. Odpowiedź serwera zawiera prawidłową odpowiedź, a ostatnia odpowiedź kończy sesję i ją ocenia. |
 | Wyniki | `POST /therapy/sessions/{id}/complete`: wynik ukończonej sesji, policzony przez serwer |
-| Twoje dane | `GET`/`PUT /users/profile`, `GET /users/progress`, `GET /users/badges`, `GET /users/progress/export/csv?lang=pl` (po angielsku lub po polsku, domyślnie w języku konta; po polsku ze średnikami i przecinkiem dziesiętnym; czas w strefie czasowej osoby), `GET /users/progress/export/pdf` |
+| Twoje dane | `GET`/`PUT /users/profile`, `GET /users/progress`, `GET /users/badges`, `GET /users/progress/export/csv?lang=pl` (po angielsku lub po polsku, domyślnie w języku konta; po polsku ze średnikami i przecinkiem dziesiętnym; czas w strefie czasowej osoby), `GET /users/progress/export/pdf?lang=pl` (raport A4 w tym samym języku, z osadzoną czcionką z polskimi literami) |
 | Planowanie | `GET`/`POST /users/scheduled-sessions`, `DELETE /users/scheduled-sessions/{id}` |
 | Nagrania | `POST /users/audio/upload` (tylko po wyrażeniu zgody, inaczej 403), `GET /users/audio/{id}` |
 | Twoje dane | `GET /users/me/export`: wszystko, co jest o Tobie zapisane, jako plik JSON do pobrania (bez skrótu hasła i ścieżek plików); `DELETE /users/me` z `{"password": ...}`: usuwa konto i wszystko, co jest o Tobie zapisane, łącznie z plikami nagrań |
