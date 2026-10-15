@@ -133,6 +133,7 @@ scripts/check.sh
 
 This is the one check that must pass before every commit. It sets up its own environment (`.venv-check`) and runs:
 - the linter;
+- a check of the backend's dependencies for known vulnerabilities (pip-audit);
 - the backend tests;
 - the quick start above, in a scratch copy of the repository;
 - the browser tests, which cover signing up, whole sessions in English and Polish, feedback, the progress chart and the admin page.
@@ -147,7 +148,6 @@ Before anyone relies on this app, at least these must be fixed. Each one is in [
 
 - **Security**
   - Logins aren't rate-limited, and tokens are kept in `localStorage` (P1-5).
-  - Some dependencies are outdated (P1-4).
 - **Privacy:** there is no privacy notice, no consent step before recording, and no way to export or delete your data (P1-6). The app stores health information.
 - **Roles:** any therapist can see and deactivate every patient. Therapists aren't linked to their own patients yet (P1-3b).
 - **Clinical content:** a handful of English placeholder exercises, not reviewed by a speech-language therapist. There are no pictures or recordings.

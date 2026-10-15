@@ -23,7 +23,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 | G2 Backend tests | 🔴 | 51 tests pass, including register → login → profile and a full scored session; coverage not measured |
 | G3 End-to-end | 🟡 | 13 tests in Chromium, including the whole flow (sign-up → word naming and sentence completion → feedback → dashboard and progress scores) in EN and PL, the admin list, the chart, and the session edge cases. Not covered yet: pronunciation (P2-7) and export (CSV/PDF) |
 | G4 Authorization | 🟡 | Tested (`test_authorization.py`): no route without a login, no admin route for patients, and users can't reach each other's sessions, answers, schedules or recordings. Admins are created explicitly (P1-3a). Still open: therapists limited to their own patients (P1-3b) |
-| G5 Security | 🔴 | Done: no untrusted data reaches `innerHTML`, and the CSP forbids inline scripts (P1-1). Recordings only through the owner-checked endpoint (P1-2). Still open: pip-audit (P1-4), login rate limit (P1-5), secrets from the environment only (P1-8) |
+| G5 Security | 🔴 | Done: no untrusted data reaches `innerHTML`, and the CSP forbids inline scripts (P1-1). Recordings only through the owner-checked endpoint (P1-2); pip-audit clean in `check.sh` (P1-4). Still open: login rate limit (P1-5), secrets from the environment only (P1-8) |
 | G6 Accessibility | 🔴 | Not measured |
 | G7 Aphasia-friendly | 🔴 | Auto-advance, visible timer, typing required (P2-4..P2-6) |
 | G8 Clinical content | 🔴 | No answer leaks (C4, enforced by `test_content.py` since P0-6). Still English-only, assets missing, nothing clinically reviewed |
@@ -133,7 +133,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
   - Therapist–patient assignment (invite plus consent).
   - An admin bootstrap command (`python -m app.cli create-admin`).
   - Authorization tests for every endpoint (G4).
-- [ ] **P1-4 Dependency health** 🔎. Pins date from late 2023: fastapi 0.104 / starlette 0.27 and python-multipart 0.0.6, some with published security advisories. passlib 1.7.4 is unmaintained and crashes on its first hash with bcrypt 5 ✅, so bcrypt is held at 4.3.0 (P0-3). Replace passlib (bcrypt used directly, or Argon2) and decide what happens to passwords over bcrypt's 72-byte limit: bcrypt 4 silently truncates them, bcrypt 5 raises. (python-jose was replaced by PyJWT in P0-3.) Upgrade to current supported versions, drop the unused matplotlib and pillow, and add `pip-audit` to `requirements-dev.txt` and `check.sh` (it must come back clean). Upgrading to Starlette 0.37.2 or later also lifts the `httpx<0.28` pin in `requirements-dev.txt`: 0.37.2 is the first release whose `TestClient` no longer passes `app=` to `httpx.Client` (checked in the published wheels).
+- [x] **P1-4 Dependency health** 🔎 (c625e62). Everything is on current releases (SQLAlchemy on 2.0.54). Unused packages are dropped. passlib is replaced by bcrypt 5, and passwords over 72 bytes are refused. `pip-audit` runs in `check.sh` and reports 0 known vulnerabilities (there were 67). Original report: Pins date from late 2023: fastapi 0.104 / starlette 0.27 and python-multipart 0.0.6, some with published security advisories. passlib 1.7.4 is unmaintained and crashes on its first hash with bcrypt 5 ✅, so bcrypt is held at 4.3.0 (P0-3). Replace passlib (bcrypt used directly, or Argon2) and decide what happens to passwords over bcrypt's 72-byte limit: bcrypt 4 silently truncates them, bcrypt 5 raises. (python-jose was replaced by PyJWT in P0-3.) Upgrade to current supported versions, drop the unused matplotlib and pillow, and add `pip-audit` to `requirements-dev.txt` and `check.sh` (it must come back clean). Upgrading to Starlette 0.37.2 or later also lifts the `httpx<0.28` pin in `requirements-dev.txt`: 0.37.2 is the first release whose `TestClient` no longer passes `app=` to `httpx.Client` (checked in the published wheels).
 - [ ] **P1-5 Login sessions that fit the users** 🔎. Tokens last 30 minutes with no refresh, so people get logged out mid-exercise and lose the session; the JWT also lives in `localStorage`. Fixes:
   - httpOnly, Secure, SameSite cookies with CSRF protection, or refresh tokens.
   - An idle timeout suited to slow, effortful use.
@@ -199,7 +199,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 - [ ] **P3-7** API hygiene: a consistent error schema, pagination limits, and a `/health` that checks the DB. (Bounds for `num_exercises` moved to P1-9.)
 - [ ] **P3-8** Performance: the "Inter" font is declared but never loaded; self-host it or drop it. Add a Lighthouse budget (G12).
 - [ ] **P3-9** PWA: the icons referenced by `manifest.json` don't exist.
-- [ ] **P3-10** Deprecation warnings in the test run ✅ (`pytest -W default`):
+- [ ] **P3-10** Deprecation warnings in the test run ✅ (`pytest -W default`). Since P1-4, `on_event`, passlib's `crypt` and httpx's `app=` are gone (70 warnings down to 11). The list:
   - FastAPI `@app.on_event` (`main.py:65`, `:73`) → a lifespan handler.
   - pydantic class-based `Config` in 7 schemas → `model_config = ConfigDict(from_attributes=True)`.
   - SQLAlchemy `declarative_base()` (`db/database.py:14`) → `sqlalchemy.orm.declarative_base`.

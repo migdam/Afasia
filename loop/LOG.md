@@ -17,6 +17,34 @@ Newest entry first. One entry per iteration.
 
 ---
 
+### 21: 2026-10-15 09:05 UTC: P1-4 Dependency health
+- **Baseline:** `check.sh` green (102 backend, smoke, 15 e2e). No human commits.
+- **Audit of the old pins** (pip-audit in a scratch venv): 67 known vulnerabilities.
+  - pillow 31, python-multipart 16, starlette 14, python-dotenv 2, anyio 2, fastapi 1.
+  - matplotlib, pillow and aiofiles aren't imported anywhere.
+- **Did:**
+  - Upgraded fastapi 0.143.1 (starlette 1.x), uvicorn 0.54.0, pydantic 2.14.1, pydantic-settings 2.16.0, python-multipart 0.0.32, python-dotenv 1.2.4, structlog 26.1.0 and reportlab 5.0.1.
+  - Moved SQLAlchemy to 2.0.54. 2.1 is left for its own migration.
+  - Dropped the three unused packages.
+  - Replaced passlib with bcrypt 5. Passwords over 72 bytes are refused at sign-up and in the CLI, and never verify.
+  - Replaced `on_event` with a lifespan handler.
+  - Lifted the httpx pin to 0.28.1.
+  - Added `pip-audit` to `check.sh`.
+- **Found:** with the new FastAPI, `test_authorization.py`'s route list from `app.routes` came out empty, so 26 checks silently became 2 skips. Fixed:
+  - the list now comes from the OpenAPI schema;
+  - a test requires at least 20 routes;
+  - `empty_parameter_set_mark = fail_at_collect` is set in both pytest configs.
+- **Verified:**
+  ```
+  old code: "assert 201 == 422" (a 74-byte password accepted, silently cut to 72)
+  now:      "No known vulnerabilities found" · backend "106 passed" (none skipped; warnings 70 -> 11) · smoke OK · e2e "15 passed"
+            docker-smoke on the new stack: all three checks pass
+  ```
+- **Docs:** removed "outdated dependencies" from both READMEs, and listed the pip-audit check under Development.
+- **Commit:** c625e62 (pushed: yes), plus this log/docs commit.
+- **Protocol notes:** after any dependency upgrade, compare the test count with the previous run. A drop or new skips means tests stopped running.
+- **Next:** P1-5, login sessions.
+
 ### 20: 2026-10-15 08:40 UTC: P1-3a Staff accounts and authorization tests
 - **Baseline:** `check.sh` green (71 backend, smoke, 15 e2e). No human commits.
 - **Split:** P1-3 became P1-3a (done here) and P1-3b. P1-3b needs product decisions (H7): how therapists and patients get linked, and how the patient consents.

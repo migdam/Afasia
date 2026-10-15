@@ -132,6 +132,7 @@ scripts/check.sh
 ```
 
 To jedyne sprawdzenie, które musi przejść przed każdym commitem. Samo przygotowuje swoje środowisko (`.venv-check`) i uruchamia:
+- sprawdzenie zależności backendu pod kątem znanych podatności (pip-audit);
 - linter;
 - testy backendu;
 - powyższy szybki start w osobnej kopii repozytorium;
@@ -147,7 +148,6 @@ Zanim ktokolwiek zacznie polegać na tej aplikacji, trzeba naprawić co najmniej
 
 - **Bezpieczeństwo**
   - Logowanie nie ma limitu prób, a tokeny są przechowywane w `localStorage` (P1-5).
-  - Część zależności jest przestarzała (P1-4).
 - **Prywatność:** brak informacji o prywatności, zgody przed nagrywaniem oraz możliwości eksportu i usunięcia swoich danych (P1-6). Aplikacja przechowuje dane o zdrowiu.
 - **Role:** każdy terapeuta widzi i może dezaktywować wszystkich pacjentów. Terapeuci nie są jeszcze powiązani ze swoimi pacjentami (P1-3b).
 - **Treść kliniczna:** kilka tymczasowych ćwiczeń po angielsku, niesprawdzonych przez logopedę. Nie ma obrazków ani nagrań.
