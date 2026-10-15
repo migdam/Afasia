@@ -19,6 +19,25 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 45: 2026-10-15 13:06 UTC: P2-2a Naming concepts as data
+- **Baseline:** `check.sh` exit code 0: 181 backend tests, smoke, 51 e2e. No human commits. Tests were written in the scratchpad until it finished.
+- **Split:** P2-2 became a (naming concepts), b (the other types) and c (assets, waiting on H2/H3).
+- **Test first:** `backend/tests/test_concepts.py`, 11 tests. They failed before because `app.content` didn't exist. I first wrote the synonym test with a skip if no synonym was drawn; I changed it to draw all easy concepts and fail if none has a synonym, so it can't silently skip.
+- **Did:**
+  - The content file: 30 concepts written natively in both languages.
+  - `app/content.py`: pydantic checks, run at startup through `therapy.py`.
+  - Naming in the session's language, with synonyms accepted.
+  - `SessionCreate.language` is `Literal["en", "pl"]`.
+  - The e2e flow reads the content file and checks the language.
+  - READMEs (the top note was out of date: security is no longer "not done"), user guides and clinical docs.
+- **Honesty note:** the difficulty bands and first sounds are my estimates, stated in the file's `about`. No frequency or imageability data was invented.
+- **Verified:**
+  - `scripts/check.sh` exit code 0: ruff, pip-audit "No known vulnerabilities found", 211 backend tests, smoke, 51 e2e.
+  - `docker-smoke.sh` exit code 0: the image includes `content/` and starts.
+- **Commit:** 8e4218a (pushed: yes)
+- **Discovered:** nothing new.
+- **Next:** P2-2b.
+
 ### 44: 2026-10-15 12:48 UTC: P2-1 Clinical foundation
 - **Baseline:** `check.sh` exit code 0: 173 backend tests, smoke, 51 e2e. No human commits. Tests were written in the scratchpad until it finished.
 - **Sources:** each checked with web searches against publisher and repository records: Big CACTUS, the Brady 2016 Cochrane review (DOI suffix `pub4` confirmed), Boyle & Coelho 1995, Leonard et al. 2008, Edmonds et al. 2009, Youmans et al. 2005, and Linebaugh et al. 2005. The 1977 Linebaugh & Lehner year couldn't be confirmed, so it is left out. The DOIs for Leonard 2008 and Linebaugh 2005 couldn't be confirmed and are marked so.

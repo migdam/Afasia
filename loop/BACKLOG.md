@@ -163,14 +163,10 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 ## P2: Clinically sound and aphasia-friendly
 
 - [x] **P2-1 Clinical foundation** (c069437). `docs/clinical/README.md` and `README.pl.md`: pending clinical review; the evidence in short (Brady 2016, Big CACTUS 2019); each exercise type's current state, intended basis (cueing hierarchy, SFA, PCA, VNeST as a model, script training planned) and gaps; the content model; and the review process. Seven references, checked against publisher and repository records (full texts not read). `[citation needed]` where unsupported. `test_clinical_docs.py` keeps both languages in step.
-- [ ] **P2-2 Content as data.** Replace the hard-coded `EXERCISE_DATA` with versioned content files (e.g. `content/items/*.json`), validated at startup. Each item has:
-  - A concept id, and the PL and EN word with accepted synonyms.
-  - Semantic features: category, use, location, description.
-  - The first sound and letter per language.
-  - A difficulty band (frequency, length, imageability).
-  - Image and audio asset ids, with licenses in `frontend/assets/CREDITS.md`.
-
-  Content tests check that both languages are present, no answer leaks, and every asset and license exists. Seed about 30 everyday, picturable concepts, authored natively in Polish and English. Exercises currently ignore the session's language and are English-only.
+- **P2-2 Content as data.** Split into a–c on 2026-10-15. The original ask: replace the hard-coded `EXERCISE_DATA` with versioned content files, validated at startup; each item with a concept id, PL and EN words with synonyms, semantic features, first sound and letter, a difficulty band, and image and audio assets with licenses; content tests; about 30 concepts authored natively in both languages.
+  - [x] **P2-2a Naming concepts as data** (8e4218a). `backend/content/concepts.json`: 30 concepts, PL and EN, with synonyms, first sound, description and features, all pending review. Checked at startup by `app/content.py`, including no answer leak with inflected forms. Naming sessions are in the session's language; synonyms count. The difficulty bands and first sounds are author estimates; real frequency and imageability data would need a source and H1.
+  - [ ] **P2-2b Sentence completion and pronunciation as data.** Move their items into content files in both languages (Polish written natively), with the same startup checks. Sentence items need options that are wrong but plausible in each language.
+  - [ ] **P2-2c Pictures and audio.** Waiting on H2/H3. When assets exist: asset ids in the content, files under `frontend/assets/`, licenses in `frontend/assets/CREDITS.md`, and a test that every referenced asset and license exists.
 - [ ] **P2-3 Naming with a cueing hierarchy** (U7, C1). A hint button steps through: meaning cue → first sound (audio) or first letter → whole word to repeat. Record the cue level for each answer, and score by independence. Since P0-6, the naming prompt shows a description of the item, because there are no pictures. That is the meaning cue given up front. Once pictures exist (H2), show the picture alone and make the description the first hint.
 - [ ] **P2-4 Aphasia-friendly UI pass** (U1–U5, U8, U11, U12):
   - Larger type and touch targets.
