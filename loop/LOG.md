@@ -19,6 +19,23 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 60: 2026-10-15 17:40 UTC: P2-7a Speech practice that works
+- **Baseline:** `check.sh` exit code 0: 269 backend tests, smoke, 100 e2e. No human commits. Tests were written in the scratchpad until it finished.
+- **Split:** P2-7 became a (the flow) and b (confidence storage and therapist review: after P3-1 and P1-3b).
+- **Test first:** `backend/tests/test_speech_self_rating.py` (3 of 4 failed before; "not yet" is a guard) and `e2e/test_speech_practice.py` (all 3 failed on the old frontend).
+- **Did:**
+  - `ExerciseAnswer.self_rating` decides pronunciation; the upload takes a `transcription`.
+  - Frontend: `listenAlong` runs recognition during the recording, with consent asked then; play-back; `rate()`; "rate first" message; calm "keep practising".
+  - Privacy notice, guides, READMEs and clinical docs (EN/PL).
+- **Tests adjusted for the new flow:**
+  - `test_microphone` sets both consents up front.
+  - The consent tests expect the speech question at the start of recording.
+  - The options contrast test counts only `#exercise-options` (the rating buttons share `.option-btn`).
+- **Verified:** `scripts/check.sh` exit code 0: ruff, pip-audit "No known vulnerabilities found", 240+ → 273 backend tests, smoke, 103 e2e. A screenshot was sent to the user.
+- **Commit:** f69b56f (pushed: yes)
+- **Discovered:** the recording status lines ("Recording...", "Recording saved...") are still hard-coded English; that is P2-10.
+- **Next:** P2-8 (adaptive difficulty and spaced repetition). Check whether it needs splitting.
+
 ### 59: 2026-10-15 17:11 UTC: P2-6b Letter tiles
 - **Baseline:** `check.sh` exit code 0: 264 backend tests, smoke, 99 e2e. No human commits. Tests were written in the scratchpad until it finished.
 - **Test first:** `backend/tests/test_letter_tiles.py` (3 of 4 failed before; the 4th, about access rules, passed partly by accident because the route didn't exist) and `e2e/test_letter_tiles.py` (failed on the old frontend).
