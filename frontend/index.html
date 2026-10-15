@@ -21,7 +21,7 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-brand">
-                <h1>🗣️ Aphasia Therapy</h1>
+                <h1><span aria-hidden="true">🗣️</span> <span class="brand-name">Aphasia Therapy</span></h1>
             </div>
             <div class="nav-controls">
                 <!-- Larger text (U1), remembered in this browser -->
@@ -340,6 +340,9 @@
                 <p id="data-message" class="form-message" data-read-aloud></p>
                 <p><a class="privacy-link" href="privacy.html#en" data-i18n="privacyNotice">Privacy notice</a></p>
             </div>
+
+            <!-- Also here because on phones the header has no room for it -->
+            <button type="button" id="account-logout" class="btn btn-secondary" data-i18n="logout">Logout</button>
         </div>
 
         <dialog id="delete-dialog" class="app-dialog" aria-labelledby="delete-title">

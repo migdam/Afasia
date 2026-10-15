@@ -999,3 +999,39 @@ button,
 .hint-list .read-aloud {
     margin: 0.25rem 0 0;
 }
+
+/* Phones (P2-4g): a short header that scrolls away instead of covering the
+   exercise. The app's name is still there for screen readers, and Logout
+   is on the Account page (#account-logout). */
+@media (max-width: 640px) {
+    .navbar {
+        position: static;
+        padding: 0.5rem 0;
+    }
+
+    .nav-container,
+    .nav-controls {
+        flex-wrap: nowrap;
+    }
+
+    .nav-controls {
+        gap: 0.25rem;
+    }
+
+    .brand-name {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+    }
+
+    #logout-btn {
+        display: none !important;
+    }
+}
+
+#account-logout {
+    margin-top: 1rem;
+}

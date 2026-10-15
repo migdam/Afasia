@@ -30,7 +30,7 @@ The exercises come in the language you choose. A few words also still appear in 
 
 **To log in:** type your username and password and click **Login**.
 
-**To log out:** click **Logout** at the top right. The login form is emptied, so the next person can't see what you typed.
+**To log out:** click **Logout** at the top right, or at the bottom of the **Account** page. On a phone it is only on the Account page, so the top of the screen stays short. The login form is emptied, so the next person can't see what you typed.
 
 While you use the app, you stay logged in. After 30 minutes without using it, or 12 hours after you logged in, you have to log in again. There is no "forgot password" yet.
 

@@ -30,7 +30,7 @@ Przeglądarka zapamiętuje te wybory.
 
 **Logowanie:** wpisz nazwę użytkownika i hasło, a potem kliknij **Zaloguj się**.
 
-**Wylogowanie:** kliknij **Wyloguj** w prawym górnym rogu. Formularz logowania zostaje wyczyszczony, więc następna osoba nie zobaczy, co wpisano.
+**Wylogowanie:** kliknij **Wyloguj** w prawym górnym rogu albo na dole strony **Konto**. Na telefonie przycisk jest tylko na stronie Konto, żeby górny pasek był niski. Formularz logowania zostaje wyczyszczony, więc następna osoba nie zobaczy, co wpisano.
 
 Dopóki korzystasz z aplikacji, zalogowanie trwa. Po 30 minutach bez korzystania z niej albo 12 godzinach od zalogowania trzeba zalogować się ponownie. Nie ma jeszcze opcji „nie pamiętam hasła”.
 

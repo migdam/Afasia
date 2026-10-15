@@ -108,6 +108,10 @@ class AphasiaApp {
             await this.handleChangePassword();
         });
 
+        document.getElementById('account-logout').addEventListener('click', () => {
+            this.logout();
+        });
+
         document.getElementById('logout-btn').addEventListener('click', () => {
             this.logout();
         });
