@@ -19,6 +19,23 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 35: 2026-10-15 10:46 UTC: P1-6d Privacy notice
+- **Baseline:** `check.sh` exit code 0: 149 backend tests, smoke, 40 e2e. No human commits. Tests were written in the scratchpad until it finished.
+- **Facts checked before writing:**
+  - The admin endpoints are open to both therapists and admins, and show every patient's account fields and sessions; they don't serve recordings.
+  - `revoked_logins` holds only a random `sid` and an expiry.
+  - Wrong passwords are counted per username and per (username, address).
+  - The frontend references no other origins.
+- **Test first:** `e2e/test_privacy_notice.py`, 4 tests: all failed before.
+- **Did:**
+  - `privacy.html`, with a CSP of `script-src 'none'` and EN and PL sections. The operator's facts are `.to-complete` and highlighted.
+  - `.privacy-link` on the login and Account pages; `i18n` points it at the current language's section.
+  - Styles, READMEs and user guides.
+- **Verified:** `scripts/check.sh` exit code 0: ruff, pip-audit "No known vulnerabilities found", 149 backend tests, smoke, 44 e2e. Polish section at 375 px checked by eye.
+- **Commit:** 52854da (pushed: yes)
+- **Discovered:** nothing new. The legal blanks are already H4/H5.
+- **Next:** P1-6e (retention for recordings). Its default needs H4, so build it configurable and default it to off ("keep until deleted"), which is what happens today.
+
 ### 34: 2026-10-15 10:32 UTC: P1-6c2 Export and delete (web app)
 - **Baseline:** `check.sh` exit code 0: 149 backend tests, smoke, 35 e2e. No human commits. Tests were written in the scratchpad until it finished.
 - **Test first:** `e2e/test_your_data_page.py`. 4 tests failed on the old frontend: download; delete in EN and PL; cancel.
