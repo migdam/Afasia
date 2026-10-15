@@ -19,6 +19,25 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 74: 2026-10-15 21:54 UTC: P2-11 An accessible progress chart
+- **Baseline:** `check.sh` exit code 0: 317 backend tests, smoke, 125 e2e. No human commits. The tests and the patch were written in the scratchpad until the baseline finished.
+- **Test first:** three new tests in `e2e/test_progress.py`, all failing before:
+  - the scale's labels, recorded as the canvas draws them (an init script wraps `fillText`), are 0%–100% for a single 80% session;
+  - in Polish, the chart has a name, and its table has two rows (80%, 100%, oldest first) under "Data" and "Wynik";
+  - with no sessions, the chart's name says so and there is no table.
+- **Did:**
+  - `drawLineChart(labels, datasets, {max, yLabel})`; the progress page passes `max: 100` and percent labels.
+  - `ui.showChartNumbers` sets the canvas's translated name (`data-i18n-label`) and fills the table with dates in words.
+  - `<details id="progress-table-box">` with a 48 px summary and a ▸/▾ arrow. The browser's marker disappears with `display: flex`, and the screenshot showed nothing hinting that it opens.
+  - 4 new keys (EN/PL).
+  - The phone-fit test opens the table.
+  - Updated the guides (EN/PL).
+- **Mistake:** to restart the check I ran `pkill -f pytest`. That also matched my own shell command (exit code 144) and left a stray pytest running, which I then killed by its PID. Lesson: stop background checks by PID, not by pattern.
+- **Verified:** `scripts/check.sh` exit code 0: ruff "All checks passed!", pip-audit "No known vulnerabilities found", 317 backend tests, smoke, 128 e2e. The docs were edited after that run, and their tests were run again (21 passed). A screenshot at 390 px in Polish was sent to the user.
+- **Commit:** a41c10d (pushed: yes)
+- **Discovered:** there is no automated axe-core check yet (G6 is unmeasured), so this change was checked by targeted tests only.
+- **Next:** every P2 item that can be done now is done (P2-2c and P2-6c wait on H2/H3; P2-7b waits on P3-1 and P1-3b). Next is P3-1 (Alembic migrations), which also unblocks P2-7b. It is probably large, so split it first.
+
 ### 73: 2026-10-15 21:36 UTC: P2-12 Every screen fits a phone, with larger text too
 - **Baseline:** `check.sh` exit code 0: 317 backend tests, smoke, 122 e2e. No human commits.
 - **Order:** the last status said P2-11 came next. In the backlog, P2-12 sits above P2-11 (I inserted it there in iteration 69), and the protocol goes top to bottom, so P2-12 came first.
