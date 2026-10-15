@@ -8,69 +8,54 @@ const API_BASE_URL = window.API_BASE_URL;
 
 class APIClient {
     constructor() {
-        this.token = localStorage.getItem('access_token');
-    }
-
-    setToken(token) {
-        this.token = token;
-        localStorage.setItem('access_token', token);
-    }
-
-    clearToken() {
-        this.token = null;
+        // The login lives in an httpOnly cookie that scripts can't read.
+        // Versions before P1-5c2 kept it here; don't leave it lying around.
         localStorage.removeItem('access_token');
+        // When the current token was issued and when it ends (Unix seconds),
+        // from the last login or renewal; unknown after a page load.
+        this.tokenTimes = null;
+        this.renewal = null;
+        this.renewRefused = false;
     }
 
-    tokenClaims() {
-        try {
-            const payload = this.token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
-            return JSON.parse(atob(payload));
-        } catch {
-            return null;
-        }
+    noteLogin(data) {
+        this.tokenTimes = { issued: data.issued_at, expires: data.expires_at };
+        this.renewRefused = false;
+    }
+
+    // Every call sends the login cookie, and the X-Requested-With header the
+    // server asks for before it accepts a change made through the cookie.
+    fetch(endpoint, options = {}) {
+        return fetch(`${API_BASE_URL}${endpoint}`, {
+            ...options,
+            credentials: 'include',
+            headers: { 'X-Requested-With': 'afasia', ...options.headers },
+        });
     }
 
     // A login runs out after a stretch of not using the app. While the app
-    // is in use, swap the token for a fresh one once half its life is gone.
-    // The server stops renewing a login some hours after it began; then the
-    // current token is simply used until it expires.
-    async renewIfStale() {
-        const claims = this.token && this.tokenClaims();
-        if (!claims || !claims.iat || this.renewing || this.renewRefused === this.token) {
+    // is in use, renew it once half its life is gone (or straight away after
+    // a page load, when its age is unknown). The server stops renewing a login
+    // some hours after it began; then it simply runs out.
+    renewIfStale() {
+        if (this.renewal || this.renewRefused) {
             return;
         }
-        const now = Date.now() / 1000;
-        if (now - claims.iat < (claims.exp - claims.iat) / 2) {
+        const times = this.tokenTimes;
+        if (times && Date.now() / 1000 - times.issued < (times.expires - times.issued) / 2) {
             return;
         }
-        const token = this.token;
-        this.renewing = true;
-        try {
-            const data = await this.request('/auth/refresh', { method: 'POST' });
-            if (this.token === token) {
-                this.setToken(data.access_token);
-            }
-        } catch {
-            this.renewRefused = token;
-        } finally {
-            this.renewing = false;
-        }
+        this.renewal = this.request('/auth/refresh', { method: 'POST' })
+            .then((data) => this.noteLogin(data))
+            .catch(() => { this.renewRefused = true; })
+            .finally(() => { this.renewal = null; });
     }
 
     async request(endpoint, options = {}) {
-        const headers = {
-            'Content-Type': 'application/json',
-            ...options.headers,
-        };
-
-        if (this.token) {
-            headers['Authorization'] = `Bearer ${this.token}`;
-        }
-
         try {
-            const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+            const response = await this.fetch(endpoint, {
                 ...options,
-                headers,
+                headers: { 'Content-Type': 'application/json', ...options.headers },
             });
 
             const data = await response.json().catch(() => null);
@@ -95,7 +80,7 @@ class APIClient {
             method: 'POST',
             body: JSON.stringify(userData),
         });
-        this.setToken(data.access_token);
+        this.noteLogin(data);
         return data;
     }
 
@@ -104,8 +89,15 @@ class APIClient {
             method: 'POST',
             body: JSON.stringify(credentials),
         });
-        this.setToken(data.access_token);
+        this.noteLogin(data);
         return data;
+    }
+
+    async logout() {
+        // A renewal still under way would set the cookie again afterwards.
+        await this.renewal;
+        this.tokenTimes = null;
+        await this.request('/auth/logout', { method: 'POST' }).catch(() => {});
     }
 
     // User endpoints
@@ -146,21 +138,13 @@ class APIClient {
     }
 
     async exportProgressCSV() {
-        const response = await fetch(`${API_BASE_URL}/users/progress/export/csv`, {
-            headers: {
-                'Authorization': `Bearer ${this.token}`,
-            },
-        });
+        const response = await this.fetch(`/users/progress/export/csv`);
         const blob = await response.blob();
         return blob;
     }
 
     async exportProgressPDF() {
-        const response = await fetch(`${API_BASE_URL}/users/progress/export/pdf`, {
-            headers: {
-                'Authorization': `Bearer ${this.token}`,
-            },
-        });
+        const response = await this.fetch(`/users/progress/export/pdf`);
         const blob = await response.blob();
         return blob;
     }
@@ -169,11 +153,8 @@ class APIClient {
         const formData = new FormData();
         formData.append('audio', audioBlob, 'recording');
 
-        const response = await fetch(`${API_BASE_URL}/users/audio/upload?exercise_id=${exerciseId}`, {
+        const response = await this.fetch(`/users/audio/upload?exercise_id=${exerciseId}`, {
             method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${this.token}`,
-            },
             body: formData,
         });
 

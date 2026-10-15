@@ -36,6 +36,16 @@ def call_api(servers, method, path, body=None, token=None):
         return error.code, json.load(error)
 
 
+def login_cookie(page):
+    """The browser's login cookie (httpOnly, so only the test can see it), or None."""
+    return next((c for c in page.context.cookies() if c["name"] == "access_token"), None)
+
+
+def browser_token(page):
+    """The token the browser is logged in with, for calling the API directly."""
+    return login_cookie(page)["value"]
+
+
 def free_port():
     with socket.socket() as s:
         s.bind(("127.0.0.1", 0))

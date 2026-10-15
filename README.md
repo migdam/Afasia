@@ -52,6 +52,8 @@ cd frontend
 python3 -m http.server 3000
 ```
 
+Open the app at `http://localhost:3000`, not `http://127.0.0.1:3000`. The login cookie comes from `localhost:8000`, and the browser only sends it back for pages on the same site (and only `localhost` origins are allowed by default).
+
 The backend reads `.env` from the repository root, wherever it is started from. Settings it doesn't use are ignored, so the same file also serves Docker Compose. In development the database is SQLite (`backend/aphasia_app.db`).
 
 ## Running with Docker
@@ -100,7 +102,7 @@ Copy `.env.template` to `.env` at the repository root. The settings:
 
 ## API
 
-FastAPI serves interactive documentation at `/docs` and `/redoc`. All endpoints are under `/api/v1`, and all of them except sign-up, login and logout need a login. Sign-up, login and `/auth/refresh` return the token in the body and also set it as an httpOnly `access_token` cookie (path `/api`, `SameSite=Strict`). Send it either as an `Authorization: Bearer <token>` header or as that cookie. Requests that change something through the cookie must also carry an `X-Requested-With` header, or they get 403; this guards against cross-site request forgery. A missing or invalid token gets 401.
+FastAPI serves interactive documentation at `/docs` and `/redoc`. All endpoints are under `/api/v1`, and all of them except sign-up, login and logout need a login. Sign-up, login and `/auth/refresh` set the token as an httpOnly `access_token` cookie (path `/api`, `SameSite=Strict`), and say when it was issued and when it ends (`issued_at`, `expires_at`). They also return it in the body, except for a renewal made through the cookie, so that page scripts never see it. Send it either as an `Authorization: Bearer <token>` header or as that cookie. Requests that change something through the cookie must also carry an `X-Requested-With` header, or they get 403; this guards against cross-site request forgery. A missing or invalid token gets 401.
 
 | Area | Endpoints |
 |---|---|
@@ -149,7 +151,7 @@ The app is improved in small, tested steps by a documented loop. See [`loop/READ
 Before anyone relies on this app, at least these must be fixed. Each one is in [`loop/BACKLOG.md`](loop/BACKLOG.md).
 
 - **Security**
-  - The web app still keeps its login token in `localStorage`, where any script running on the page could read it. The server already supports the httpOnly cookie; switching the web app to it is P1-5c2.
+  - Logging out removes the login cookie, but the server doesn't revoke tokens: a token copied before logout keeps working until it expires, and can be renewed for up to 12 hours after the login.
   - The limit on wrong passwords (5 per username in 15 minutes) is kept in memory: each server process counts on its own, and a restart forgets it.
 - **Privacy:** there is no privacy notice, no consent step before recording, and no way to export or delete your data (P1-6). The app stores health information.
 - **Roles:** any therapist can see and deactivate every patient. Therapists aren't linked to their own patients yet (P1-3b).

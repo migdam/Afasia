@@ -1,5 +1,5 @@
 """Text that people typed is shown as text, never run as page markup (P1-1)."""
-from conftest import call_api
+from conftest import browser_token, call_api
 from playwright.sync_api import expect
 
 MARKUP = "<b>bold</b><img src=x onerror=alert(1)>"
@@ -8,7 +8,7 @@ MARKUP = "<b>bold</b><img src=x onerror=alert(1)>"
 def test_titles_with_markup_are_shown_as_text(page, servers, account):
     dialogs = []
     page.on("dialog", lambda dialog: (dialogs.append(dialog.message), dialog.dismiss()))
-    token = page.evaluate("localStorage.getItem('access_token')")
+    token = browser_token(page)
     status, _ = call_api(
         servers, "POST", "/therapy/sessions",
         {"title": MARKUP, "exercise_type": "sentence_completion", "difficulty": "easy", "num_exercises": 5}, token,

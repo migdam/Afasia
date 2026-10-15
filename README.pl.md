@@ -52,6 +52,8 @@ cd frontend
 python3 -m http.server 3000
 ```
 
+Otwieraj aplikację pod adresem `http://localhost:3000`, a nie `http://127.0.0.1:3000`. Ciasteczko logowania pochodzi z `localhost:8000`, a przeglądarka odsyła je tylko stronom z tej samej witryny (domyślnie dozwolone są też tylko adresy `localhost`).
+
 Backend czyta `.env` z katalogu głównego repozytorium, niezależnie od tego, skąd go uruchomisz. Nieznane mu ustawienia pomija, więc ten sam plik służy też Docker Compose. Podczas pracy nad kodem bazą danych jest SQLite (`backend/aphasia_app.db`).
 
 ## Uruchamianie w Dockerze
@@ -100,7 +102,7 @@ Skopiuj `.env.template` do `.env` w katalogu głównym repozytorium. Ustawienia:
 
 ## API
 
-FastAPI udostępnia interaktywną dokumentację pod `/docs` i `/redoc`. Wszystkie adresy zaczynają się od `/api/v1`. Wszystkie oprócz rejestracji, logowania i wylogowania wymagają zalogowania. Rejestracja, logowanie i `/auth/refresh` zwracają token w treści odpowiedzi, a także ustawiają go jako ciasteczko httpOnly `access_token` (ścieżka `/api`, `SameSite=Strict`). Token można wysłać w nagłówku `Authorization: Bearer <token>` albo jako to ciasteczko. Żądania, które coś zmieniają za pomocą ciasteczka, muszą też mieć nagłówek `X-Requested-With`, inaczej dostają 403; to ochrona przed fałszowaniem żądań z innych stron (CSRF). Brakujący lub nieprawidłowy token daje 401.
+FastAPI udostępnia interaktywną dokumentację pod `/docs` i `/redoc`. Wszystkie adresy zaczynają się od `/api/v1`. Wszystkie oprócz rejestracji, logowania i wylogowania wymagają zalogowania. Rejestracja, logowanie i `/auth/refresh` ustawiają token jako ciasteczko httpOnly `access_token` (ścieżka `/api`, `SameSite=Strict`) i podają, kiedy został wydany i kiedy wygasa (`issued_at`, `expires_at`). Zwracają go też w treści odpowiedzi, z wyjątkiem odnowienia przez ciasteczko, żeby skrypty na stronie nigdy go nie widziały. Token można wysłać w nagłówku `Authorization: Bearer <token>` albo jako to ciasteczko. Żądania, które coś zmieniają za pomocą ciasteczka, muszą też mieć nagłówek `X-Requested-With`, inaczej dostają 403; to ochrona przed fałszowaniem żądań z innych stron (CSRF). Brakujący lub nieprawidłowy token daje 401.
 
 | Obszar | Adresy |
 |---|---|
@@ -149,7 +151,7 @@ Aplikację ulepsza się małymi, przetestowanymi krokami według opisanej pętli
 Zanim ktokolwiek zacznie polegać na tej aplikacji, trzeba naprawić co najmniej poniższe. Każdy punkt jest w [`loop/BACKLOG.md`](loop/BACKLOG.md).
 
 - **Bezpieczeństwo**
-  - Aplikacja w przeglądarce nadal trzyma token logowania w `localStorage`, skąd mógłby go odczytać każdy skrypt działający na stronie. Serwer obsługuje już ciasteczko httpOnly; przejście aplikacji na nie to P1-5c2.
+  - Wylogowanie usuwa ciasteczko logowania, ale serwer nie unieważnia tokenów: token skopiowany przed wylogowaniem działa, dopóki nie wygaśnie, i można go odnawiać do 12 godzin od zalogowania.
   - Limit błędnych haseł (5 na nazwę użytkownika w ciągu 15 minut) jest trzymany w pamięci: każdy proces serwera liczy osobno, a restart go kasuje.
 - **Prywatność:** brak informacji o prywatności, zgody przed nagrywaniem oraz możliwości eksportu i usunięcia swoich danych (P1-6). Aplikacja przechowuje dane o zdrowiu.
 - **Role:** każdy terapeuta widzi i może dezaktywować wszystkich pacjentów. Terapeuci nie są jeszcze powiązani ze swoimi pacjentami (P1-3b).

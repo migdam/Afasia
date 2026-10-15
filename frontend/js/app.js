@@ -18,12 +18,8 @@ class AphasiaApp {
         // Load theme
         ui.loadTheme();
 
-        // Check if user is logged in
-        if (api.token) {
-            this.loadUserData();
-        } else {
-            ui.showAuthPage();
-        }
+        // The login is an httpOnly cookie, so ask the server whether there is one.
+        this.loadUserData();
 
         // Set up event listeners
         this.setupEventListeners();
@@ -40,7 +36,7 @@ class AphasiaApp {
             ui.loadScheduledSessions();
         } catch (error) {
             console.error('Failed to load user data:', error);
-            this.logout();
+            ui.showAuthPage();
         }
     }
 
@@ -205,8 +201,9 @@ class AphasiaApp {
         }
     }
 
-    logout() {
-        api.clearToken();
+    async logout() {
+        // Wait until the cookie is gone, or it could outlive a new login.
+        await api.logout();
         ui.showAuthPage();
     }
 

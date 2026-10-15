@@ -1,5 +1,5 @@
 """The progress page's chart."""
-from conftest import call_api
+from conftest import browser_token, call_api
 from playwright.sync_api import expect
 from test_sessions import ANSWERS
 
@@ -20,7 +20,7 @@ def complete_perfect_session(servers, token):
 
 
 def test_the_chart_draws_a_line_in_the_theme_colour(page, servers, account):
-    token = page.evaluate("localStorage.getItem('access_token')")
+    token = browser_token(page)
     complete_perfect_session(servers, token)
     complete_perfect_session(servers, token)
     page.click("#theme-toggle")  # dark theme

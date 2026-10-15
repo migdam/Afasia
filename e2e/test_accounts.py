@@ -1,5 +1,5 @@
 """Signing up, staying signed in, and logging back in, in a real browser."""
-from conftest import PASSWORD
+from conftest import PASSWORD, login_cookie
 from playwright.sync_api import expect
 
 
@@ -24,3 +24,30 @@ def test_logging_out_shows_an_empty_login_form(page, account):
     page.click("#login-form-submit button[type=submit]")
 
     expect(page.locator("#dashboard-page")).to_be_visible()
+
+
+def test_the_login_is_kept_where_page_scripts_cannot_read_it(page, account):
+    cookie = login_cookie(page)
+
+    assert cookie["httpOnly"] and cookie["secure"] and cookie["sameSite"] == "Strict"
+    assert "access_token" not in page.evaluate("document.cookie")
+    assert page.evaluate("localStorage.getItem('access_token')") is None
+
+
+def test_a_token_left_by_an_older_version_is_removed(page, account):
+    page.evaluate("localStorage.setItem('access_token', 'old')")
+
+    page.reload()
+
+    expect(page.locator("#dashboard-page")).to_be_visible()
+    assert page.evaluate("localStorage.getItem('access_token')") is None
+
+
+def test_logging_out_ends_the_login_for_good(page, account):
+    page.click("#logout-btn")
+    expect(page.locator("#auth-page")).to_be_visible()
+
+    assert login_cookie(page) is None
+    page.reload()
+    expect(page.locator("#auth-page")).to_be_visible()
+    expect(page.locator("#dashboard-page")).to_be_hidden()

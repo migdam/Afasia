@@ -77,3 +77,23 @@ def test_logging_out_removes_the_cookie(client):
     header = response.headers["set-cookie"].lower()
     assert header.startswith('access_token=""') or header.startswith("access_token=;")
     assert "max-age=0" in header
+
+
+def test_a_renewal_through_the_cookie_does_not_reveal_the_token(client):
+    # Otherwise a script injected into the page could fetch it, which is
+    # exactly what the httpOnly cookie is meant to prevent.
+    response = sign_up(client)
+    _, cookie = cookie_from(response)
+    token = response.json()["access_token"]
+
+    by_cookie = client.post("/api/v1/auth/refresh", headers={"Cookie": cookie, "X-Requested-With": "afasia"})
+    by_bearer = client.post("/api/v1/auth/refresh", headers={"Authorization": f"Bearer {token}"})
+
+    assert by_cookie.json()["access_token"] is None
+    assert by_bearer.json()["access_token"]
+
+
+def test_token_responses_say_when_the_token_was_issued_and_ends(client):
+    body = sign_up(client).json()
+
+    assert 0 < body["expires_at"] - body["issued_at"] <= 30 * 60

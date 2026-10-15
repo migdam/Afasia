@@ -56,8 +56,11 @@ class AdminUserResponse(UserResponse):
 
 
 class TokenResponse(BaseModel):
-    access_token: str
+    # None when renewing through the login cookie (the cookie carries it).
+    access_token: Optional[str]
     token_type: str = "bearer"
+    issued_at: int  # Unix time
+    expires_at: int  # Unix time
     user: UserResponse
 
 

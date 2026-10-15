@@ -1,7 +1,9 @@
 """Authentication endpoints."""
 import time
+from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi.security import HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from ....db.database import get_db
 from ....db.models import User
@@ -16,11 +18,24 @@ from ....core.security import (
     decode_token,
     get_current_user_id,
     get_token,
+    security,
     set_login_cookie,
 )
 from ..schemas import UserCreate, UserLogin, TokenResponse, UserResponse
 
 router = APIRouter()
+
+
+def login_response(response: Response, user: User, token: str, show_token: bool = True) -> TokenResponse:
+    """Set the login cookie and describe the token (with the token itself if show_token)."""
+    set_login_cookie(response, token)
+    claims = decode_token(token)
+    return TokenResponse(
+        access_token=token if show_token else None,
+        issued_at=claims["iat"],
+        expires_at=claims["exp"],
+        user=UserResponse.model_validate(user),
+    )
 
 
 @router.post("/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
@@ -52,9 +67,7 @@ def register(user_data: UserCreate, response: Response, db: Session = Depends(ge
     db.commit()
     db.refresh(user)
 
-    token = create_access_token(user.id)
-    set_login_cookie(response, token)
-    return TokenResponse(access_token=token, user=UserResponse.model_validate(user))
+    return login_response(response, user, create_access_token(user.id))
 
 
 @router.post("/login", response_model=TokenResponse)
@@ -85,9 +98,7 @@ def login(credentials: UserLogin, response: Response, db: Session = Depends(get_
         )
 
     login_limit.record_success(credentials.username)
-    token = create_access_token(user.id)
-    set_login_cookie(response, token)
-    return TokenResponse(access_token=token, user=UserResponse.model_validate(user))
+    return login_response(response, user, create_access_token(user.id))
 
 
 @router.post("/refresh", response_model=TokenResponse)
@@ -95,6 +106,7 @@ def refresh(
     response: Response,
     user_id: int = Depends(get_current_user_id),
     token: str = Depends(get_token),
+    bearer: Optional[HTTPAuthorizationCredentials] = Depends(security),
     db: Session = Depends(get_db),
 ):
     """Swap a valid token for a fresh one, keeping the original login time.
@@ -108,9 +120,10 @@ def refresh(
         raise credentials_error()
 
     user = db.get(User, user_id)
+    # Through the cookie, the new token goes only into the cookie: a script
+    # on the page could otherwise read it from the body.
     new_token = create_access_token(user.id, auth_time=auth_time)
-    set_login_cookie(response, new_token)
-    return TokenResponse(access_token=new_token, user=UserResponse.model_validate(user))
+    return login_response(response, user, new_token, show_token=bearer is not None)
 
 
 @router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
