@@ -19,7 +19,7 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
-### 76: 2026-10-15 22:58 UTC: P3-2 Continuous integration
+### 76: 2026-10-15 22:57 UTC: P3-2 Continuous integration
 - **Baseline:** `check.sh` exit code 0: 321 backend tests, smoke, 128 e2e. No human commits.
 - **Test first:** `backend/tests/test_ci.py`. All 4 tests failed before, as there was no workflow. They check that it runs on every push and PR, runs check.sh and docker-smoke.sh, uses the Docker image's Python 3.11, pins every action to a 40-character commit, and has read-only permissions.
 - **Did:** `.github/workflows/checks.yml` on ubuntu-24.04.
