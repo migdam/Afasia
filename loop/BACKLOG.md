@@ -20,8 +20,8 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 | Gate | Status | Evidence |
 |------|--------|----------|
 | G1 Runs | 🟡 | `scripts/check.sh` passes, including `scripts/smoke.sh`: the README backend quick start in a copy of the tree answers `/health`. Not yet covered: a from-scratch install in the copy (it reuses `.venv`) and the frontend half of the quick start (P0-7) |
-| G2 Backend tests | 🔴 | 48 tests pass, including register → login → profile and a full scored session; coverage not measured |
-| G3 End-to-end | 🟡 | 6 tests in Chromium: sign-up, reload, logout and login; a whole sentence-completion session with feedback and the server's score; double submit, carried-over answers, leaving during feedback. Not covered yet: the other exercise types, the progress page, export, and Polish (P0-7d–g) |
+| G2 Backend tests | 🔴 | 49 tests pass, including register → login → profile and a full scored session; coverage not measured |
+| G3 End-to-end | 🟡 | 8 tests in Chromium: sign-up, reload, logout and login; a whole sentence-completion session with feedback, the server's score and the first badge; double submit, carried-over answers, leaving during feedback; the admin list and deactivation. Not covered yet: the other exercise types, the progress page, export, and Polish (P0-7e–g) |
 | G4 Authorization | 🔴 | P1-3 |
 | G5 Security | 🔴 | P1-1, P1-2, P1-4 |
 | G6 Accessibility | 🔴 | Not measured |
@@ -67,7 +67,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
   - [x] **P0-7c Exercise state** (1f7fdce). Submit is disabled until the next exercise is shown. The answer is read only from the input the exercise shows. Each exercise starts with an empty text box and no recording. Leaving during feedback cancels the pending move to the next exercise, which used to fire in the next session. Original report:
     - Submit stays enabled during the 2 s feedback delay, so a double click submits twice and skips an exercise. Since P0-4 the second submission gets 409 "Exercise already answered", which the UI shows as an error alert.
     - `recordedAudio` and the hidden text input aren't reset between exercises or sessions.
-  - [ ] **P0-7d Dashboard and admin data.**
+  - [x] **P0-7d Dashboard and admin data** (19bb94f). `GET /admin/users` returns `is_active`, so deactivation works (it never did). The list is built with DOM methods, not `innerHTML`. The dashboard loads the badge count. The admin menu is hidden again for non-staff users. Original report:
     - The admin list reads `user.is_active`, which `UserResponse` doesn't include.
     - The dashboard badge count only updates after visiting Progress.
   - [ ] **P0-7e Unavailable content.**
@@ -108,6 +108,10 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
   - Add a strict Content-Security-Policy.
 
   **Test:** an e2e test with a malicious username shows it as plain text.
+
+  Progress: the admin list, the worst case, has been built with DOM methods since P0-7d, and `e2e/test_admin.py` shows a `<b>…</b>` username there as text. Still to do (`grep -n "innerHTML\|onclick=" frontend/js`):
+  - `ui.js`: recent sessions, scheduled sessions (titles, plus an inline `onclick`), badges, and the empty-state messages.
+  - `app.js`: exercise options and the record button.
 - [ ] **P1-2 Voice recordings are served without authentication** 🔎. `main.py` mounts the upload directory at `/uploads` with `StaticFiles`, so recordings of patients' speech can be fetched by anyone with the URL. Fixes:
   - Remove the mount, and serve recordings only through the authenticated, ownership-checked endpoint.
   - Use random (uuid) file names, stored outside any web root.

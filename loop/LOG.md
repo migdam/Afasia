@@ -17,6 +17,31 @@ Newest entry first. One entry per iteration.
 
 ---
 
+### 10: 2026-10-15 05:45 UTC: P0-7d Dashboard and admin data
+- **Baseline:** `check.sh` green (48 backend, smoke, 6 e2e), same as entry 9. No human commits.
+- **Did:**
+  - Added `AdminUserResponse` (`UserResponse` plus `is_active`) for `GET /admin/users`.
+  - The admin list is now built with DOM methods (`textContent`, `addEventListener`), not `innerHTML` with an inline `onclick`.
+  - `showDashboard()` loads the badge count, and hides the admin menu for non-staff users.
+  - Tests:
+    - Backend: `test_admin.py`.
+    - e2e: `test_admin.py` (2 tests), plus a badge assertion in the full-session test.
+    - e2e `conftest.py`: `call_api()` and the database path.
+  - There is no way to create an admin yet (P1-3), so the tests set the role in the database. SQLAlchemy stores enum names, so the role is `'ADMIN'`.
+- **Worse than reported:** without `is_active`, every patient was offered "Activate", and clicking it re-activated an active user, so no admin could ever deactivate anyone.
+- **Found and fixed:** the admin menu stayed visible for the next person to log in on the same page after an admin logged out. The API still refused them with 403.
+- **Verified:**
+  ```
+  old code: backend KeyError: 'is_active'
+            e2e "Expected '<b>pat2be989</b>' · Actual value: pat2be989" (the markup was rendered)
+            badge count "Actual value: 0"
+            admin menu "expected to be hidden · Actual value: visible"
+  now:      ruff "All checks passed!" · backend "49 passed" · smoke OK · e2e "8 passed in 37.74s" · node --check OK
+  ```
+- **Commit:** 19bb94f (pushed: yes), plus this log/backlog commit.
+- **Discovered:** nothing new. P1-1 now records what's done and lists the `innerHTML` and `onclick` uses still left.
+- **Next:** P0-7e. Hide Image Recognition from the dropdowns, and stop showing broken images and audio.
+
 ### 9: 2026-10-15 05:35 UTC: P0-7c Exercise state
 - **Baseline:** `check.sh` green (48 backend, smoke, 3 e2e), same as entry 8. No human commits.
 - **Did** (all in `frontend/js/app.js`):
