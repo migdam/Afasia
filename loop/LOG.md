@@ -19,6 +19,22 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 57: 2026-10-15 16:35 UTC: P2-5 Forgiving answer checking
+- **Baseline:** `check.sh` exit code 0: 240 backend tests, smoke, 95 e2e. No human commits. Tests were written in the scratchpad until it finished.
+- **Test first:**
+  - `backend/tests/test_answer_checking.py`, 19 tests. They failed before (import error).
+  - `e2e/test_forgiving_answers.py`: the "almost" test failed before. The no-diacritics test passed once the backend change was live, and the backend tests cover that case failing before.
+- **Did:**
+  - `app/answers.py` (`normalize`, `matches`, `edit_distance`, `is_near_miss`), used in `submit_answer`.
+  - `AnswerResult.almost`.
+  - Frontend "Almost"/"Prawie" and a JS `normalizeAnswer` for the practice retry.
+  - Guides and READMEs (EN/PL).
+- **Decision:** a near miss is not credited. That is clinical (C3), so it is left for H1 and recorded on P2-5.
+- **Verified:** `scripts/check.sh` exit code 0: ruff, pip-audit "No known vulnerabilities found", 259 backend tests, smoke, 97 e2e.
+- **Commit:** 827e819 (pushed: yes)
+- **Discovered:** nothing new.
+- **Next:** P2-6 (answering without typing).
+
 ### 56: 2026-10-15 16:19 UTC: P2-4f Calm feedback
 - **Baseline:** `check.sh` exit code 0: 240 backend tests, smoke, 89 e2e. No human commits. Tests were written in the scratchpad until it finished.
 - **Test first:** `e2e/test_calm_feedback.py`, 5 tests: all failed before. My first color test called `page.evaluate` with two arguments; Playwright takes one, so it now passes a list.
