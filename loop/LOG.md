@@ -17,6 +17,32 @@ Newest entry first. One entry per iteration.
 
 ---
 
+### 15: 2026-10-15 07:20 UTC: P0-9a READMEs describe only what exists
+- **Baseline:** `check.sh` green (51 backend, smoke, 13 e2e). No human commits.
+- **Split:** P0-9 covers about 3,600 lines of docs, so it became P0-9a (READMEs, done here) and P0-9b (user guides and `.env.template`).
+- **Did:**
+  - Rewrote `README.md` and `README.pl.md` (the Polish written natively) from what the tests and iterations 1–14 verified.
+  - The new READMEs include:
+    - an early-development, not-for-clinical-use status;
+    - what works, with the untested parts marked;
+    - what doesn't work;
+    - the quick start, which `smoke.sh` still checks;
+    - Docker;
+    - a settings table and an API overview;
+    - Known limitations, each linked to its backlog item;
+    - "no license chosen yet".
+  - Deleted `README_IMPLEMENTATION.md`.
+  - New `test_docs.py`: all relative links resolve, and the READMEs contain no known-false claims.
+- **Verified:**
+  ```
+  old docs: 4 failed — LICENSE link missing (both READMEs); README.md 9 false claims, README.pl.md 6
+  now:      backend "61 passed" · README smoke OK · e2e "13 passed" (exit code checked directly)
+  ```
+- **Slip:** the first commit message said "66 backend tests". I corrected it to 61 with `--amend` before pushing.
+- **Commit:** f056514 (pushed: yes), plus this log/backlog commit.
+- **Discovered:** nothing new.
+- **Next:** P0-9b, the user guides.
+
 ### 14: 2026-10-15 07:05 UTC: P0-8 Docker stack
 - **Baseline:** `check.sh` green (51 backend, smoke, 13 e2e). No human commits.
 - **Environment:**
