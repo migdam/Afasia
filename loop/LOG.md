@@ -19,6 +19,19 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 30: 2026-10-15 09:36 UTC: P1-6a Release the microphone
+- **Baseline:** `check.sh` exit code 0: 136 backend tests, smoke, 25 e2e. No human commits. Tests were written in the scratchpad until the baseline finished.
+- **Split:** P1-6 became a–f: the microphone, consent, export and deletion, the privacy notice, retention, and third parties and logs.
+- **Test first:** `e2e/test_microphone.py`, 4 tests: stop recording; record twice; leave mid-recording; log out mid-recording. The page counts the streams it opens, and Chromium runs with `--use-fake-device-for-media-stream`. On the old code all 4 failed: `assert 1 == 0` (one track still live), and timeouts waiting for the tracks to end.
+- **Did:**
+  - `audio.js`: `startRecording()` opens the microphone, `stopRecording()` releases it, and `cleanup()` drops a recording in progress.
+  - `app.js`: `stopListening()` (microphone, speech recognition and the record button) runs when an exercise is shown, when the session completes, on exit and at logout. `leaveExercise()` does the clean-up without the page switch, so logout no longer flashes the dashboard. Clicks while the microphone opens are ignored.
+  - User guides (EN/PL): the microphone is on only while recording.
+- **Verified:** `scripts/check.sh` exit code 0: ruff, pip-audit "No known vulnerabilities found", 136 backend tests, smoke, 29 e2e.
+- **Commit:** da7ebeb (pushed: yes)
+- **Discovered:** speech recognition listens to new audio at submit time instead of the recording. That is already in P2-7, so nothing new.
+- **Next:** P1-6b (consent).
+
 ### 29: 2026-10-15 09:23 UTC: P1-5e2 Change password (web app)
 - **Baseline:** `check.sh` ran the 136 backend tests, smoke and the 20 existing e2e tests, all green. It also collected my new `e2e/test_account_page.py`, which I had written while it ran, and those 5 tests failed (rc=1). That doubles as "fails before"; the existing code was green.
 - **Test first:** `e2e/test_account_page.py`, 5 tests (EN and PL): change the password, then log out and log in with the new one, and the old one gets 401; a wrong current password is explained in words with `role="alert"`; the fields are labelled, with `autocomplete` and `minlength`.

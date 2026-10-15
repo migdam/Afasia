@@ -142,13 +142,13 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 - [x] **P1-5d Logout ends the login on the server too** (4e5c445). Tokens carry a random login id (`sid`), kept by renewals. Logout records it in `revoked_logins`, which every request checks; other devices stay logged in. Tokens without `sid` are refused, so everyone logs in again once after upgrading.
 - [x] **P1-5e1 Change password, API** (e29ebc9). `POST /users/password` needs the current password (wrong ones count towards the login limit), applies the sign-up rules, ends the person's other logins (`login_cutoffs` table), and gives this login a new token. A "forgot password" reset needs email, which is out of scope for the loop; it goes to H5 (hosting and accounts) when someone wants it.
 - [x] **P1-5e2 Change password, web app** (d81dbb7). New Account page (bottom nav, EN/PL) with a labelled change-password form. Results show as a message in words under the button (`role="alert"` for errors, `role="status"` for success), in the current language. `ui.showFormMessage` can be reused when P2-4 replaces `alert()`.
-- [ ] **P1-6 Privacy (GDPR: health data is special-category)** 🔎:
-  - A privacy notice in PL and EN.
-  - Explicit consent before recording audio, and before browser speech recognition, which can send audio to the browser vendor's cloud.
-  - Release the microphone 🔎. `audioRecorder` keeps the stream from the first recording open for the rest of the visit (`cleanup()` is never called), and leaving a session mid-recording doesn't stop it. So the browser keeps showing the microphone as in use.
-  - Data export (JSON) and account deletion for the user.
-  - A retention policy for recordings.
-  - No third-party requests without consent, and no PII in logs.
+- **P1-6 Privacy (GDPR: health data is special-category)** 🔎. Split into a–f on 2026-10-15.
+  - [x] **P1-6a Release the microphone** 🔎 (da7ebeb). It is opened for each recording and released when the recording stops, when you leave the session or exercise, or when you log out. `e2e/test_microphone.py` uses Chromium's fake microphone.
+  - [ ] **P1-6b Consent before recording and speech recognition.** Ask before the first recording, and separately before browser speech recognition, which can send audio to the browser vendor's cloud. Say what is kept and where, in plain words, EN and PL. Store the answers with the account and let the person change them on the Account page. With no consent, the exercise must still be usable (self-rating, C5).
+  - [ ] **P1-6c Your data: export and delete.** A JSON export of everything stored about you (account, sessions, answers, progress, badges, plans, recording list), and account deletion that also removes your recordings from disk. Both on the Account page, with a confirmation for deletion.
+  - [ ] **P1-6d Privacy notice** in PL and EN, linked from the login page and the Account page: what is stored, why, where, for how long, and who can see it. Only facts that the code supports; the legal parts (controller, legal basis, contact) are placeholders until H4/H5.
+  - [ ] **P1-6e Retention for recordings.** A configurable retention period after which recordings are deleted (a scheduled clean-up or a CLI command). The default needs a decision (H4).
+  - [ ] **P1-6f No third-party requests, no personal data in logs.** Check that the app loads nothing from other origins (the CSP can enforce it), and that the logs carry no usernames, emails, answers or tokens. Add tests for both.
 - [ ] **P1-7 Users would never receive fixes** 🔎. The service worker serves app code cache-first, and nginx marks JS/CSS `immutable` for a year without hashed filenames. Switch app code to network-first, or to stale-while-revalidate with versioned assets. Never cache API responses containing personal data. Either build real offline support or remove the offline claims.
 - [ ] **P1-8 Safe defaults** 🔎:
   - `DEBUG` defaults to true.
