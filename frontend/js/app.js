@@ -106,6 +106,8 @@ class AphasiaApp {
 
         document.getElementById('try-again').addEventListener('click', () => this.tryAgain());
         document.getElementById('choose-words').addEventListener('click', () => this.showWordChoices());
+        document.getElementById('use-tiles').addEventListener('click', () => this.showLetterTiles());
+        document.getElementById('tiles-undo').addEventListener('click', () => this.undoTile());
 
         document.getElementById('next-exercise').addEventListener('click', () => {
             this.goToNextExercise();
@@ -498,6 +500,10 @@ class AphasiaApp {
 
         document.getElementById('exercise-options').replaceChildren();
         document.getElementById('choose-words').hidden = false;
+        document.getElementById('use-tiles').hidden = false;
+        document.getElementById('tiles-area').hidden = true;
+        document.getElementById('letter-tiles').replaceChildren();
+        this.tappedTiles = [];
         if (exercise.options && exercise.options.length > 0) {
             // Multiple choice
             this.showOptions(exercise.options);
@@ -695,6 +701,46 @@ class AphasiaApp {
             });
             return button;
         }));
+    }
+
+    // Naming without typing (U6): build the word from its letters. Each tile
+    // adds its letter to the answer box; Undo takes the last one back.
+    async showLetterTiles() {
+        const exercise = this.currentExercises[this.currentExerciseIndex];
+        const button = document.getElementById('use-tiles');
+        button.disabled = true;
+        try {
+            const { tiles } = await api.getTiles(exercise.id);
+            const input = document.getElementById('answer-input');
+            input.value = '';
+            this.tappedTiles = [];
+            document.getElementById('letter-tiles').replaceChildren(...tiles.map((letter) => {
+                const tile = el('button', 'btn tile', letter === ' ' ? '␣' : letter);
+                tile.type = 'button';
+                tile.dataset.letter = letter;
+                if (letter === ' ') tile.setAttribute('aria-label', i18n.translate('space'));
+                tile.addEventListener('click', () => {
+                    input.value += letter;
+                    tile.disabled = true;
+                    this.tappedTiles.push(tile);
+                });
+                return tile;
+            }));
+            document.getElementById('tiles-area').hidden = false;
+            button.hidden = true;
+        } catch (error) {
+            console.error('Tiles failed:', error);
+        } finally {
+            button.disabled = false;
+        }
+    }
+
+    undoTile() {
+        const tile = this.tappedTiles.pop();
+        if (!tile) return;
+        const input = document.getElementById('answer-input');
+        input.value = input.value.slice(0, -tile.dataset.letter.length);
+        tile.disabled = false;
     }
 
     // Naming without typing (U6): show words to choose from.

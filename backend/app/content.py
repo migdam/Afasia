@@ -314,3 +314,13 @@ def choice_words(language: str, answer: str, others: int = 3) -> list[str]:
     words = [answer, *random.sample(pool, min(others, len(pool)))]
     random.shuffle(words)
     return words
+
+
+def letter_tiles(word: str) -> list[str]:
+    """The word's letters (and any spaces), shuffled, as tiles to build it
+    from (backlog P2-6b)."""
+    import random
+
+    letters = list(word)
+    random.shuffle(letters)
+    return letters

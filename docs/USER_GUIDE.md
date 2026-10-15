@@ -76,7 +76,7 @@ Small differences don't matter: capital letters, extra spaces, punctuation, and 
 
 **🔊 Read aloud**, under the question, under each hint and under the feedback, reads it out. Messages, questions in dialogs and explanations elsewhere in the app have the same button. It uses only voices on your own device; if your device has none for your language, the button isn't shown.
 
-**If typing is hard**, click **Choose from words**: four words appear, and you click the right one. A right answer chosen this way earns fewer points than one you recall yourself.
+**If typing is hard**, click **Choose from words**: four words appear, and you click the right one. Or click **Build from letters**: the word's letters appear as large tiles; tap them in order, and use **Undo** to take the last one back. A right answer found either way earns fewer points than one you recall yourself.
 
 **If the word doesn't come**, click **Hint**. Each click gives a little more help: first what the thing is for and where you find it, then its first letter, then the word itself. A right answer after hints earns fewer points, and the message says how many hints you used.
 

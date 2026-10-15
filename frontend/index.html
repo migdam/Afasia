@@ -220,6 +220,11 @@
                         <ol id="hint-list" class="hint-list" aria-live="polite"></ol>
                         <!-- Answer by choosing instead of typing (U6) -->
                         <button type="button" id="choose-words" class="btn btn-secondary" data-i18n="chooseWords">Choose from words</button>
+                        <button type="button" id="use-tiles" class="btn btn-secondary" data-i18n="useTiles">Build from letters</button>
+                        <div id="tiles-area" class="tiles-area" hidden>
+                            <div id="letter-tiles" class="letter-tiles"></div>
+                            <button type="button" id="tiles-undo" class="btn btn-secondary" data-i18n="undo">Undo</button>
+                        </div>
                     </div>
 
                     <div id="exercise-audio" class="exercise-audio" style="display: none;">

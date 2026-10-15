@@ -132,7 +132,8 @@ def export_my_data(user_id: int = Depends(get_current_user_id), db: Session = De
         "consents": get_consents(db, user_id).model_dump(),
         "sessions": [
             {**as_data(session), "exercises": [
-                {**as_data(e), "cue_level": e.cue_level, "choices_shown": e.choices_shown}
+                {**as_data(e), "cue_level": e.cue_level, "choices_shown": e.choices_shown,
+                 "tiles_used": e.tiles_used}
                 for e in session.exercises
             ]}
             for session in user.sessions

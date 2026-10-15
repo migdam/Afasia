@@ -127,6 +127,8 @@ class ExerciseResponse(BaseModel):
     cue_level: int = 0
     # Whether the word was chosen from a list; see POST .../choices.
     choices_shown: bool = False
+    # Whether the word was built from letter tiles; see POST .../tiles.
+    tiles_used: bool = False
 
     class Config:
         from_attributes = True
@@ -147,6 +149,11 @@ class Hint(BaseModel):
 class Choices(BaseModel):
     """Words to choose from in a naming exercise; one of them is right."""
     choices: List[str]
+
+
+class Tiles(BaseModel):
+    """A naming answer's letters, shuffled."""
+    tiles: List[str]
 
 
 class AnswerResult(ExerciseResponse):

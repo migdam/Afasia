@@ -115,6 +115,12 @@ class Exercise(Base):
     session = relationship("TherapySession", back_populates="exercises")
     cue = relationship("ExerciseCue", uselist=False, cascade="all, delete-orphan")
     choice = relationship("ExerciseChoice", uselist=False, cascade="all, delete-orphan")
+    tiles = relationship("ExerciseTiles", uselist=False, cascade="all, delete-orphan")
+
+    @property
+    def tiles_used(self) -> bool:
+        """Whether the word was built from letter tiles rather than recalled."""
+        return self.tiles is not None
 
     @property
     def choices_shown(self) -> bool:
@@ -147,6 +153,16 @@ class ExerciseChoice(Base):
 
     exercise_id = Column(Integer, ForeignKey("exercises.id"), primary_key=True)
     words = Column(JSON, nullable=False)
+
+
+class ExerciseTiles(Base):
+    """The letter tiles offered in a naming exercise (backlog P2-6b), kept so
+    asking again shows the same order. Its own table, as there are no
+    migrations yet (backlog P3-1). Deleted with its exercise."""
+    __tablename__ = "exercise_tiles"
+
+    exercise_id = Column(Integer, ForeignKey("exercises.id"), primary_key=True)
+    letters = Column(JSON, nullable=False)
 
 
 class Progress(Base):
