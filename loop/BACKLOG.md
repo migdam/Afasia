@@ -23,7 +23,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 | G2 Backend tests | 🔴 | 51 tests pass, including register → login → profile and a full scored session; coverage not measured |
 | G3 End-to-end | 🟡 | 13 tests in Chromium, including the whole flow (sign-up → word naming and sentence completion → feedback → dashboard and progress scores) in EN and PL, the admin list, the chart, and the session edge cases. Not covered yet: pronunciation (P2-7) and export (CSV/PDF) |
 | G4 Authorization | 🟡 | Tested (`test_authorization.py`): no route without a login, no admin route for patients, and users can't reach each other's sessions, answers, schedules or recordings. Admins are created explicitly (P1-3a). Still open: therapists limited to their own patients (P1-3b) |
-| G5 Security | 🔴 | Done: no untrusted data reaches `innerHTML`, and the CSP forbids inline scripts (P1-1). Recordings only through the owner-checked endpoint (P1-2); pip-audit clean in `check.sh` (P1-4). Still open: login rate limit (P1-5), secrets from the environment only (P1-8) |
+| G5 Security | 🔴 | Done: no untrusted data reaches `innerHTML`, and the CSP forbids inline scripts (P1-1). Recordings only through the owner-checked endpoint (P1-2); pip-audit clean in `check.sh` (P1-4). Login rate-limited, and accounts checked on every request (P1-5a). Still open: secrets from the environment only (P1-8) |
 | G6 Accessibility | 🔴 | Not measured |
 | G7 Aphasia-friendly | 🔴 | Auto-advance, visible timer, typing required (P2-4..P2-6) |
 | G8 Clinical content | 🔴 | No answer leaks (C4, enforced by `test_content.py` since P0-6). Still English-only, assets missing, nothing clinically reviewed |
@@ -134,12 +134,11 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
   - An admin bootstrap command (`python -m app.cli create-admin`).
   - Authorization tests for every endpoint (G4).
 - [x] **P1-4 Dependency health** 🔎 (c625e62). Everything is on current releases (SQLAlchemy on 2.0.54). Unused packages are dropped. passlib is replaced by bcrypt 5, and passwords over 72 bytes are refused. `pip-audit` runs in `check.sh` and reports 0 known vulnerabilities (there were 67). Original report: Pins date from late 2023: fastapi 0.104 / starlette 0.27 and python-multipart 0.0.6, some with published security advisories. passlib 1.7.4 is unmaintained and crashes on its first hash with bcrypt 5 ✅, so bcrypt is held at 4.3.0 (P0-3). Replace passlib (bcrypt used directly, or Argon2) and decide what happens to passwords over bcrypt's 72-byte limit: bcrypt 4 silently truncates them, bcrypt 5 raises. (python-jose was replaced by PyJWT in P0-3.) Upgrade to current supported versions, drop the unused matplotlib and pillow, and add `pip-audit` to `requirements-dev.txt` and `check.sh` (it must come back clean). Upgrading to Starlette 0.37.2 or later also lifts the `httpx<0.28` pin in `requirements-dev.txt`: 0.37.2 is the first release whose `TestClient` no longer passes `app=` to `httpx.Client` (checked in the published wheels).
-- [ ] **P1-5 Login sessions that fit the users** 🔎. Tokens last 30 minutes with no refresh, so people get logged out mid-exercise and lose the session; the JWT also lives in `localStorage`. Fixes:
+- [x] **P1-5a Login safety** (73b9ee7). The account is looked up on every request, so a deactivated or deleted user's token gets 401 at once. 5 wrong passwords for a username within 15 minutes give 429 with `Retry-After`; a successful login clears the count. The count is in memory, so it is per process. Sign-up passwords need at least 8 characters (staff accounts from the CLI already needed 12).
+- [ ] **P1-5b Login sessions that fit the users** 🔎. Tokens last 30 minutes with no refresh, so people get logged out mid-exercise and lose the session; the JWT also lives in `localStorage`. Fixes:
   - httpOnly, Secure, SameSite cookies with CSRF protection, or refresh tokens.
   - An idle timeout suited to slow, effortful use.
-  - Rate-limited login.
-  - A minimum password length.
-  - Check the user on every request. Today a deactivated user's token keeps working until it expires, and a deleted user's token gets 404 instead of 401.
+  - If the app runs with several workers, move the wrong-password count (P1-5a) to the database or Redis so they share it.
 - [ ] **P1-6 Privacy (GDPR: health data is special-category)** 🔎:
   - A privacy notice in PL and EN.
   - Explicit consent before recording audio, and before browser speech recognition, which can send audio to the browser vendor's cloud.

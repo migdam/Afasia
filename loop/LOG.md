@@ -17,6 +17,22 @@ Newest entry first. One entry per iteration.
 
 ---
 
+### 22: 2026-10-15 09:50 UTC: P1-5a Login safety
+- **Baseline:** `check.sh` green (102 backend, smoke, 15 e2e). No human commits.
+- **Split:** P1-5 became P1-5a (per-request account check, login limit, minimum password length) and P1-5b (cookies or refresh tokens, idle timeout).
+- **Test first:** `backend/tests/test_login_safety.py`, 4 tests. On the old code: 3 failed, 1 passed (`assert 200 == 429`; a deactivated user's token still got 200).
+- **Did:**
+  - `get_current_user_id` looks up the user's `is_active` on each request; a missing or inactive account gets 401.
+  - `app/core/login_limit.py`: 5 failures per username (case-insensitive) in 15 minutes → 429 "Too many failed attempts" with `Retry-After`. Success clears the record. In memory, per process; reset in the test fixture.
+  - `UserCreate` passwords need 8+ characters; the sign-up field has `minlength="8"`.
+  - READMEs' Known limitations and the user guides (EN/PL) updated, with a new troubleshooting row.
+- **Verified:** `scripts/check.sh` exit code 0: ruff, pip-audit clean, 110 backend tests, smoke, 15 e2e.
+- **Commit:** 73b9ee7 (pushed: yes)
+- **Discovered:**
+  - The frontend shows a 422's `detail` list as text, so a too-short password from an old client reads badly. The form's `minlength` covers the normal case. Folded into P2 error-message work when it comes up.
+  - The limit is per username, so an attacker can lock someone out for 15 minutes. That is accepted for now and noted in P1-5b's scope for review.
+- **Next:** P1-5b if it fits one iteration, otherwise P1-6.
+
 ### 21: 2026-10-15 09:05 UTC: P1-4 Dependency health
 - **Baseline:** `check.sh` green (102 backend, smoke, 15 e2e). No human commits.
 - **Audit of the old pins** (pip-audit in a scratch venv): 67 known vulnerabilities.
