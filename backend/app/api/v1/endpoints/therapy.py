@@ -257,6 +257,7 @@ def finish_session(db: Session, session: TherapySession):
     # Create progress record
     progress = Progress(
         user_id=user.id,
+        date=now,
         exercises_completed=session.total_exercises,
         accuracy_rate=session.score,
         total_time_seconds=session.duration_seconds,

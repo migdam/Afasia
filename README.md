@@ -9,7 +9,7 @@ A web app for practising words and sentences after a stroke or brain injury. Peo
 
 ## What works today
 
-Accounts, practice sessions, feedback, scores, the progress chart, planned sessions and the admin page are covered by automated tests (see [Development](#development)), and so are parts of the phone layout: the header and the session lists. The CSV and PDF exports are not tested yet.
+Accounts, practice sessions, feedback, scores, the progress chart, planned sessions and the admin page are covered by automated tests (see [Development](#development)), and so are parts of the phone layout: the header and the session lists. The PDF export is not tested yet.
 
 - **Accounts.** Sign up, log in and out, stay signed in after a reload, and change your password on the Account page. Passwords are hashed with bcrypt; logins use JWTs. A login ends after 30 minutes without using the app, and at most 12 hours after logging in.
 - **Practice sessions** of 5–50 exercises, at easy, medium or hard:
@@ -121,7 +121,7 @@ FastAPI serves interactive documentation at `/docs` and `/redoc`. All endpoints 
 | Hints | `POST /therapy/exercises/{id}/hint`: the next naming hint (1 what it is for, 2 the first letter, 3 the word); fewer points for each hint used (shares pending clinical review) |
 | Answers | `POST /therapy/exercises/{id}/answer` (forgiving: case, spacing, punctuation and missing Polish letters don't count; `almost` marks a near miss): one answer per exercise. The response includes the right answer, and the last answer completes and scores the session. |
 | Results | `POST /therapy/sessions/{id}/complete`: a finished session's server-computed result |
-| You | `GET`/`PUT /users/profile`, `GET /users/progress`, `GET /users/badges`, `GET /users/progress/export/csv`, `GET /users/progress/export/pdf` |
+| You | `GET`/`PUT /users/profile`, `GET /users/progress`, `GET /users/badges`, `GET /users/progress/export/csv?lang=pl` (in English or Polish, the account's language by default; semicolons and decimal commas in Polish; times in the person's time zone), `GET /users/progress/export/pdf` |
 | Planning | `GET`/`POST /users/scheduled-sessions`, `DELETE /users/scheduled-sessions/{id}` |
 | Recordings | `POST /users/audio/upload` (only after consent: 403 otherwise), `GET /users/audio/{id}` |
 | Your data | `GET /users/me/export`: everything stored about you as a JSON download (no password hash, no file locations); `DELETE /users/me` with `{"password": ...}`: deletes the account and everything stored about you, recording files included |

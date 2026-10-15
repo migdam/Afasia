@@ -185,13 +185,14 @@ class APIClient {
     }
 
     async exportProgressCSV() {
-        const response = await this.fetch(`/users/progress/export/csv`);
+        // In the language on screen (P2-10c).
+        const response = await this.fetch(`/users/progress/export/csv?lang=${i18n.getCurrentLanguage()}`);
         const blob = await response.blob();
         return blob;
     }
 
     async exportProgressPDF() {
-        const response = await this.fetch(`/users/progress/export/pdf`);
+        const response = await this.fetch(`/users/progress/export/pdf?lang=${i18n.getCurrentLanguage()}`);
         const blob = await response.blob();
         return blob;
     }

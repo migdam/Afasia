@@ -1,6 +1,6 @@
 """User profile and progress endpoints."""
 import time
-from typing import List, Optional
+from typing import List, Literal, Optional
 from datetime import datetime, timedelta
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status, UploadFile, File, Form
 from fastapi.security import HTTPAuthorizationCredentials
@@ -13,6 +13,7 @@ from ....db.models import (
     ScheduledSession, AudioRecording, LoginCutoff, Consent, TimeZoneSetting
 )
 from ....core.clock import as_utc, utcnow
+from ....export_text import CSV_DELIMITER, TEXTS, decimal, language_of, local_time
 from ....core.config import settings
 from ....core import login_limit
 from ....core.security import (
@@ -402,41 +403,42 @@ def delete_scheduled_session(
 
 @router.get("/progress/export/csv")
 def export_progress_csv(
+    lang: Optional[Literal["en", "pl"]] = None,
     user_id: int = Depends(get_current_user_id),
     db: Session = Depends(get_db)
 ):
-    """Export progress data as CSV."""
+    """Every finished session as a spreadsheet file, in the language asked
+    for (or the account's), with times in your time zone (backlog P2-10c)."""
+    user = db.get(User, user_id)
+    language = language_of(lang, user.language)
+    words = TEXTS[language]
+    setting = db.get(TimeZoneSetting, user_id)
+    zone_name = setting.time_zone if setting else None
     progress_records = db.query(Progress).filter(
         Progress.user_id == user_id
     ).order_by(Progress.date.desc()).all()
 
-    # Create CSV in memory
     output = io.StringIO()
-    writer = csv.writer(output)
-
-    # Write header
-    writer.writerow([
-        'Date', 'Exercises Completed', 'Accuracy Rate (%)',
-        'Time (seconds)', 'Points Earned', 'Difficulty', 'Exercise Type'
-    ])
-
-    # Write data
+    # A byte-order mark, so spreadsheet programs read Polish letters as UTF-8.
+    output.write("\ufeff")
+    writer = csv.writer(output, delimiter=CSV_DELIMITER[language])
+    header = list(words["csv_headers"])
+    header[0] = header[0].format(zone=zone_name or "UTC")
+    writer.writerow(header)
     for record in progress_records:
         writer.writerow([
-            record.date.strftime('%Y-%m-%d %H:%M:%S'),
+            local_time(record.date, zone_name),
             record.exercises_completed,
-            round(record.accuracy_rate, 2),
+            decimal(record.accuracy_rate, language),
             record.total_time_seconds,
             record.points_earned,
-            record.difficulty_level.value if record.difficulty_level else '',
-            record.exercise_type.value if record.exercise_type else ''
+            words["levels"].get(record.difficulty_level.value, "") if record.difficulty_level else "",
+            words["types"].get(record.exercise_type.value, "") if record.exercise_type else "",
         ])
-
-    output.seek(0)
 
     return StreamingResponse(
         iter([output.getvalue()]),
-        media_type="text/csv",
+        media_type="text/csv; charset=utf-8",
         headers={"Content-Disposition": f"attachment; filename=progress_{utcnow().strftime('%Y%m%d')}.csv"}
     )
 
