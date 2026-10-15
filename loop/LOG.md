@@ -17,6 +17,35 @@ Newest entry first. One entry per iteration.
 
 ---
 
+### 3: 2026-10-15 04:44 UTC: P0-3 Every authenticated request returns 401
+- **Baseline:** `check.sh` green (10 passed, smoke OK), same as entry 2. No human commits.
+- **Did:**
+  - `create_access_token(user_id)` now builds the claims itself, with a string `sub`.
+  - Replaced python-jose with PyJWT 2.15.1. Decoding pins the algorithm and requires `exp` and `sub`.
+  - `HTTPBearer(auto_error=False)`, so a missing token or non-Bearer scheme gets 401 with `WWW-Authenticate: Bearer`.
+  - Simplified the two token calls in `auth.py`.
+  - Added a `client` fixture (fresh database per test) and `test_auth.py` (11 tests).
+- **Discovered and fixed here, because they blocked the acceptance test:**
+  - **Every registration crashed.** pip resolves bcrypt 5.0.0 today, and passlib 1.7.4's first hash raises `ValueError: password cannot be longer than 72 bytes`. Pinned `bcrypt==4.3.0`. In a throwaway venv, 4.3.0 hashes and verifies, while 5.0.0 raises.
+  - **Entry 0 was wrong** to call bcrypt 5 "not a blocker": its run had bcrypt 4.0.1 installed by an earlier step. Corrected in place.
+  - **Harness gap:** `check.sh` reinstalled into the existing venv, so a removed package (python-jose) would have lingered and hidden a missing requirement. `check.sh` now owns `.venv-check` and rebuilds it when the requirements change. A developer's own `.venv` is never touched. Deleted the old `.venv` from entry 1.
+  - The test `SECRET_KEY` was 15 bytes, which made PyJWT warn (`InsecureKeyLengthWarning`, RFC 7518). Lengthened it.
+- **Verified:**
+  ```
+  old code, new token tests:  6 failed, 4 passed
+      assert 401 == 200   (valid token, /users/profile)   ·   assert 403 == 401   (no header)
+  now, freshly rebuilt venv:  "Requirements changed; rebuilding .venv-check" · real 0m42.6s
+      ruff "All checks passed!" · pytest "21 passed, 24 warnings" · "README quick start: the backend answered /health"
+      jose importable in .venv-check: False · bcrypt 4.3.0 · InsecureKeyLengthWarning count: 0
+  ```
+- **Commit:** d3988e9 (pushed: yes), plus this log/backlog commit.
+- **Discovered (added to the backlog):**
+  - P1-4 now describes the passlib/bcrypt problem correctly, including the 72-byte limit.
+  - P1-5: a deactivated user's token keeps working until it expires, and a deleted user's token gets 404 instead of 401.
+  - P1-8: refuse secret keys shorter than 32 bytes.
+- **Next:** P0-4. Sessions never complete, so no points, progress or badges are ever saved. With the `client` fixture and working auth, it can be reproduced in tests.
+- **Protocol notes:** verifying in a freshly built venv is what exposed the bcrypt crash. Suggest step 5 say so explicitly whenever requirements change.
+
 ### 2: 2026-10-15 04:33 UTC: P0-2 Backend can't start
 - **Baseline:** `check.sh` green (2 passed, 2 xfailed), same as entry 1. No human commits.
 - **Did:**
@@ -97,7 +126,7 @@ generate_exercises(image_recognition) still spinning after 3 s: True
 word_naming item as shipped: {'question': 'What is this? (cat)', 'answer': 'cat', ...}
 ```
 
-**Scoring, with the JWT subject also patched to a string** (bcrypt pinned below 4.1 for this run, though 5.0.0 also registered fine):
+**Scoring, with the JWT subject also patched to a string** (bcrypt pinned below 4.1 for this run ~~, though 5.0.0 also registered fine~~; wrong, see entry 3):
 ```
 answer response includes correct_answer: False
 is_correct stored: [True, True, True]
@@ -106,6 +135,6 @@ after re-submitting 1 answer: completed_exercises=3 is_completed=True score=100.
 after re-submitting again: points=20 progress_records=2
 ```
 
-- **Not a blocker:** bcrypt 5.0.0 with passlib 1.7.4. Registration works; passlib only prints a warning.
+- **Not a blocker:** ~~bcrypt 5.0.0 with passlib 1.7.4. Registration works; passlib only prints a warning.~~ **Wrong, corrected in entry 3:** that run already had bcrypt 4.0.1 installed. With bcrypt 5.0.0, every registration crashes.
 - **Did:** wrote `loop/PROMPT.md`, `loop/BACKLOG.md`, `loop/LOG.md`, `loop/README.md` and `loop/run.sh`. No app code changed.
 - **Next:** P0-1, then P0-2.

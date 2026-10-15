@@ -20,7 +20,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 | Gate | Status | Evidence |
 |------|--------|----------|
 | G1 Runs | 🟡 | `scripts/check.sh` passes, including `scripts/smoke.sh`: the README backend quick start in a copy of the tree answers `/health`. Not yet covered: a from-scratch install in the copy (it reuses `.venv`) and the frontend half of the quick start (P0-7) |
-| G2 Backend tests | 🔴 | 10 tests pass and app code is now testable; coverage not measured |
+| G2 Backend tests | 🔴 | 21 tests pass, including register → login → profile; coverage not measured |
 | G3 End-to-end | 🔴 | No e2e tests |
 | G4 Authorization | 🔴 | P1-3 |
 | G5 Security | 🔴 | P1-1, P1-2, P1-4 |
@@ -44,7 +44,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
   3. `app/api/v1/schemas.py`: `EmailStr` needs `email-validator`, which is missing from requirements.
 
   **Acceptance:** following the README exactly, `uvicorn app.main:app` starts and `/health` returns 200. Tests cover settings parsing: a comma-separated CORS env var, the `.env` location, and unknown keys. Delete the `crashes_on_import` marker in `backend/tests/test_smoke.py`; strict mode fails the run until you do.
-- [ ] **P0-3 Every authenticated request returns 401** ✅. Registration (201) and login (200) work, but the token they return is rejected: tokens are created with an integer `sub`, and python-jose refuses non-string subjects on decode. Fix it by encoding `str(user.id)` and parsing it back. While here:
+- [x] **P0-3 Every authenticated request returns 401** ✅ (d3988e9). Tokens carry a string `sub`, PyJWT replaced python-jose, decoding requires `exp` and `sub`, and missing or invalid tokens get 401 with `WWW-Authenticate: Bearer`. The fresh-venv run also showed that every registration crashed (passlib 1.7.4 + bcrypt 5), so bcrypt is held at 4.3.0 until P1-4. Original report: registration (201) and login (200) work, but the token they return is rejected: tokens are created with an integer `sub`, and python-jose refuses non-string subjects on decode. Fix it by encoding `str(user.id)` and parsing it back. While here:
   - Replace python-jose (unmaintained, has published advisories) with PyJWT.
   - Return 401, not 403, for missing or invalid tokens.
 
@@ -105,12 +105,13 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
   - Therapist–patient assignment (invite plus consent).
   - An admin bootstrap command (`python -m app.cli create-admin`).
   - Authorization tests for every endpoint (G4).
-- [ ] **P1-4 Dependency health** 🔎. Pins date from late 2023: fastapi 0.104 / starlette 0.27, python-multipart 0.0.6, python-jose 3.3.0, and passlib 1.7.4, which is unmaintained (it prints a warning with the bcrypt 5.0.0 that pip resolves today). Some of these have published security advisories. Upgrade to current supported versions, drop the unused matplotlib and pillow, and add `pip-audit` to `requirements-dev.txt` and `check.sh` (it must come back clean). Upgrading to Starlette 0.37.2 or later also lifts the `httpx<0.28` pin in `requirements-dev.txt`: 0.37.2 is the first release whose `TestClient` no longer passes `app=` to `httpx.Client` (checked in the published wheels).
+- [ ] **P1-4 Dependency health** 🔎. Pins date from late 2023: fastapi 0.104 / starlette 0.27 and python-multipart 0.0.6, some with published security advisories. passlib 1.7.4 is unmaintained and crashes on its first hash with bcrypt 5 ✅, so bcrypt is held at 4.3.0 (P0-3). Replace passlib (bcrypt used directly, or Argon2) and decide what happens to passwords over bcrypt's 72-byte limit: bcrypt 4 silently truncates them, bcrypt 5 raises. (python-jose was replaced by PyJWT in P0-3.) Upgrade to current supported versions, drop the unused matplotlib and pillow, and add `pip-audit` to `requirements-dev.txt` and `check.sh` (it must come back clean). Upgrading to Starlette 0.37.2 or later also lifts the `httpx<0.28` pin in `requirements-dev.txt`: 0.37.2 is the first release whose `TestClient` no longer passes `app=` to `httpx.Client` (checked in the published wheels).
 - [ ] **P1-5 Login sessions that fit the users** 🔎. Tokens last 30 minutes with no refresh, so people get logged out mid-exercise and lose the session; the JWT also lives in `localStorage`. Fixes:
   - httpOnly, Secure, SameSite cookies with CSRF protection, or refresh tokens.
   - An idle timeout suited to slow, effortful use.
   - Rate-limited login.
   - A minimum password length.
+  - Check the user on every request. Today a deactivated user's token keeps working until it expires, and a deleted user's token gets 404 instead of 401.
 - [ ] **P1-6 Privacy (GDPR: health data is special-category)** 🔎:
   - A privacy notice in PL and EN.
   - Explicit consent before recording audio, and before browser speech recognition, which can send audio to the browser vendor's cloud.
@@ -120,7 +121,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 - [ ] **P1-7 Users would never receive fixes** 🔎. The service worker serves app code cache-first, and nginx marks JS/CSS `immutable` for a year without hashed filenames. Switch app code to network-first, or to stale-while-revalidate with versioned assets. Never cache API responses containing personal data. Either build real offline support or remove the offline claims.
 - [ ] **P1-8 Safe defaults** 🔎:
   - `DEBUG` defaults to true.
-  - The app should refuse to start with the template `SECRET_KEY` outside development.
+  - The app should refuse to start with the template `SECRET_KEY`, or with one shorter than 32 bytes (RFC 7518; PyJWT warns about it), outside development.
   - `/health/detailed` exposes configuration.
   - Datetimes are naive (`datetime.utcnow()`, deprecated in Python 3.12).
 
