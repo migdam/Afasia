@@ -309,8 +309,10 @@ body {
 
 .card-header {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
+    gap: 0.75rem;
     margin-bottom: 1.25rem;
 }
 
@@ -339,21 +341,26 @@ body {
 
 .session-header {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: start;
     gap: 0.75rem;
     margin-bottom: 0.75rem;
 }
 
-/* The details may shrink and wrap, so the score or button beside them
-   stays on the card on a phone (backlog P1-11). */
+/* The details take the room there is and wrap, so the score or button
+   beside them stays on the card on a phone (backlog P1-11). With larger
+   text on a narrow screen, there isn't room for both on one line, and the
+   score or button moves under the details instead (P2-12). */
 .session-header > :first-child {
+    flex: 1 1 8rem;
     min-width: 0;
 }
 
 .session-title {
     font-weight: 600;
     color: var(--text-primary);
+    overflow-wrap: anywhere;  /* a title someone typed may hold a very long word */
 }
 
 .session-meta {
@@ -677,8 +684,19 @@ body {
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
+    gap: 0.75rem;
+}
+
+/* An email address has no spaces to wrap at: on a phone it breaks where it
+   must, and the button moves under it, instead of pushing the button off
+   the screen (backlog P2-12). */
+.user-info {
+    flex: 1 1 12rem;
+    min-width: 0;
+    overflow-wrap: anywhere;
 }
 
 .user-info h4 {
