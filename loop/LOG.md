@@ -19,6 +19,18 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 44: 2026-10-15 12:48 UTC: P2-1 Clinical foundation
+- **Baseline:** `check.sh` exit code 0: 173 backend tests, smoke, 51 e2e. No human commits. Tests were written in the scratchpad until it finished.
+- **Sources:** each checked with web searches against publisher and repository records: Big CACTUS, the Brady 2016 Cochrane review (DOI suffix `pub4` confirmed), Boyle & Coelho 1995, Leonard et al. 2008, Edmonds et al. 2009, Youmans et al. 2005, and Linebaugh et al. 2005. The 1977 Linebaugh & Lehner year couldn't be confirmed, so it is left out. The DOIs for Leonard 2008 and Linebaugh 2005 couldn't be confirmed and are marked so.
+- **Caught on my own reread:** I had first written co-author names and initials I hadn't verified (for example Palmer's co-authors). They were removed; initials appear only where the records showed them. I also marked one unsourced generalisation claim `[citation needed]`.
+- **Test first:** `backend/tests/test_clinical_docs.py`, 4 tests: all failed before.
+- **Did:** both documents (the Polish one written natively); `test_docs.py` also checks them for known-false claims; READMEs link them.
+- **Verified:** `scripts/check.sh` exit code 0: ruff, pip-audit "No known vulnerabilities found", 181 backend tests, smoke, 51 e2e.
+- **Gate:** G10 Privacy is now 🟢, since P1-6 met every criterion (its legal blanks are H4/H5).
+- **Commit:** c069437 (pushed: yes)
+- **Discovered:** nothing new.
+- **Next:** P2-2 (content as data). It is large, so split it first.
+
 ### 43: 2026-10-15 12:34 UTC: P1-9 Session size 1 to 50
 - **Baseline:** `check.sh` exit code 0: 166 backend tests, smoke, 51 e2e. No human commits. Tests were written in the scratchpad until it finished.
 - **Decision:** the server allows 1 to 50, not the form's 5 to 50. Short sessions are legitimate (U9), and many tests use one exercise. The safety problem is ≤0 and huge sizes.

@@ -28,7 +28,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 | G7 Aphasia-friendly | 🔴 | Auto-advance, visible timer, typing required (P2-4..P2-6) |
 | G8 Clinical content | 🔴 | No answer leaks (C4, enforced by `test_content.py` since P0-6). Still English-only, assets missing, nothing clinically reviewed |
 | G9 i18n | 🔴 | Hard-coded English strings in JS (P2-10) |
-| G10 Privacy | 🔴 | P1-6 |
+| G10 Privacy | 🟢 | Every criterion met (P1-6a–f): export and deletion, consent before recording and before speech recognition, configurable retention, no third-party requests (tested), and a privacy notice in PL and EN. Its legal blanks (who runs the app, legal basis, hosting, contact, retention periods) wait for H4/H5 |
 | G11 Honest docs | 🟢 | The READMEs and user guides (EN/PL) describe only what exists, Known limitations are listed, and `test_docs.py` checks that every relative link resolves and that no known-false claim returns (P0-9) |
 | G12 Lighthouse | 🔴 | Not measured |
 | G13 Delivery | 🟡 | The Docker Compose stack starts and passes `scripts/docker-smoke.sh` (P0-8). No CI yet (P3-2) |
@@ -162,7 +162,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 
 ## P2: Clinically sound and aphasia-friendly
 
-- [ ] **P2-1 Clinical foundation.** Write `docs/clinical/README.md` and `docs/clinical/README.pl.md` covering the evidence-based approach behind each exercise type (with verified references), the content model, and the review process. Mark everything "pending clinical review" (C1, C7).
+- [x] **P2-1 Clinical foundation** (c069437). `docs/clinical/README.md` and `README.pl.md`: pending clinical review; the evidence in short (Brady 2016, Big CACTUS 2019); each exercise type's current state, intended basis (cueing hierarchy, SFA, PCA, VNeST as a model, script training planned) and gaps; the content model; and the review process. Seven references, checked against publisher and repository records (full texts not read). `[citation needed]` where unsupported. `test_clinical_docs.py` keeps both languages in step.
 - [ ] **P2-2 Content as data.** Replace the hard-coded `EXERCISE_DATA` with versioned content files (e.g. `content/items/*.json`), validated at startup. Each item has:
   - A concept id, and the PL and EN word with accepted synonyms.
   - Semantic features: category, use, location, description.
