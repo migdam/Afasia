@@ -19,6 +19,21 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 67: 2026-10-15 19:35 UTC: P2-9d Badges that can be earned
+- **Baseline:** `check.sh` exit code 0: 301 backend tests, smoke, 107 e2e. No human commits. The tests and the patch were written in the scratchpad until the baseline finished.
+- **Decision:** I removed the three badge types rather than implement them. Their names (perfectionist, master) suggest pressure. Inventing rules is a gamification decision, which H7 already asks about, and the UI only lists badges a person has earned, so nobody saw these three. H7 now names the open questions: a weekly goal, and which badges.
+- **Test first:** `backend/tests/test_badges.py`.
+  - "Only badges that can be earned exist" failed before (the three extra types).
+  - Guards:
+    - the icon map in `ui.js` equals the enum;
+    - 7 practice days with days off between them earn the week badge (rest days, P2-9c);
+    - 30 days earn the month badge.
+- **Did:** removed `PERFECTIONIST`, `DEDICATED` and `MASTER` from `BadgeType`, and their icons from `ui.js`. No data changes: none was ever awarded. On PostgreSQL the native enum type keeps the old labels unused, which is harmless. No doc changes: the guides and READMEs already listed only the three badges that can be earned.
+- **Verified:** `scripts/check.sh` exit code 0: ruff "All checks passed!", pip-audit "No known vulnerabilities found", 305 backend tests, smoke, 107 e2e.
+- **Commit:** eab4f5c (pushed: yes)
+- **Discovered:** U9 (pause and resume) isn't met. Leaving a session leaves it unfinished, with no way to continue it. It is already P4-6; the G7 row now names it.
+- **Next:** P2-10 (full i18n). It is large (hard-coded strings, exports, key parity, plurals, dates), so split it first.
+
 ### 66: 2026-10-15 19:20 UTC: P2-9c Rest days in streaks
 - **Baseline:** `check.sh` exit code 0: 297 backend tests, smoke, 107 e2e. No human commits. The tests and the patch were written in the scratchpad until the baseline finished.
 - **Test first:** `backend/tests/test_rest_days.py`. It can't be imported before the change (there is no `app.streaks`), so a copy without that import ran against the old code: 3 of 4 failed.
