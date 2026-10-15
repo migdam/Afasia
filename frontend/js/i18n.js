@@ -81,6 +81,16 @@ const translations = {
         cancel: "Cancel",
         schedule: "Schedule",
 
+        // Account
+        account: "Account",
+        changePassword: "Change password",
+        currentPassword: "Current password",
+        newPassword: "New password (at least 8 characters)",
+        passwordChanged: "Your password has been changed. You are logged out on your other devices.",
+        wrongCurrentPassword: "The current password is not right.",
+        newPasswordRules: "The new password needs at least 8 characters.",
+        tooManyAttempts: "Too many wrong passwords. Wait up to 15 minutes, then try again.",
+
         // Common
         save: "Save",
         delete: "Delete",
@@ -167,6 +177,16 @@ const translations = {
         dateTime: "Data i godzina",
         cancel: "Anuluj",
         schedule: "Zaplanuj",
+
+        // Account
+        account: "Konto",
+        changePassword: "Zmień hasło",
+        currentPassword: "Obecne hasło",
+        newPassword: "Nowe hasło (co najmniej 8 znaków)",
+        passwordChanged: "Hasło zostało zmienione. Na innych urządzeniach nastąpiło wylogowanie.",
+        wrongCurrentPassword: "Obecne hasło jest nieprawidłowe.",
+        newPasswordRules: "Nowe hasło musi mieć co najmniej 8 znaków.",
+        tooManyAttempts: "Zbyt wiele błędnych haseł. Odczekaj do 15 minut i spróbuj ponownie.",
 
         // Common
         save: "Zapisz",

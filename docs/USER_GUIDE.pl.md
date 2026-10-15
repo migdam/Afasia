@@ -33,6 +33,8 @@ Same ćwiczenia są na razie po angielsku, w obu wersjach językowych. Po wybran
 
 Dopóki korzystasz z aplikacji, pozostajesz zalogowany. Po 30 minutach bez korzystania z niej albo 12 godzinach od zalogowania trzeba zalogować się ponownie. Nie ma jeszcze opcji „nie pamiętam hasła”.
 
+**Zmiana hasła:** dotknij **Konto** na dole ekranu. Wpisz obecne hasło i nowe, mające co najmniej 8 znaków, a potem kliknij **Zmień hasło**. Komunikat pod przyciskiem powie, czy się udało. Na tym urządzeniu pozostajesz zalogowany, ale na innych trzeba zalogować się ponownie nowym hasłem.
+
 ## Tablica
 
 Na górze są trzy liczby:

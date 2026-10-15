@@ -65,6 +65,11 @@ class AphasiaApp {
         });
 
         // Logout
+        document.getElementById('password-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await this.handleChangePassword();
+        });
+
         document.getElementById('logout-btn').addEventListener('click', () => {
             this.logout();
         });
@@ -92,6 +97,8 @@ class AphasiaApp {
                 } else if (page === 'progress') {
                     ui.showPage('progress');
                     ui.loadProgress();
+                } else if (page === 'account') {
+                    ui.showPage('account');
                 } else if (page === 'admin') {
                     ui.showPage('admin');
                     ui.loadAdminDashboard();
@@ -198,6 +205,22 @@ class AphasiaApp {
             ui.loadScheduledSessions();
         } catch (error) {
             alert('Registration failed: ' + error.message);
+        }
+    }
+
+    async handleChangePassword() {
+        const form = document.getElementById('password-form');
+        const current = document.getElementById('current-password').value;
+        const next = document.getElementById('new-password').value;
+        try {
+            await api.changePassword(current, next);
+            form.reset();
+            ui.showFormMessage('password-message', 'passwordChanged', 'success');
+        } catch (error) {
+            const key = {
+                400: 'wrongCurrentPassword', 422: 'newPasswordRules', 429: 'tooManyAttempts',
+            }[error.status] || 'error';
+            ui.showFormMessage('password-message', key, 'error');
         }
     }
 

@@ -61,7 +61,9 @@ class APIClient {
             const data = await response.json().catch(() => null);
 
             if (!response.ok) {
-                throw new Error(data?.detail || 'Request failed');
+                const error = new Error(data?.detail || 'Request failed');
+                error.status = response.status;
+                throw error;
             }
 
             if (!endpoint.startsWith('/auth/')) {
@@ -98,6 +100,15 @@ class APIClient {
         await this.renewal;
         this.tokenTimes = null;
         await this.request('/auth/logout', { method: 'POST' }).catch(() => {});
+    }
+
+    async changePassword(currentPassword, newPassword) {
+        const data = await this.request('/users/password', {
+            method: 'POST',
+            body: JSON.stringify({ current_password: currentPassword, new_password: newPassword }),
+        });
+        this.noteLogin(data);  // this login carries on with a new token
+        return data;
     }
 
     // User endpoints

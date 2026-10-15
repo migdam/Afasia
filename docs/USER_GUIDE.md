@@ -33,6 +33,8 @@ The exercises themselves are in English for now, in both languages. A few messag
 
 While you use the app, you stay logged in. After 30 minutes without using it, or 12 hours after you logged in, you have to log in again. There is no "forgot password" yet.
 
+**To change your password:** tap **Account** at the bottom of the screen. Type your current password and a new one of at least 8 characters, then click **Change password**. A message under the button says whether it worked. You stay logged in here, but on your other devices you have to log in again with the new password.
+
 ## The dashboard
 
 At the top are three numbers:

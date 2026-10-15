@@ -11,7 +11,7 @@ A web app for practising words and sentences after a stroke or brain injury. Peo
 
 Accounts, practice sessions, feedback, scores, the progress chart and the admin page are covered by automated tests (see [Development](#development)). Export, scheduling and the phone layout are not tested yet.
 
-- **Accounts.** Sign up, log in and out, and stay signed in after a reload. Passwords are hashed with bcrypt; logins use JWTs. A login ends after 30 minutes without using the app, and at most 12 hours after logging in.
+- **Accounts.** Sign up, log in and out, stay signed in after a reload, and change your password on the Account page. Passwords are hashed with bcrypt; logins use JWTs. A login ends after 30 minutes without using the app, and at most 12 hours after logging in.
 - **Practice sessions** of 5–50 exercises, at easy, medium or hard:
   - *Word naming*: read a short description ("A pet that barks and wags its tail") and type the word.
   - *Sentence completion*: choose the word that completes a sentence.
@@ -152,7 +152,7 @@ The app is improved in small, tested steps by a documented loop. See [`loop/READ
 Before anyone relies on this app, at least these must be fixed. Each one is in [`loop/BACKLOG.md`](loop/BACKLOG.md).
 
 - **Security**
-  - A password can be changed only through the API (`POST /users/password`); the web app has no form for it yet (P1-5e2). There is no "forgot password" reset, and no way to log out on all devices at once without changing the password.
+  - There is no "forgot password" reset, and no way to log out on all devices at once without changing the password.
   - The limits on wrong passwords are kept in memory: each server process counts on its own, and a restart forgets them. Behind a proxy, clients are told apart only if the server trusts the proxy's `X-Forwarded-For` (the Docker setup does); otherwise everyone shares one count per username. Whether 5 and 50 suit people with aphasia is an open question (backlog H7).
 - **Privacy:** there is no privacy notice, no consent step before recording, and no way to export or delete your data (P1-6). The app stores health information.
 - **Roles:** any therapist can see and deactivate every patient. Therapists aren't linked to their own patients yet (P1-3b).

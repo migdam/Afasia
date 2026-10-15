@@ -49,11 +49,25 @@ class UIManager {
         });
     }
 
+    // A message under a form, in words, in the current language. Errors are
+    // announced at once (role="alert"); other news politely (role="status").
+    showFormMessage(id, key, kind) {
+        const message = document.getElementById(id);
+        message.className = `form-message ${kind}`;
+        message.setAttribute('role', kind === 'error' ? 'alert' : 'status');
+        message.setAttribute('data-i18n', key);  // re-translated if the language changes
+        message.textContent = i18n.translate(key);
+    }
+
     showAuthPage() {
         // Start again from an empty login form, so nothing typed earlier (a
         // password included) is left on screen for the next person.
         document.getElementById('login-form-submit').reset();
         document.getElementById('register-form-submit').reset();
+        document.getElementById('password-form').reset();
+        const passwordMessage = document.getElementById('password-message');
+        passwordMessage.textContent = '';
+        passwordMessage.removeAttribute('data-i18n');
         document.getElementById('register-form').style.display = 'none';
         document.getElementById('login-form').style.display = 'block';
         this.showPage('auth');

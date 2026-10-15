@@ -11,7 +11,7 @@ Aplikacja internetowa do ćwiczenia słów i zdań po udarze lub urazie mózgu. 
 
 Konta, sesje ćwiczeń, informacja zwrotna, wyniki, wykres postępów i panel administratora są sprawdzane testami automatycznymi (zob. [Rozwój](#rozwój)). Eksport, planowanie sesji i układ na telefon nie mają jeszcze testów.
 
-- **Konta.** Rejestracja, logowanie i wylogowanie. Po odświeżeniu strony nadal jesteś zalogowany. Hasła są haszowane algorytmem bcrypt, a logowanie korzysta z tokenów JWT. Zalogowanie kończy się po 30 minutach bez korzystania z aplikacji, a najpóźniej 12 godzin po zalogowaniu.
+- **Konta.** Rejestracja, logowanie, wylogowanie i zmiana hasła na stronie Konto. Po odświeżeniu strony nadal jesteś zalogowany. Hasła są haszowane algorytmem bcrypt, a logowanie korzysta z tokenów JWT. Zalogowanie kończy się po 30 minutach bez korzystania z aplikacji, a najpóźniej 12 godzin po zalogowaniu.
 - **Sesje ćwiczeń** po 5–50 ćwiczeń, na poziomie łatwym, średnim lub trudnym:
   - *Nazywanie słów*: przeczytaj krótki opis („A pet that barks and wags its tail”) i wpisz słowo.
   - *Uzupełnianie zdań*: wybierz słowo, które kończy zdanie.
@@ -152,7 +152,7 @@ Aplikację ulepsza się małymi, przetestowanymi krokami według opisanej pętli
 Zanim ktokolwiek zacznie polegać na tej aplikacji, trzeba naprawić co najmniej poniższe. Każdy punkt jest w [`loop/BACKLOG.md`](loop/BACKLOG.md).
 
 - **Bezpieczeństwo**
-  - Hasło można zmienić tylko przez API (`POST /users/password`); aplikacja w przeglądarce nie ma jeszcze do tego formularza (P1-5e2). Nie ma resetu „nie pamiętam hasła” ani sposobu na wylogowanie naraz ze wszystkich urządzeń bez zmiany hasła.
+  - Nie ma resetu „nie pamiętam hasła” ani sposobu na wylogowanie naraz ze wszystkich urządzeń bez zmiany hasła.
   - Limity błędnych haseł są trzymane w pamięci: każdy proces serwera liczy osobno, a restart je kasuje. Za serwerem pośredniczącym klienci są rozróżniani tylko wtedy, gdy serwer ufa jego nagłówkowi `X-Forwarded-For` (konfiguracja Docker tak robi); w przeciwnym razie wszyscy dzielą jeden licznik na nazwę użytkownika. Czy wartości 5 i 50 pasują osobom z afazją, to otwarte pytanie (backlog H7).
 - **Prywatność:** brak informacji o prywatności, zgody przed nagrywaniem oraz możliwości eksportu i usunięcia swoich danych (P1-6). Aplikacja przechowuje dane o zdrowiu.
 - **Role:** każdy terapeuta widzi i może dezaktywować wszystkich pacjentów. Terapeuci nie są jeszcze powiązani ze swoimi pacjentami (P1-3b).

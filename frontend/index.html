@@ -267,6 +267,27 @@
             </div>
         </div>
 
+        <!-- Account Page -->
+        <div id="account-page" class="page">
+            <h2 data-i18n="account">Account</h2>
+
+            <div class="card">
+                <h3 data-i18n="changePassword">Change password</h3>
+                <form id="password-form">
+                    <div class="form-group">
+                        <label for="current-password" data-i18n="currentPassword">Current password</label>
+                        <input type="password" id="current-password" required autocomplete="current-password">
+                    </div>
+                    <div class="form-group">
+                        <label for="new-password" data-i18n="newPassword">New password (at least 8 characters)</label>
+                        <input type="password" id="new-password" required minlength="8" autocomplete="new-password">
+                    </div>
+                    <button type="submit" class="btn btn-primary" data-i18n="changePassword">Change password</button>
+                    <p id="password-message" class="form-message"></p>
+                </form>
+            </div>
+        </div>
+
         <!-- Admin Page -->
         <div id="admin-page" class="page">
             <h2 data-i18n="adminDashboard">Admin Dashboard</h2>
@@ -346,6 +367,10 @@
         <button class="nav-item" data-page="progress">
             <span class="nav-icon">📊</span>
             <span class="nav-label" data-i18n="progress">Progress</span>
+        </button>
+        <button class="nav-item" data-page="account">
+            <span class="nav-icon">👤</span>
+            <span class="nav-label" data-i18n="account">Account</span>
         </button>
         <button class="nav-item" data-page="admin" id="admin-nav" style="display: none;">
             <span class="nav-icon">⚙️</span>
