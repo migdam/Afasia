@@ -22,7 +22,10 @@ FALSE_CLAIMS = [
     "support@aphasia-therapy.app", "wsparcie@terapia-afazji.app", "@aphasiatherapy",
     "api\\.md", "deployment\\.md", "specify your pricing", "określ swój model",
 ]
-CHECKED_FOR_CLAIMS = ["README.md", "README.pl.md", "docs/USER_GUIDE.md", "docs/USER_GUIDE.pl.md"]
+CHECKED_FOR_CLAIMS = [
+    "README.md", "README.pl.md", "docs/USER_GUIDE.md", "docs/USER_GUIDE.pl.md",
+    "docs/clinical/README.md", "docs/clinical/README.pl.md",
+]
 
 
 @pytest.mark.parametrize("doc", DOCS, ids=[str(d.relative_to(ROOT)) for d in DOCS])
