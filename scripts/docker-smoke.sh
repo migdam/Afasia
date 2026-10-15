@@ -70,6 +70,36 @@ try:
 except urllib.error.HTTPError as error:
     assert error.code == 401, f"profile after logout: {error.code}"
 print("page, /api, sign-up, login, profile and logout all work through nginx")
+
+# Your data (P1-6c1), on PostgreSQL, which enforces the foreign keys that
+# SQLite in the tests doesn't: export, then delete an account with a recording.
+status, body = call("POST", "/api/v1/auth/login", {"username": name, "password": account["password"]})
+token = json.loads(body)["access_token"]
+call("PUT", "/api/v1/users/consents", {"recordings": True}, token=token)
+status, body = call("POST", "/api/v1/therapy/sessions", {"title": "smoke", "exercise_type": "pronunciation",
+                                                          "difficulty": "easy", "num_exercises": 1}, token=token)
+session_id = json.loads(body)["id"]
+status, body = call("GET", f"/api/v1/therapy/sessions/{session_id}/exercises", token=token)
+exercise_id = json.loads(body)[0]["id"]
+boundary = "smokeboundary"
+upload = urllib.request.Request(
+    f"{base}/api/v1/users/audio/upload?exercise_id={exercise_id}", method="POST",
+    headers={"Authorization": f"Bearer {token}", "Content-Type": f"multipart/form-data; boundary={boundary}"},
+    data=(f"--{boundary}\r\nContent-Disposition: form-data; name=\"audio\"; filename=\"r\"\r\n"
+          f"Content-Type: audio/webm\r\n\r\n").encode() + b"\x1aE\xdf\xa3" + b"\0" * 64
+         + f"\r\n--{boundary}--\r\n".encode(),
+)
+assert urllib.request.urlopen(upload, timeout=10).status == 200, "recording upload"
+status, body = call("GET", "/api/v1/users/me/export", token=token)
+assert status == 200 and len(json.loads(body)["recordings"]) == 1, "export"
+status, _ = call("DELETE", "/api/v1/users/me", {"password": account["password"]}, token=token)
+assert status == 204, f"delete: {status}"
+try:
+    call("POST", "/api/v1/auth/login", {"username": name, "password": account["password"]})
+    raise AssertionError("the deleted account can still log in")
+except urllib.error.HTTPError as error:
+    assert error.code == 401, f"login after deletion: {error.code}"
+print("export, and deleting an account with a recording, work on PostgreSQL")
 EOF
   "${compose[@]}" logs --tail 40 >&2 || true
   exit 1

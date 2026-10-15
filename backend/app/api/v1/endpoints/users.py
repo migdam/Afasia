@@ -4,7 +4,7 @@ from typing import List, Optional
 from datetime import datetime, timedelta
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status, UploadFile, File
 from fastapi.security import HTTPAuthorizationCredentials
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from ....db.database import get_db
@@ -15,14 +15,16 @@ from ....db.models import (
 from ....core.config import settings
 from ....core import login_limit
 from ....core.security import (
-    create_access_token, get_current_user_id, get_password_hash, security, verify_password,
+    clear_login_cookie, create_access_token, get_current_user_id, get_password_hash, security,
+    verify_password,
 )
 from .auth import login_response
 from ..schemas import (
-    Consents, PasswordChange, TokenResponse, UserResponse, UserUpdate, ProgressResponse, ProgressStats,
+    AccountDeletion, Consents, PasswordChange, TokenResponse, UserResponse, UserUpdate, ProgressResponse, ProgressStats,
     BadgeResponse, ScheduledSessionCreate, ScheduledSessionResponse,
     AudioRecordingResponse
 )
+import enum
 import os
 import csv
 import io
@@ -98,6 +100,82 @@ def update_consents(
         db.add(row)
     db.commit()
     return get_consents(db, user_id)
+
+
+def as_data(row, leave_out=()) -> dict:
+    """A database row as plain JSON-ready data, without the columns left out."""
+    data = {}
+    for column in row.__table__.columns:
+        if column.name in leave_out:
+            continue
+        value = getattr(row, column.name)
+        if isinstance(value, datetime):
+            value = value.isoformat()
+        elif isinstance(value, enum.Enum):
+            value = value.value
+        data[column.name] = value
+    return data
+
+
+@router.get("/me/export")
+def export_my_data(user_id: int = Depends(get_current_user_id), db: Session = Depends(get_db)):
+    """Everything stored about you, as one JSON file to download.
+
+    Left out: the password hash, and where recordings sit on the server's
+    disk (each recording can be played through GET /users/audio/{id}).
+    """
+    user = db.get(User, user_id)
+    data = {
+        "exported_at": datetime.utcnow().isoformat(),
+        "account": as_data(user, leave_out={"hashed_password"}),
+        "consents": get_consents(db, user_id).model_dump(),
+        "sessions": [
+            {**as_data(session), "exercises": [as_data(e) for e in session.exercises]}
+            for session in user.sessions
+        ],
+        "progress": [as_data(p) for p in user.progress_records],
+        "badges": [as_data(b) for b in user.badges],
+        "scheduled_sessions": [as_data(s) for s in user.scheduled_sessions],
+        "recordings": [
+            {**as_data(r, leave_out={"file_path"}), "play_url": f"/api/v1/users/audio/{r.id}"}
+            for r in user.audio_recordings
+        ],
+    }
+    return JSONResponse(
+        data, headers={"Content-Disposition": 'attachment; filename="afasia-my-data.json"'},
+    )
+
+
+@router.delete("/me", status_code=status.HTTP_204_NO_CONTENT)
+def delete_my_account(
+    data: AccountDeletion,
+    request: Request,
+    response: Response,
+    user_id: int = Depends(get_current_user_id),
+    db: Session = Depends(get_db),
+):
+    """Delete your account and everything stored about you, recordings included.
+
+    Needs your password; wrong ones count towards the login limit.
+    """
+    user = db.get(User, user_id)
+    client = request.client.host if request.client else "unknown"
+    wait = login_limit.retry_after(user.username, client)
+    if wait:
+        raise login_limit.too_many_attempts(wait)
+    if not verify_password(data.password, user.hashed_password):
+        login_limit.record_failure(user.username, client)
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Password is incorrect")
+
+    files = [Path(r.file_path) for r in user.audio_recordings]
+    # Rows without a foreign key to users go by hand; the rest follow the user.
+    db.query(Consent).filter(Consent.user_id == user_id).delete()
+    db.query(LoginCutoff).filter(LoginCutoff.user_id == user_id).delete()
+    db.delete(user)
+    db.commit()
+    for path in files:
+        path.unlink(missing_ok=True)
+    clear_login_cookie(response)
 
 
 # Audio formats accepted for recordings, by content type. Browsers record

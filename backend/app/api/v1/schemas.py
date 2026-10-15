@@ -46,6 +46,10 @@ class Consents(BaseModel):
     speech_recognition: Optional[StrictBool] = None
 
 
+class AccountDeletion(BaseModel):
+    password: str
+
+
 class UserLogin(BaseModel):
     username: str
     password: str

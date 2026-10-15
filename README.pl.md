@@ -114,6 +114,7 @@ FastAPI udostępnia interaktywną dokumentację pod `/docs` i `/redoc`. Wszystki
 | Twoje dane | `GET`/`PUT /users/profile`, `GET /users/progress`, `GET /users/badges`, `GET /users/progress/export/csv`, `GET /users/progress/export/pdf` |
 | Planowanie | `GET`/`POST /users/scheduled-sessions`, `DELETE /users/scheduled-sessions/{id}` |
 | Nagrania | `POST /users/audio/upload` (tylko po wyrażeniu zgody, inaczej 403), `GET /users/audio/{id}` |
+| Twoje dane | `GET /users/me/export`: wszystko, co jest o Tobie zapisane, jako plik JSON do pobrania (bez skrótu hasła i ścieżek plików); `DELETE /users/me` z `{"password": ...}`: usuwa konto i wszystko, co jest o Tobie zapisane, łącznie z plikami nagrań |
 | Zgody | `GET`/`PUT /users/consents`: `recordings` i `speech_recognition`, każda `true`, `false` albo `null` (jeszcze nie pytano) |
 | Administrator | `GET /admin/stats`, `GET /admin/users`, `GET /admin/users/{id}/sessions`, `PUT /admin/users/{id}/activate`, `PUT /admin/users/{id}/deactivate` |
 
@@ -155,7 +156,7 @@ Zanim ktokolwiek zacznie polegać na tej aplikacji, trzeba naprawić co najmniej
 - **Bezpieczeństwo**
   - Nie ma resetu „nie pamiętam hasła” ani sposobu na wylogowanie naraz ze wszystkich urządzeń bez zmiany hasła.
   - Limity błędnych haseł są trzymane w pamięci: każdy proces serwera liczy osobno, a restart je kasuje. Za serwerem pośredniczącym klienci są rozróżniani tylko wtedy, gdy serwer ufa jego nagłówkowi `X-Forwarded-For` (konfiguracja Docker tak robi); w przeciwnym razie wszyscy dzielą jeden licznik na nazwę użytkownika. Czy wartości 5 i 50 pasują osobom z afazją, to otwarte pytanie (backlog H7).
-- **Prywatność:** nagrania i rozpoznawanie mowy wymagają zgody, o którą aplikacja pyta. Brak jeszcze informacji o prywatności oraz możliwości eksportu i usunięcia swoich danych (P1-6). Aplikacja przechowuje dane o zdrowiu.
+- **Prywatność:** nagrania i rozpoznawanie mowy wymagają zgody, o którą aplikacja pyta. Brak jeszcze informacji o prywatności (P1-6d). Eksport i usunięcie swoich danych działają przez API, ale aplikacja w przeglądarce nie ma jeszcze do tego przycisków (P1-6c2). Aplikacja przechowuje dane o zdrowiu.
 - **Role:** każdy terapeuta widzi i może dezaktywować wszystkich pacjentów. Terapeuci nie są jeszcze powiązani ze swoimi pacjentami (P1-3b).
 - **Treść kliniczna:** kilka tymczasowych ćwiczeń po angielsku, niesprawdzonych przez logopedę. Nie ma obrazków ani nagrań.
 - **Dostępność** nie została zbadana, a zasady projektowania przyjaznego osobom z afazją z [`loop/PROMPT.md`](loop/PROMPT.md) nie są jeszcze spełnione. Na przykład aplikacja nadal sama przechodzi dalej po 2 sekundach.
