@@ -19,6 +19,20 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 53: 2026-10-15 15:22 UTC: P2-4d2 Read aloud elsewhere
+- **Baseline:** `check.sh` exit code 0: 240 backend tests, smoke, 77 e2e. No human commits. Tests were written in the scratchpad until it finished.
+- **Test first:** `e2e/test_read_aloud_more.py`, 4 tests with the fake speech engine: all failed before.
+- **Did:**
+  - `data-read-aloud` on 11 texts.
+  - `ui.addReadAloudButtons` at start-up.
+  - `readAloudButton` remembers its target, and `updateReadAloud` hides it while the target is empty.
+  - Refreshes in `showFormMessage`, `clearFormMessage`, `notify` and `askConsent`.
+  - Guides and READMEs (EN/PL).
+- **Verified:** `scripts/check.sh` exit code 0: ruff, pip-audit "No known vulnerabilities found", 240 backend tests, smoke, 81 e2e.
+- **Commit:** 4e27b5a (pushed: yes)
+- **Discovered:** nothing new. Empty-state lines and headings are noted as still uncovered.
+- **Next:** P2-4g (a compact header on phones).
+
 ### 52: 2026-10-15 15:07 UTC: P2-4d Read aloud
 - **Baseline:** `check.sh` exit code 0: 240 backend tests, smoke, 72 e2e. No human commits. Tests were written in the scratchpad until it finished.
 - **Checked first:** `SpeechSynthesisVoice.localService` (MDN): true means a local synthesizer, false a remote service. So read-aloud uses local voices only, which keeps the privacy notice true.
