@@ -54,6 +54,7 @@ const translations = {
         correctAnswer: "Correct answer",
         hint: "Hint",
         nextExercise: "Next",
+        largerText: "Larger text",
 
         // Messages in the app (U12)
         ok: "OK",
@@ -201,6 +202,7 @@ const translations = {
         correctAnswer: "Prawidłowa odpowiedź",
         hint: "Podpowiedź",
         nextExercise: "Dalej",
+        largerText: "Większy tekst",
 
         // Messages in the app (U12)
         ok: "OK",
@@ -335,6 +337,11 @@ class I18n {
         // The privacy notice opens at the current language's section.
         document.querySelectorAll('.privacy-link').forEach((link) => {
             link.href = `privacy.html#${this.currentLang}`;
+        });
+
+        // Accessible names of buttons that show only a symbol.
+        document.querySelectorAll('[data-i18n-label]').forEach((element) => {
+            element.setAttribute('aria-label', this.translate(element.getAttribute('data-i18n-label')));
         });
 
         // Update language toggle button

@@ -13,10 +13,11 @@ Ten przewodnik opisuje aplikację w jej obecnej postaci: wczesnej wersji do wypr
 ## Język i motyw
 
 Przyciski w prawym górnym rogu każdego ekranu:
+- **A+** powiększa cały tekst. Kliknij jeszcze raz, żeby wrócić do zwykłej wielkości.
 - **EN / PL** przełącza język między angielskim a polskim.
 - **🌙 / ☀️** przełącza między motywem jasnym a ciemnym.
 
-Przeglądarka zapamiętuje oba wybory.
+Przeglądarka zapamiętuje te wybory.
 
 Ćwiczenia są w wybranym języku. Po wybraniu polskiego kilka słów nadal jest też po angielsku: „Completed” na liście sesji i przyciski w panelu administratora.
 

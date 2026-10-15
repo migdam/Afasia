@@ -13,8 +13,9 @@ class AphasiaApp {
     }
 
     init() {
-        // Load theme
+        // Load theme and text size
         ui.loadTheme();
+        this.setLargeText(localStorage.getItem('textSize') === 'large');
 
         // The login is an httpOnly cookie, so ask the server whether there is one.
         this.loadUserData();
@@ -173,6 +174,12 @@ class AphasiaApp {
         });
 
         document.getElementById('app-message-ok').addEventListener('click', () => ui.clearNotice());
+
+        document.getElementById('text-size').addEventListener('click', () => {
+            const large = !document.documentElement.classList.contains('large-text');
+            this.setLargeText(large);
+            localStorage.setItem('textSize', large ? 'large' : 'normal');
+        });
 
         document.getElementById('submit-answer').addEventListener('click', () => {
             this.submitCurrentAnswer();
@@ -637,6 +644,12 @@ class AphasiaApp {
 
     leaveExercise() {
         this.stopListening();
+    }
+
+    // Larger text (U1): everything is sized in rem, so the root size scales it all.
+    setLargeText(large) {
+        document.documentElement.classList.toggle('large-text', large);
+        document.getElementById('text-size').setAttribute('aria-pressed', String(large));
     }
 
     goToNextExercise() {

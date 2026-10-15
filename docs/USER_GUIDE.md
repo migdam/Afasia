@@ -13,10 +13,11 @@ This guide describes the app as it is today: an early version for trying out, no
 ## Language and theme
 
 The buttons at the top right of every screen:
+- **A+** makes all text larger. Click it again for the usual size.
 - **EN / PL** switches the language between English and Polish.
 - **🌙 / ☀️** switches between the light and dark theme.
 
-Your browser remembers both choices.
+Your browser remembers these choices.
 
 The exercises come in the language you choose. A few words also still appear in English when Polish is chosen: "Completed" in the session list, and the admin buttons.
 
