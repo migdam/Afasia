@@ -19,6 +19,21 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 28: 2026-10-15 09:10 UTC: P1-5e1 Change password (API)
+- **Baseline:** `check.sh` exit code 0: 130 backend tests, smoke, 20 e2e. No human commits. Per the iteration 27 note, I wrote only tests until the baseline finished.
+- **Split:** the web app has no account page to hold a form, so P1-5e became e1 (the API) and e2 (the account page and form).
+- **Test first:** `backend/tests/test_change_password.py`, 5 tests: all failed before.
+- **Did:**
+  - `POST /users/password` with `PasswordChange`; the sign-up rules are now shared (`check_new_password`).
+  - Wrong current passwords give 400 and count towards `login_limit`; there is a shared `too_many_attempts()` for the 429.
+  - New `login_cutoffs` table, which `get_current_user_id` checks against the token's `auth_time`. It has no foreign key, so it never blocks deleting a user.
+  - The changing login gets a new token (cookie; in the body only for Bearer callers).
+  - READMEs (EN/PL): endpoint table and Known limitations.
+- **Verified:** `scripts/check.sh` exit code 0: ruff, pip-audit "No known vulnerabilities found", 136 backend tests, smoke, 20 e2e. `docker-smoke.sh` was not run: it doesn't change passwords, and the new table is created the same way as `revoked_logins`, which it checked on PostgreSQL in iteration 27.
+- **Commit:** e29ebc9 (pushed: yes)
+- **Discovered:** nothing new.
+- **Next:** P1-5e2.
+
 ### 27: 2026-10-15 08:58 UTC: P1-5d Logout ends the login on the server
 - **Baseline:** the backend stage passed: 125 tests. Then 1 e2e test failed, but that's on me: I edited `security.py` (which now requires `sid`) while the baseline was still running. Its e2e server started on my edited code, and the old aged-token test sent no `sid`. Not a regression.
 - **Test first:**
