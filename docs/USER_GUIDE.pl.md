@@ -228,7 +228,7 @@ Sesja rozpocznie się natychmiast!
 **Kontrole:**
 - **Wyjdź**: Opuść sesję (postęp zostanie utracony)
 - **Zatwierdź**: Sprawdź swoją odpowiedź
-- **Odtwórz Audio**: (Ćwiczenia wymowy) Usłysz słowo
+- **Odtwórz Audio**: (Ćwiczenia wymowy) Usłysz słowo (jeszcze niedostępne: nie ma nagrań)
 
 ### Opinia Zwrotna
 
@@ -314,7 +314,7 @@ Po ukończeniu wszystkich ćwiczeń:
 
 **Jak to działa:**
 1. Zobacz słowo lub frazę
-2. Kliknij "Odtwórz Audio", aby je usłyszeć
+2. Kliknij "Odtwórz Audio", aby je usłyszeć (jeszcze niedostępne: nie ma nagrań)
 3. Kliknij "Nagraj", aby ćwiczyć
 4. Mów wyraźnie do mikrofonu
 5. Kliknij "Stop", gdy skończysz
@@ -446,7 +446,7 @@ Przed rozpoczęciem:
 **Krok po kroku:**
 
 1. **Posłuchaj Przykładu**
-   - Kliknij przycisk "Odtwórz Audio"
+   - Kliknij przycisk "Odtwórz Audio" (jeszcze niedostępne: nie ma nagrań)
    - Usłysz poprawną wymowę
    - Posłuchaj kilka razy, jeśli potrzeba
 

@@ -95,3 +95,22 @@ def test_leaving_during_feedback_does_not_move_the_next_session_on(page, account
     page.wait_for_timeout(2500)  # longer than the feedback pause
 
     expect(page.locator("#exercise-counter")).to_have_text("1/5")
+
+
+def test_only_exercise_types_with_content_are_offered(page, account):
+    for menu in ("#exercise-type", "#schedule-type"):
+        values = page.locator(f"{menu} option").evaluate_all("options => options.map(o => o.value)")
+        assert "image_recognition" not in values, menu
+
+
+def test_starting_exercises_loads_no_missing_files(page, account):
+    record_dialogs(page)  # accepts the confirmation when leaving
+    failed = []
+    page.on("response", lambda response: failed.append(response.url) if response.status >= 400 else None)
+
+    for exercise_type in ("word_naming", "pronunciation"):
+        start_session(page, exercise_type)
+        expect(page.locator("#exercise-image")).to_be_hidden()
+        page.click("#exit-exercise")
+
+    assert failed == []

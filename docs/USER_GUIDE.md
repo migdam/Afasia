@@ -228,7 +228,7 @@ The session will begin immediately!
 **Controls:**
 - **Exit**: Leave session (progress will be lost)
 - **Submit**: Check your answer
-- **Play Audio**: (Pronunciation exercises) Hear the word
+- **Play Audio**: (Pronunciation exercises) Hear the word (not available yet: there are no recordings)
 
 ### Feedback
 
@@ -314,7 +314,7 @@ When you finish all exercises:
 
 **How it works:**
 1. See a word or phrase
-2. Click "Play Audio" to hear it
+2. Click "Play Audio" to hear it (not available yet: there are no recordings)
 3. Click "Record" to practice
 4. Speak clearly into microphone
 5. Click "Stop" when done
@@ -446,7 +446,7 @@ Before starting:
 **Step-by-Step:**
 
 1. **Listen to Example**
-   - Click "Play Audio" button
+   - Click "Play Audio" button (not available yet: there are no recordings)
    - Hear the correct pronunciation
    - Listen multiple times if needed
 
