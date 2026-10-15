@@ -166,6 +166,8 @@ alembic revision --autogenerate -m "co się zmieniło"
 
 Przeczytaj i popraw nowy plik w `backend/migrations/versions/`, a potem uruchom `scripts/check.sh`: `tests/test_migrations.py` nie przejdzie, jeśli migracje i modele się nie zgadzają.
 
+GitHub Actions uruchamia to samo sprawdzenie oraz test stosu Docker Compose (`scripts/docker-smoke.sh`) przy każdym pushu i pull requeście (`.github/workflows/checks.yml`).
+
 Wkład w projekt: zgłoś problem albo pull request. Utrzymuj `scripts/check.sh` na zielono, do każdej zmiany dodaj test, a to README i [wersję angielską](README.md) aktualizuj razem.
 
 Aplikację ulepsza się małymi, przetestowanymi krokami według opisanej pętli. Zob. [`loop/README.md`](loop/README.md).
@@ -182,7 +184,6 @@ Zanim ktokolwiek zacznie polegać na tej aplikacji, trzeba naprawić co najmniej
 - **Treść kliniczna:** po polsku i po angielsku, w `backend/content/` i sprawdzana przy starcie aplikacji: 30 pojęć do nazywania, 12 zdań do uzupełnienia i 9 zwrotów do powtórzenia. Wszystkie są tymczasowe i niesprawdzone przez logopedę. Nie ma obrazków ani nagrań. Na czym powinien opierać się każdy rodzaj ćwiczeń, ze sprawdzoną bibliografią, opisuje [`docs/clinical/README.pl.md`](docs/clinical/README.pl.md); ten dokument także oczekuje na ocenę kliniczną.
 - **Dostępność** nie została zbadana, a zasady projektowania przyjaznego osobom z afazją z [`loop/PROMPT.md`](loop/PROMPT.md) nie są jeszcze spełnione. Na przykład czytanie na głos działa tylko wtedy, gdy urządzenie ma własny głos dla danego języka.
 - **Kwestie prawne:** nie oceniono, czy aplikacja jest wyrobem medycznym w rozumieniu przepisów UE.
-- **Wdrażanie:** nie ma jeszcze ciągłej integracji (CI).
 
 ## Licencja
 

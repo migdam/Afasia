@@ -166,6 +166,8 @@ alembic revision --autogenerate -m "what changed"
 
 Read and correct the new file in `backend/migrations/versions/`, then run `scripts/check.sh`: `tests/test_migrations.py` fails if the migrations and the models disagree.
 
+GitHub Actions runs the same check, and the Docker Compose smoke test (`scripts/docker-smoke.sh`), on every push and pull request (`.github/workflows/checks.yml`).
+
 Contributions: open an issue or a pull request. Keep `scripts/check.sh` green, add a test for every change, and update this README and [the Polish one](README.pl.md) together.
 
 The app is improved in small, tested steps by a documented loop. See [`loop/README.md`](loop/README.md).
@@ -182,7 +184,6 @@ Before anyone relies on this app, at least these must be fixed. Each one is in [
 - **Clinical content:** in Polish and English, in `backend/content/` and checked when the app starts: 30 naming concepts, 12 sentences to complete and 9 phrases to repeat. All are placeholders, not reviewed by a speech-language therapist. There are no pictures or recordings. What each exercise type should be based on, with checked references, is in [`docs/clinical/README.md`](docs/clinical/README.md), also pending clinical review.
 - **Accessibility** has not been audited, and the aphasia-friendly design rules in [`loop/PROMPT.md`](loop/PROMPT.md) are not met yet. For example, read-aloud works only where the device has a voice of its own for the language.
 - **Legal:** whether the app counts as a medical device under EU rules has not been assessed.
-- **Delivery:** there is no continuous integration yet.
 
 ## License
 
