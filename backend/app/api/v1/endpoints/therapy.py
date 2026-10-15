@@ -70,11 +70,14 @@ EXERCISE_DATA = {
 
 
 def generate_exercises(exercise_type: ExerciseType, difficulty: DifficultyLevel, count: int) -> List[dict]:
-    """Generate random exercises based on type and difficulty."""
+    """Pick random exercises of a type and difficulty, repeating items if needed.
+
+    Raises LookupError when there is no content for that type and difficulty,
+    rather than substituting another difficulty or looping forever.
+    """
     available = EXERCISE_DATA.get(exercise_type, {}).get(difficulty, [])
     if not available:
-        # Fallback to medium difficulty
-        available = EXERCISE_DATA.get(exercise_type, {}).get(DifficultyLevel.MEDIUM, [])
+        raise LookupError(f"no {exercise_type.value} exercises at {difficulty.value} difficulty")
 
     # Repeat if needed
     exercises = []
@@ -190,6 +193,20 @@ def create_session(
     db: Session = Depends(get_db)
 ):
     """Create a new therapy session."""
+    # Pick the exercises first, so a request without content creates nothing.
+    try:
+        exercise_templates = generate_exercises(
+            session_data.exercise_type,
+            session_data.difficulty,
+            session_data.num_exercises
+        )
+    except LookupError:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"There are no {session_data.exercise_type.value} exercises "
+                   f"at {session_data.difficulty.value} difficulty yet"
+        ) from None
+
     # Create session
     session = TherapySession(
         user_id=user_id,
@@ -204,13 +221,6 @@ def create_session(
     db.add(session)
     db.commit()
     db.refresh(session)
-
-    # Generate exercises
-    exercise_templates = generate_exercises(
-        session_data.exercise_type,
-        session_data.difficulty,
-        session_data.num_exercises
-    )
 
     for template in exercise_templates:
         exercise = Exercise(

@@ -53,7 +53,7 @@ Aphasia is a communication disorder that affects a person's ability to speak, un
 #### 🎯 **Interactive Therapy Sessions**
 - **Word Naming**: Visual recognition and naming exercises with images
 - **Sentence Completion**: Fill-in-the-blank exercises with multiple choice options
-- **Image Recognition**: Match images to correct words
+- **Image Recognition**: Match images to correct words (not available yet: there are no exercises of this type)
 - **Pronunciation Practice**: Record and evaluate speech patterns
 
 #### 📊 **Progress Tracking**

@@ -5,7 +5,7 @@ import pytest
 
 from app.api.v1.endpoints.therapy import EXERCISE_DATA
 from app.db.database import SessionLocal
-from app.db.models import TherapySession
+from app.db.models import ExerciseType, TherapySession
 
 ANSWERS = {
     item["question"]: item["answer"]
@@ -60,6 +60,25 @@ def get_points_and_history(client, auth):
     points = client.get("/api/v1/users/profile", headers=auth).json()["total_points"]
     history = client.get("/api/v1/users/progress", headers=auth).json()["progress_history"]
     return points, history
+
+
+def test_a_type_without_content_is_refused_and_creates_nothing(client, auth, monkeypatch):
+    monkeypatch.setitem(EXERCISE_DATA, ExerciseType.IMAGE_RECOGNITION, {})
+
+    response = client.post(
+        "/api/v1/therapy/sessions",
+        headers=auth,
+        json={
+            "title": "Practice",
+            "exercise_type": "image_recognition",
+            "difficulty": "easy",
+            "num_exercises": 3,
+        },
+    )
+
+    assert response.status_code == 422
+    assert "image_recognition" in response.json()["detail"]
+    assert client.get("/api/v1/therapy/sessions", headers=auth).json() == []
 
 
 def test_the_last_answer_completes_and_scores_the_session(client, auth):

@@ -53,7 +53,7 @@ Afazja to zaburzenie komunikacji, które wpływa na zdolność osoby do mówieni
 #### 🎯 **Interaktywne Sesje Terapeutyczne**
 - **Nazywanie Słów**: Ćwiczenia rozpoznawania wizualnego i nazywania z obrazkami
 - **Uzupełnianie Zdań**: Ćwiczenia wypełniania luk z opcjami wielokrotnego wyboru
-- **Rozpoznawanie Obrazów**: Dopasowywanie obrazów do właściwych słów
+- **Rozpoznawanie Obrazów**: Dopasowywanie obrazów do właściwych słów (jeszcze niedostępne: nie ma ćwiczeń tego typu)
 - **Ćwiczenie Wymowy**: Nagrywanie i ocena wzorców mowy
 
 #### 📊 **Śledzenie Postępów**

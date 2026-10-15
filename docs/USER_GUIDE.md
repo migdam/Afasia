@@ -157,7 +157,7 @@ Four types available:
    - Choose the right word
    - Improves grammar skills
 
-3. **Image Recognition** 🎨
+3. **Image Recognition** 🎨 (not available yet)
    - Match images to words
    - Visual learning
    - Memory enhancement
@@ -296,6 +296,8 @@ When you finish all exercises:
 - No partial credit
 
 ### 3. Image Recognition
+
+**Not available yet:** there are no image-recognition exercises, so starting this type shows an error message.
 
 **How it works:**
 1. See an image

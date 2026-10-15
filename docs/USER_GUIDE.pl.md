@@ -157,7 +157,7 @@ Dostępne cztery typy:
    - Wybierz właściwe słowo
    - Poprawia umiejętności gramatyczne
 
-3. **Rozpoznawanie Obrazów** 🎨
+3. **Rozpoznawanie Obrazów** 🎨 (jeszcze niedostępne)
    - Dopasuj obrazy do słów
    - Uczenie się wizualne
    - Wzmocnienie pamięci
@@ -296,6 +296,8 @@ Po ukończeniu wszystkich ćwiczeń:
 - Brak częściowych punktów
 
 ### 3. Rozpoznawanie Obrazów
+
+**Jeszcze niedostępne:** nie ma ćwiczeń rozpoznawania obrazów, więc wybranie tego typu wyświetla komunikat o błędzie.
 
 **Jak to działa:**
 1. Zobacz obraz
