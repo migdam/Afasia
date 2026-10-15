@@ -9,7 +9,7 @@ Aplikacja internetowa do ćwiczenia słów i zdań po udarze lub urazie mózgu. 
 
 ## Co już działa
 
-Konta, sesje ćwiczeń, informacja zwrotna, wyniki, wykres postępów i panel administratora są sprawdzane testami automatycznymi (zob. [Rozwój](#rozwój)). Eksport, planowanie sesji i układ na telefon nie mają jeszcze testów.
+Konta, sesje ćwiczeń, informacja zwrotna, wyniki, wykres postępów, planowanie sesji i panel administratora są sprawdzane testami automatycznymi (zob. [Rozwój](#rozwój)), podobnie jak część układu na telefon: górny pasek i listy sesji. Eksport do CSV i PDF nie ma jeszcze testów.
 
 - **Konta.** Rejestracja, logowanie, wylogowanie i zmiana hasła na stronie Konto. Odświeżenie strony nie kończy zalogowania. Hasła są haszowane algorytmem bcrypt, a logowanie korzysta z tokenów JWT. Zalogowanie kończy się po 30 minutach bez korzystania z aplikacji, a najpóźniej 12 godzin po zalogowaniu.
 - **Sesje ćwiczeń** po 5–50 ćwiczeń, na poziomie łatwym, średnim lub trudnym:

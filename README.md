@@ -9,7 +9,7 @@ A web app for practising words and sentences after a stroke or brain injury. Peo
 
 ## What works today
 
-Accounts, practice sessions, feedback, scores, the progress chart and the admin page are covered by automated tests (see [Development](#development)). Export, scheduling and the phone layout are not tested yet.
+Accounts, practice sessions, feedback, scores, the progress chart, planned sessions and the admin page are covered by automated tests (see [Development](#development)), and so are parts of the phone layout: the header and the session lists. The CSV and PDF exports are not tested yet.
 
 - **Accounts.** Sign up, log in and out, stay signed in after a reload, and change your password on the Account page. Passwords are hashed with bcrypt; logins use JWTs. A login ends after 30 minutes without using the app, and at most 12 hours after logging in.
 - **Practice sessions** of 5–50 exercises, at easy, medium or hard:
