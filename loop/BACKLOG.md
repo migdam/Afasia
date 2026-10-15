@@ -127,7 +127,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
   - Check that the exercise belongs to the user.
 - [ ] **P1-3 Therapist and admin model** 🔎. Split on 2026-10-15:
   - [x] **P1-3a Staff accounts and authorization tests** (719dca3). `python -m app.cli create-user` / `set-role` (12-character minimum, password never on the command line), documented in both READMEs and checked in `docker-smoke.sh`. `test_authorization.py`: every non-public route needs a login, patients get 403 on admin routes, and users can't reach each other's data.
-  - [ ] **P1-3b Therapists see only their patients.** Today every therapist can see and deactivate every patient. Needs a therapist–patient link, plus decisions from H7: who invites whom, and how the patient consents. Admins keep the whole list. Only admins should deactivate accounts.
+  - [!] **P1-3b Therapists see only their patients.** Blocked on H7: it needs a decision on how therapists and patients are linked. Today every therapist can see and deactivate every patient. Needs a therapist–patient link, plus decisions from H7: who invites whom, and how the patient consents. Admins keep the whole list. Only admins should deactivate accounts.
 
   Original report: Any therapist can see and deactivate every patient, and there is no way to create a therapist or admin account at all. Add:
   - Therapist–patient assignment (invite plus consent).
@@ -234,4 +234,4 @@ The loop must not fake these. Write decisions or answers directly under each ite
 - [ ] **H4 Legal.** Decide whether the intended purpose makes this a medical device under EU MDR 2017/745 (software with a therapeutic purpose can qualify), which decides what the app may claim. Also: a GDPR DPIA, a privacy policy, EU hosting, and processor agreements.
 - [ ] **H5 Project facts.** The license (the README says MIT, but there is no LICENSE file), a real support contact, the domain, and hosting.
 - [ ] **H6 Usability testing** with people with aphasia, carers and therapists. This is the most important input for "best in the world".
-- [ ] **H7 Product decisions.** Self-registration or therapist invitation? Which kind of gamification suits this population?
+- [ ] **H7 Product decisions.** Self-registration or therapist invitation? Which kind of gamification suits this population? For P1-3b, how does a therapist get linked to a patient: the patient enters a therapist's code, the therapist invites by email, or an admin assigns? And how does the patient agree to share their results?
