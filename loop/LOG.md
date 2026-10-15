@@ -17,6 +17,25 @@ Newest entry first. One entry per iteration.
 
 ---
 
+### 20: 2026-10-15 08:40 UTC: P1-3a Staff accounts and authorization tests
+- **Baseline:** `check.sh` green (71 backend, smoke, 15 e2e). No human commits.
+- **Split:** P1-3 became P1-3a (done here) and P1-3b. P1-3b needs product decisions (H7): how therapists and patients get linked, and how the patient consents.
+- **Did:**
+  - `app/cli.py`: `create-user` (role, password from a prompt or stdin, at least 12 characters, duplicates refused) and `set-role`.
+  - New "Staff accounts" section in both READMEs, including the Docker form; both guides point to it.
+  - `docker-smoke.sh` now also creates an admin with the CLI and uses it.
+  - Tests: `test_cli.py` (3) and `test_authorization.py` (28). The routes are enumerated from the app, so a new route without a login check fails automatically.
+- **Verified:**
+  ```
+  old code: test_cli — ImportError: cannot import name 'cli' · test_authorization: 28 passed (it guards what already works)
+  now:      check.sh backend "102 passed" · smoke OK · e2e "15 passed" (exit code checked directly)
+            docker-smoke: "Created admin smokeadmin." · "the CLI-made admin can log in and use the admin API" · 0 containers left
+  ```
+- **Slip:** the first attempt to extend `docker-smoke.sh` nested an `EOF` heredoc inside another, so the outer one ended early. Nothing was changed; I redid it with the Edit tool plus a heredoc under a different delimiter. Lesson, as a protocol note: never nest heredocs that share a delimiter.
+- **Commit:** 719dca3 (pushed: yes), plus this log/backlog commit.
+- **Discovered:** nothing new.
+- **Next:** P1-3b needs H7's decisions, so take P1-4 (dependency health) first. Then P1-5 onwards.
+
 ### 19: 2026-10-15 08:20 UTC: P1-2 Private voice recordings
 - **Baseline:** `check.sh` green (67 backend, smoke, 15 e2e). No human commits.
 - **Did:**

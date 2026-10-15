@@ -22,7 +22,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 | G1 Runs | 🟡 | `scripts/check.sh` passes, including `scripts/smoke.sh`: the README backend quick start in a copy of the tree answers `/health`. Not yet covered: a from-scratch install in the copy (it reuses `.venv`) and the frontend half of the quick start (P0-7) |
 | G2 Backend tests | 🔴 | 51 tests pass, including register → login → profile and a full scored session; coverage not measured |
 | G3 End-to-end | 🟡 | 13 tests in Chromium, including the whole flow (sign-up → word naming and sentence completion → feedback → dashboard and progress scores) in EN and PL, the admin list, the chart, and the session edge cases. Not covered yet: pronunciation (P2-7) and export (CSV/PDF) |
-| G4 Authorization | 🔴 | P1-3 |
+| G4 Authorization | 🟡 | Tested (`test_authorization.py`): no route without a login, no admin route for patients, and users can't reach each other's sessions, answers, schedules or recordings. Admins are created explicitly (P1-3a). Still open: therapists limited to their own patients (P1-3b) |
 | G5 Security | 🔴 | Done: no untrusted data reaches `innerHTML`, and the CSP forbids inline scripts (P1-1). Recordings only through the owner-checked endpoint (P1-2). Still open: pip-audit (P1-4), login rate limit (P1-5), secrets from the environment only (P1-8) |
 | G6 Accessibility | 🔴 | Not measured |
 | G7 Aphasia-friendly | 🔴 | Auto-advance, visible timer, typing required (P2-4..P2-6) |
@@ -125,7 +125,11 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
   - In the upload endpoint, enforce `MAX_UPLOAD_SIZE` (defined but unused; the whole file is read into memory) and check the content type.
   - Store the real format: MediaRecorder produces webm/ogg, but files are saved as `.wav`.
   - Check that the exercise belongs to the user.
-- [ ] **P1-3 Therapist and admin model** 🔎. Any therapist can see and deactivate every patient, and there is no way to create a therapist or admin account at all. Add:
+- [ ] **P1-3 Therapist and admin model** 🔎. Split on 2026-10-15:
+  - [x] **P1-3a Staff accounts and authorization tests** (719dca3). `python -m app.cli create-user` / `set-role` (12-character minimum, password never on the command line), documented in both READMEs and checked in `docker-smoke.sh`. `test_authorization.py`: every non-public route needs a login, patients get 403 on admin routes, and users can't reach each other's data.
+  - [ ] **P1-3b Therapists see only their patients.** Today every therapist can see and deactivate every patient. Needs a therapist–patient link, plus decisions from H7: who invites whom, and how the patient consents. Admins keep the whole list. Only admins should deactivate accounts.
+
+  Original report: Any therapist can see and deactivate every patient, and there is no way to create a therapist or admin account at all. Add:
   - Therapist–patient assignment (invite plus consent).
   - An admin bootstrap command (`python -m app.cli create-admin`).
   - Authorization tests for every endpoint (G4).
