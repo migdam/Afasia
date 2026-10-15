@@ -1,7 +1,7 @@
 """Pydantic schemas for request/response validation."""
 from datetime import datetime
 from typing import Optional, List
-from pydantic import BaseModel, EmailStr, field_validator
+from pydantic import BaseModel, ConfigDict, EmailStr, StrictBool, field_validator
 from ...db.models import DifficultyLevel, ExerciseType, UserRole, BadgeType
 
 
@@ -31,6 +31,19 @@ class PasswordChange(BaseModel):
     new_password: str
 
     _password_rules = field_validator("new_password")(check_new_password)
+
+
+class Consents(BaseModel):
+    """Yes (true), no (false) or not asked yet (null), for each kind of processing.
+
+    recordings: keeping voice recordings on the server.
+    speech_recognition: the browser's speech recognition, which may send
+    audio to the browser maker's servers.
+    """
+    model_config = ConfigDict(extra="forbid")
+
+    recordings: Optional[StrictBool] = None
+    speech_recognition: Optional[StrictBool] = None
 
 
 class UserLogin(BaseModel):

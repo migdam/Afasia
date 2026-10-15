@@ -204,3 +204,17 @@ class LoginCutoff(Base):
 
     user_id = Column(Integer, primary_key=True)
     not_before = Column(Integer, nullable=False)  # Unix time
+
+
+class Consent(Base):
+    """A person's yes or no to one kind of processing, and when they said it.
+
+    No foreign key, like login_cutoffs: deleting an account (backlog P1-6c)
+    must delete these rows itself.
+    """
+    __tablename__ = "consents"
+
+    user_id = Column(Integer, primary_key=True)
+    kind = Column(String(32), primary_key=True)  # see CONSENT_KINDS in the users endpoints
+    granted = Column(Boolean, nullable=False)
+    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow)

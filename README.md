@@ -113,7 +113,8 @@ FastAPI serves interactive documentation at `/docs` and `/redoc`. All endpoints 
 | Results | `POST /therapy/sessions/{id}/complete`: a finished session's server-computed result |
 | You | `GET`/`PUT /users/profile`, `GET /users/progress`, `GET /users/badges`, `GET /users/progress/export/csv`, `GET /users/progress/export/pdf` |
 | Planning | `GET`/`POST /users/scheduled-sessions`, `DELETE /users/scheduled-sessions/{id}` |
-| Recordings | `POST /users/audio/upload`, `GET /users/audio/{id}` |
+| Recordings | `POST /users/audio/upload` (only after consent: 403 otherwise), `GET /users/audio/{id}` |
+| Consent | `GET`/`PUT /users/consents`: `recordings` and `speech_recognition`, each `true`, `false` or `null` (not asked yet) |
 | Admin | `GET /admin/stats`, `GET /admin/users`, `GET /admin/users/{id}/sessions`, `PUT /admin/users/{id}/activate`, `PUT /admin/users/{id}/deactivate` |
 
 `GET /health` answers without logging in.
@@ -154,7 +155,7 @@ Before anyone relies on this app, at least these must be fixed. Each one is in [
 - **Security**
   - There is no "forgot password" reset, and no way to log out on all devices at once without changing the password.
   - The limits on wrong passwords are kept in memory: each server process counts on its own, and a restart forgets them. Behind a proxy, clients are told apart only if the server trusts the proxy's `X-Forwarded-For` (the Docker setup does); otherwise everyone shares one count per username. Whether 5 and 50 suit people with aphasia is an open question (backlog H7).
-- **Privacy:** there is no privacy notice, no consent step before recording, and no way to export or delete your data (P1-6). The app stores health information.
+- **Privacy:** the server keeps recordings only with consent, but the web app can't ask for it yet, so it keeps none (P1-6b2). There is no privacy notice, and no way to export or delete your data (P1-6). The app stores health information.
 - **Roles:** any therapist can see and deactivate every patient. Therapists aren't linked to their own patients yet (P1-3b).
 - **Clinical content:** a handful of English placeholder exercises, not reviewed by a speech-language therapist. There are no pictures or recordings.
 - **Accessibility** has not been audited, and the aphasia-friendly design rules in [`loop/PROMPT.md`](loop/PROMPT.md) are not met yet. For example, the app still moves on automatically after 2 seconds.

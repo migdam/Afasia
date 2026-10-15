@@ -10,7 +10,7 @@ from sqlalchemy import func
 from ....db.database import get_db
 from ....db.models import (
     User, TherapySession, Exercise, Progress, UserBadge,
-    ScheduledSession, AudioRecording, LoginCutoff
+    ScheduledSession, AudioRecording, LoginCutoff, Consent
 )
 from ....core.config import settings
 from ....core import login_limit
@@ -19,7 +19,7 @@ from ....core.security import (
 )
 from .auth import login_response
 from ..schemas import (
-    PasswordChange, TokenResponse, UserResponse, UserUpdate, ProgressResponse, ProgressStats,
+    Consents, PasswordChange, TokenResponse, UserResponse, UserUpdate, ProgressResponse, ProgressStats,
     BadgeResponse, ScheduledSessionCreate, ScheduledSessionResponse,
     AudioRecordingResponse
 )
@@ -66,6 +66,38 @@ def change_password(
     db.commit()
     # As with renewals, through the cookie the new token goes only into the cookie.
     return login_response(response, user, create_access_token(user.id, auth_time=now), show_token=bearer is not None)
+
+
+CONSENT_KINDS = tuple(Consents.model_fields)
+
+
+def get_consents(db: Session, user_id: int) -> Consents:
+    rows = db.query(Consent).filter(Consent.user_id == user_id).all()
+    return Consents(**{row.kind: row.granted for row in rows if row.kind in CONSENT_KINDS})
+
+
+@router.get("/consents", response_model=Consents)
+def read_consents(user_id: int = Depends(get_current_user_id), db: Session = Depends(get_db)):
+    """Your answers about recordings and speech recognition (null: not asked yet)."""
+    return get_consents(db, user_id)
+
+
+@router.put("/consents", response_model=Consents)
+def update_consents(
+    choices: Consents,
+    user_id: int = Depends(get_current_user_id),
+    db: Session = Depends(get_db),
+):
+    """Give or withdraw consent. Only the kinds in the request change."""
+    for kind, granted in choices.model_dump(exclude_unset=True).items():
+        if granted is None:
+            continue
+        row = db.get(Consent, (user_id, kind)) or Consent(user_id=user_id, kind=kind)
+        row.granted = granted
+        row.updated_at = datetime.utcnow()
+        db.add(row)
+    db.commit()
+    return get_consents(db, user_id)
 
 
 # Audio formats accepted for recordings, by content type. Browsers record
@@ -377,6 +409,11 @@ async def upload_audio(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Exercise not found"
+        )
+    if not get_consents(db, user_id).recordings:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You have not agreed to keeping recordings"
         )
 
     content_type = (audio.content_type or "").split(";")[0].strip().lower()

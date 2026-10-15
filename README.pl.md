@@ -113,7 +113,8 @@ FastAPI udostępnia interaktywną dokumentację pod `/docs` i `/redoc`. Wszystki
 | Wyniki | `POST /therapy/sessions/{id}/complete`: wynik ukończonej sesji, policzony przez serwer |
 | Twoje dane | `GET`/`PUT /users/profile`, `GET /users/progress`, `GET /users/badges`, `GET /users/progress/export/csv`, `GET /users/progress/export/pdf` |
 | Planowanie | `GET`/`POST /users/scheduled-sessions`, `DELETE /users/scheduled-sessions/{id}` |
-| Nagrania | `POST /users/audio/upload`, `GET /users/audio/{id}` |
+| Nagrania | `POST /users/audio/upload` (tylko po wyrażeniu zgody, inaczej 403), `GET /users/audio/{id}` |
+| Zgody | `GET`/`PUT /users/consents`: `recordings` i `speech_recognition`, każda `true`, `false` albo `null` (jeszcze nie pytano) |
 | Administrator | `GET /admin/stats`, `GET /admin/users`, `GET /admin/users/{id}/sessions`, `PUT /admin/users/{id}/activate`, `PUT /admin/users/{id}/deactivate` |
 
 `GET /health` odpowiada bez logowania.
@@ -154,7 +155,7 @@ Zanim ktokolwiek zacznie polegać na tej aplikacji, trzeba naprawić co najmniej
 - **Bezpieczeństwo**
   - Nie ma resetu „nie pamiętam hasła” ani sposobu na wylogowanie naraz ze wszystkich urządzeń bez zmiany hasła.
   - Limity błędnych haseł są trzymane w pamięci: każdy proces serwera liczy osobno, a restart je kasuje. Za serwerem pośredniczącym klienci są rozróżniani tylko wtedy, gdy serwer ufa jego nagłówkowi `X-Forwarded-For` (konfiguracja Docker tak robi); w przeciwnym razie wszyscy dzielą jeden licznik na nazwę użytkownika. Czy wartości 5 i 50 pasują osobom z afazją, to otwarte pytanie (backlog H7).
-- **Prywatność:** brak informacji o prywatności, zgody przed nagrywaniem oraz możliwości eksportu i usunięcia swoich danych (P1-6). Aplikacja przechowuje dane o zdrowiu.
+- **Prywatność:** serwer przechowuje nagrania tylko za zgodą, ale aplikacja w przeglądarce nie umie jeszcze o nią zapytać, więc nie przechowuje żadnych (P1-6b2). Brak informacji o prywatności oraz możliwości eksportu i usunięcia swoich danych (P1-6). Aplikacja przechowuje dane o zdrowiu.
 - **Role:** każdy terapeuta widzi i może dezaktywować wszystkich pacjentów. Terapeuci nie są jeszcze powiązani ze swoimi pacjentami (P1-3b).
 - **Treść kliniczna:** kilka tymczasowych ćwiczeń po angielsku, niesprawdzonych przez logopedę. Nie ma obrazków ani nagrań.
 - **Dostępność** nie została zbadana, a zasady projektowania przyjaznego osobom z afazją z [`loop/PROMPT.md`](loop/PROMPT.md) nie są jeszcze spełnione. Na przykład aplikacja nadal sama przechodzi dalej po 2 sekundach.

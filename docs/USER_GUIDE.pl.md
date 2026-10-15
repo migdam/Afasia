@@ -122,7 +122,7 @@ Na razie każdy terapeuta widzi wszystkich pacjentów. Rejestracja zawsze tworzy
 
 ## Twoje dane
 
-Wszystko, co robisz, jest zapisywane na serwerze, na którym działa aplikacja: konto, odpowiedzi, nagrania i wyniki. Informacja o prywatności, zgoda przed nagrywaniem oraz możliwość pobrania lub usunięcia wszystkich swoich danych są planowane, ale jeszcze ich nie ma. Jeśli chcesz usunąć swoje dane, poproś o to osobę, która uruchamia aplikację.
+Wszystko, co robisz, jest zapisywane na serwerze, na którym działa aplikacja: konto, odpowiedzi i wyniki. Nagrania są przechowywane tylko wtedy, gdy się na to zgodzisz. Aplikacja nie umie jeszcze o to zapytać, więc na razie nagrania nie są przechowywane. Informacja o prywatności, pytania o zgodę oraz możliwość pobrania lub usunięcia wszystkich swoich danych są planowane, ale jeszcze ich nie ma. Jeśli chcesz usunąć swoje dane, poproś o to osobę, która uruchamia aplikację.
 
 ## Gdy coś nie działa
 

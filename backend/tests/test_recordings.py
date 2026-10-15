@@ -36,6 +36,7 @@ def upload(client, auth, exercise_id, content=WEBM, content_type="audio/webm;cod
 @pytest.fixture
 def pat(client):
     auth = register(client, "pat")
+    client.put("/api/v1/users/consents", headers=auth, json={"recordings": True})  # P1-6b1
     return auth, an_exercise_of(client, auth)
 
 

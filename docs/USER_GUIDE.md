@@ -122,7 +122,7 @@ At the moment every therapist sees every patient. Signing up always makes a pati
 
 ## Your data
 
-Everything you do is stored on the server that runs the app: your account, your answers, your recordings and your scores. A privacy notice, consent before recording, and ways to export or delete all your data are planned but not available yet. Ask whoever runs the app if you need your data removed.
+Everything you do is stored on the server that runs the app: your account, your answers and your scores. Recordings are kept only if you have agreed to it. The app can't ask you yet, so for now your recordings are not kept. A privacy notice, the consent questions, and ways to export or delete all your data are planned but not available yet. Ask whoever runs the app if you need your data removed.
 
 ## When something goes wrong
 
