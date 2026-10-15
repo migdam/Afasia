@@ -139,6 +139,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
   - httpOnly, Secure, SameSite cookies with CSRF protection, or refresh tokens.
   - An idle timeout suited to slow, effortful use.
   - If the app runs with several workers, move the wrong-password count (P1-5a) to the database or Redis so they share it.
+  - Review the lockout: the limit is per username, so anyone can lock an account for 15 minutes by guessing wrong. Consider keying on username plus IP, or a delay instead of a hard stop.
 - [ ] **P1-6 Privacy (GDPR: health data is special-category)** 🔎:
   - A privacy notice in PL and EN.
   - Explicit consent before recording audio, and before browser speech recognition, which can send audio to the browser vendor's cloud.
