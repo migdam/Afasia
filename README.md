@@ -147,7 +147,8 @@ The app is improved in small, tested steps by a documented loop. See [`loop/READ
 Before anyone relies on this app, at least these must be fixed. Each one is in [`loop/BACKLOG.md`](loop/BACKLOG.md).
 
 - **Security**
-  - Logins aren't rate-limited, and tokens are kept in `localStorage` (P1-5).
+  - Login tokens are kept in `localStorage`, and a login lasts a fixed 30 minutes (P1-5b).
+  - The limit on wrong passwords (5 per username in 15 minutes) is kept in memory: each server process counts on its own, and a restart forgets it.
 - **Privacy:** there is no privacy notice, no consent step before recording, and no way to export or delete your data (P1-6). The app stores health information.
 - **Roles:** any therapist can see and deactivate every patient. Therapists aren't linked to their own patients yet (P1-3b).
 - **Clinical content:** a handful of English placeholder exercises, not reviewed by a speech-language therapist. There are no pictures or recordings.

@@ -24,7 +24,7 @@ The exercises themselves are in English for now, in both languages. A few messag
 
 **To sign up:**
 1. Click **Register** under the login form.
-2. Fill in your email, a username, your full name (optional) and a password.
+2. Fill in your email, a username, your full name (optional) and a password of at least 8 characters.
 3. Click **Register**. You go straight to your dashboard.
 
 **To log in:** type your username and password and click **Login**.
@@ -128,6 +128,7 @@ Everything you do is stored on the server that runs the app: your account, your 
 |---|---|
 | "Incorrect username or password" | Check the spelling and Caps Lock. Usernames are case-sensitive. |
 | "Inactive user" | Your account was deactivated. Ask your therapist or admin. |
+| "Too many failed attempts" | After 5 wrong passwords, logging in to that account is paused for up to 15 minutes. Wait, then try again. |
 | You're back at the login page | Your 30-minute login expired. Log in again. |
 | "Failed to start session" | The server may be down. Try again later, or tell whoever runs the app. |
 | "Please provide an answer" | Type a word or choose an option before **Submit**. |

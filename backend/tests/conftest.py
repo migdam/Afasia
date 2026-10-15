@@ -27,9 +27,11 @@ def client():
     """A test client for the app, on an empty database."""
     from fastapi.testclient import TestClient
 
+    from app.core import login_limit
     from app.db.database import Base, engine
     from app.main import app
 
+    login_limit.reset()
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
     with TestClient(app) as test_client:

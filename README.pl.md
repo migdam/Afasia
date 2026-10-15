@@ -147,7 +147,8 @@ Aplikację ulepsza się małymi, przetestowanymi krokami według opisanej pętli
 Zanim ktokolwiek zacznie polegać na tej aplikacji, trzeba naprawić co najmniej poniższe. Każdy punkt jest w [`loop/BACKLOG.md`](loop/BACKLOG.md).
 
 - **Bezpieczeństwo**
-  - Logowanie nie ma limitu prób, a tokeny są przechowywane w `localStorage` (P1-5).
+  - Tokeny logowania są przechowywane w `localStorage`, a zalogowanie trwa stałe 30 minut (P1-5b).
+  - Limit błędnych haseł (5 na nazwę użytkownika w ciągu 15 minut) jest trzymany w pamięci: każdy proces serwera liczy osobno, a restart go kasuje.
 - **Prywatność:** brak informacji o prywatności, zgody przed nagrywaniem oraz możliwości eksportu i usunięcia swoich danych (P1-6). Aplikacja przechowuje dane o zdrowiu.
 - **Role:** każdy terapeuta widzi i może dezaktywować wszystkich pacjentów. Terapeuci nie są jeszcze powiązani ze swoimi pacjentami (P1-3b).
 - **Treść kliniczna:** kilka tymczasowych ćwiczeń po angielsku, niesprawdzonych przez logopedę. Nie ma obrazków ani nagrań.

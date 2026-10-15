@@ -16,6 +16,8 @@ class UserCreate(BaseModel):
     @field_validator("password")
     @classmethod
     def fits_bcrypt(cls, password: str) -> str:
+        if len(password) < 8:
+            raise ValueError("Password must be at least 8 characters")
         # bcrypt would silently ignore everything past 72 bytes.
         if len(password.encode()) > 72:
             raise ValueError("Password must be at most 72 bytes (UTF-8)")

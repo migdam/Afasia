@@ -6,7 +6,10 @@ import bcrypt
 import jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from sqlalchemy.orm import Session
 
+from ..db.database import get_db
+from ..db.models import User
 from .config import settings
 
 # bcrypt only looks at the first 72 bytes of a password. Longer ones are
@@ -64,11 +67,20 @@ def decode_token(token: str) -> dict:
 
 def get_current_user_id(
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
+    db: Session = Depends(get_db),
 ) -> int:
-    """Get the current user's ID from the Bearer token."""
+    """Get the current user's ID from the Bearer token.
+
+    The account is looked up on every request, so a token stops working as
+    soon as its user is deactivated or deleted.
+    """
     if credentials is None:
         raise credentials_error()
     try:
-        return int(decode_token(credentials.credentials)["sub"])
+        user_id = int(decode_token(credentials.credentials)["sub"])
     except ValueError:
         raise credentials_error() from None
+    active = db.query(User.is_active).filter(User.id == user_id).scalar()
+    if not active:
+        raise credentials_error()
+    return user_id

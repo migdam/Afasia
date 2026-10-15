@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from ....db.database import get_db
 from ....db.models import User
+from ....core import login_limit
 from ....core.security import (
     verify_password,
     get_password_hash,
@@ -51,9 +52,18 @@ def register(user_data: UserCreate, db: Session = Depends(get_db)):
 @router.post("/login", response_model=TokenResponse)
 def login(credentials: UserLogin, db: Session = Depends(get_db)):
     """Login user."""
+    wait = login_limit.retry_after(credentials.username)
+    if wait:
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Too many failed attempts. Please wait and try again.",
+            headers={"Retry-After": str(wait)},
+        )
+
     user = db.query(User).filter(User.username == credentials.username).first()
 
     if not user or not verify_password(credentials.password, user.hashed_password):
+        login_limit.record_failure(credentials.username)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
@@ -66,6 +76,7 @@ def login(credentials: UserLogin, db: Session = Depends(get_db)):
             detail="Inactive user"
         )
 
+    login_limit.record_success(credentials.username)
     return TokenResponse(
         access_token=create_access_token(user.id),
         user=UserResponse.model_validate(user)
