@@ -17,6 +17,29 @@ Newest entry first. One entry per iteration.
 
 ---
 
+### 9: 2026-10-15 05:35 UTC: P0-7c Exercise state
+- **Baseline:** `check.sh` green (48 backend, smoke, 3 e2e), same as entry 8. No human commits.
+- **Did** (all in `frontend/js/app.js`):
+  - Submit is disabled from the first click until the next exercise is shown. It is re-enabled when there's no answer yet or the request fails.
+  - The answer is read from the input the exercise shows (option, recording or text box), never from a hidden input.
+  - Each exercise starts with an empty text box and no recording.
+  - `exitExercise()` cancels the pending move to the next exercise.
+  - Added 3 e2e tests and shared helpers in `e2e/test_sessions.py`.
+- **Verified:**
+  ```
+  old code: double click -> "Expected '2/5' · Actual value: 3/5" (both submissions accepted, an exercise skipped)
+            stale typed answer -> no "Please provide an answer"; the earlier word was submitted
+            leaving during feedback -> next session "Expected '1/5' · Actual value: 2/5"
+  now:      ruff "All checks passed!" · backend "48 passed" · smoke OK · e2e "6 passed in 34.11s"
+            e2e repeated 3 times: "6 passed" each time (the double-click and timing tests are stable)
+  ```
+- **Commit:** 1f7fdce (pushed: yes), plus this log/backlog commit.
+- **Discovered (added to the backlog):**
+  - **P1-10, at the top of P1:** the server accepts simultaneous answers. The double click got past P0-4's 409 because both requests raced the check. A probe confirmed it: both answers accepted in 20/20 trials, and 20 sessions produced 40 progress records. P0-4's ticked line now says so.
+  - **P1-6 (code reading):** the microphone stream is never released after the first recording, and leaving mid-recording keeps it recording.
+  - The recording reset has no e2e test, because headless Chromium has no microphone (P2-7 redesigns speech practice).
+- **Next:** P0-7d. The admin list's `is_active`, and the dashboard badge count.
+
 ### 8: 2026-10-15 05:25 UTC: P0-7b Session result and feedback
 - **Baseline:** `check.sh` green (47 backend, smoke, 2 e2e), same as entry 7. No human commits.
 - **Did:**

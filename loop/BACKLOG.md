@@ -21,7 +21,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 |------|--------|----------|
 | G1 Runs | 🟡 | `scripts/check.sh` passes, including `scripts/smoke.sh`: the README backend quick start in a copy of the tree answers `/health`. Not yet covered: a from-scratch install in the copy (it reuses `.venv`) and the frontend half of the quick start (P0-7) |
 | G2 Backend tests | 🔴 | 48 tests pass, including register → login → profile and a full scored session; coverage not measured |
-| G3 End-to-end | 🟡 | In Chromium: sign-up, reload, logout and login, and a whole sentence-completion session with feedback and the server's score. Not covered yet: the other exercise types, the progress page, export, and Polish (P0-7c–g) |
+| G3 End-to-end | 🟡 | 6 tests in Chromium: sign-up, reload, logout and login; a whole sentence-completion session with feedback and the server's score; double submit, carried-over answers, leaving during feedback. Not covered yet: the other exercise types, the progress page, export, and Polish (P0-7d–g) |
 | G4 Authorization | 🔴 | P1-3 |
 | G5 Security | 🔴 | P1-1, P1-2, P1-4 |
 | G6 Accessibility | 🔴 | Not measured |
@@ -49,7 +49,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
   - Return 401, not 403, for missing or invalid tokens.
 
   **Acceptance:** tests for register → login → `GET /users/profile` = 200, and for a bad or missing token = 401.
-- [x] **P0-4 Sessions never complete, so there are no points, progress, streaks or badges** ✅ (cc1a0b0). The last answer now completes the session once, in `finish_session()`: points are summed over correct answers, the score and duration are computed on the server, and the progress record comes last. Re-answering gets 409. `POST /complete` returns the server's result and ignores the client. Original report: in `submit_answer`, the "all answered?" count runs before the current answer is flushed (`autoflush=False`). Reproduced: after answering 3/3 correctly, the session shows `completed_exercises=2`, is not completed, has 0 points and no progress record. Re-submitting any answer then "completes" it, and every re-submit awards points again and adds another progress record (10 → 20 points, 1 → 2 records). Further problems in the same flow:
+- [x] **P0-4 Sessions never complete, so there are no points, progress, streaks or badges** ✅ (cc1a0b0). The last answer now completes the session once, in `finish_session()` (but not under simultaneous requests, see P1-10): points are summed over correct answers, the score and duration are computed on the server, and the progress record comes last. Re-answering gets 409. `POST /complete` returns the server's result and ignores the client. Original report: in `submit_answer`, the "all answered?" count runs before the current answer is flushed (`autoflush=False`). Reproduced: after answering 3/3 correctly, the session shows `completed_exercises=2`, is not completed, has 0 points and no progress record. Re-submitting any answer then "completes" it, and every re-submit awards points again and adds another progress record (10 → 20 points, 1 → 2 records). Further problems in the same flow:
   - Points are computed only for the last answer, not the session.
   - The progress record is written before the duration is known, so time is always 0.
   - `POST /sessions/{id}/complete` overwrites the server-computed score with whatever the client sends.
@@ -64,7 +64,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
     - Wrong-answer feedback reads "Incorrect. Try again! Correct! Well done!: undefined". It concatenates both messages and reads `correct_answer`, a field the API never returns (✅ confirmed absent). Return the correct answer in the answer response only, once the exercise is answered, and show one calm message.
 
     **Test:** a sentence-completion session with one wrong answer shows the right answer and ends with the server's score.
-  - [ ] **P0-7c Exercise state.**
+  - [x] **P0-7c Exercise state** (1f7fdce). Submit is disabled until the next exercise is shown. The answer is read only from the input the exercise shows. Each exercise starts with an empty text box and no recording. Leaving during feedback cancels the pending move to the next exercise, which used to fire in the next session. Original report:
     - Submit stays enabled during the 2 s feedback delay, so a double click submits twice and skips an exercise. Since P0-4 the second submission gets 409 "Exercise already answered", which the UI shows as an error alert.
     - `recordedAudio` and the hidden text input aren't reset between exercises or sessions.
   - [ ] **P0-7d Dashboard and admin data.**
@@ -96,6 +96,11 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 
 ## P1: Safety (security, privacy, data integrity)
 
+- [ ] **P1-10 Simultaneous answers are all accepted** ✅. The "already answered" check in `submit_answer` reads the row and then writes it, so two requests at the same moment both pass. Measured on 2026-10-15: two threads answered the same exercise, and both were accepted in 20 of 20 trials. 20 one-exercise sessions ended with 40 progress records, so `finish_session()` ran twice for each and points were doubled. In the browser, a double click caused the same thing before P0-7c. Two tabs or a network retry still can. Fixes:
+  - Claim the answer atomically: `UPDATE … WHERE id = :id AND is_correct IS NULL`, then check the row count.
+  - Complete the session atomically too (`… WHERE is_completed = false`). Two different last exercises answered at once must neither both complete the session nor both miss it.
+  - Add tests with concurrent requests.
+
 - [ ] **P1-1 Stored XSS into the therapist/admin dashboard** 🔎. Usernames, emails, session and schedule titles, and exercise options go into `innerHTML` (`frontend/js/ui.js`, `frontend/js/app.js`). Usernames have no validation, so a patient can register a username containing HTML/JS that runs in a therapist's browser, where the JWT sits in `localStorage`. Fixes:
   - Render with `textContent` or DOM APIs.
   - Remove the inline `onclick=` handlers.
@@ -123,6 +128,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 - [ ] **P1-6 Privacy (GDPR: health data is special-category)** 🔎:
   - A privacy notice in PL and EN.
   - Explicit consent before recording audio, and before browser speech recognition, which can send audio to the browser vendor's cloud.
+  - Release the microphone 🔎. `audioRecorder` keeps the stream from the first recording open for the rest of the visit (`cleanup()` is never called), and leaving a session mid-recording doesn't stop it. So the browser keeps showing the microphone as in use.
   - Data export (JSON) and account deletion for the user.
   - A retention policy for recordings.
   - No third-party requests without consent, and no PII in logs.
