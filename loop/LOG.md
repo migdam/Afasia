@@ -19,6 +19,26 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 64: 2026-10-15 18:43 UTC: P2-9a Streaks that can't miscount, and the first-session badge
+- **Baseline:** `check.sh` exit code 0: 288 backend tests, smoke, 106 e2e. No human commits. The tests and the patch were written in the scratchpad until the baseline finished.
+- **Split:** P2-9 became:
+  - a: correctness;
+  - b: time zone;
+  - c: rest days or a weekly goal;
+  - d: the unawarded badges.
+- **Test first:** `backend/tests/test_streaks.py`.
+  - The first-session badge after an unfinished session failed before (`[] == ['first_session']`).
+  - The race failed before (`2 == 3`). It uses two database sessions: one reads the person, the other finishes a session just before midnight, then the first finishes just after.
+  - The days-in-a-row test is a guard.
+- **Did:**
+  - `streaks(days, today)` works out the current and longest runs. `finish_session` reads the finished-session days afresh and adds today.
+  - The first-session badge requires a finished session.
+  - No doc changes: the guides already say "first finished session".
+- **Verified:** `scripts/check.sh` exit code 0: ruff "All checks passed!", pip-audit "No known vulnerabilities found", 291 backend tests, smoke, 106 e2e.
+- **Commit:** 2239a18 (pushed: yes)
+- **Discovered:** nothing new.
+- **Next:** P2-9b (streak days in the person's time zone).
+
 ### 63: 2026-10-15 18:28 UTC: P2-8c Suggest another level
 - **Baseline:** `check.sh` exit code 0: 280 backend tests, smoke, 103 e2e. No human commits. The tests and the patch were written in the scratchpad until the baseline finished.
 - **Test first:**
