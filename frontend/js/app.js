@@ -22,6 +22,7 @@ class AphasiaApp {
 
         // Set up event listeners
         this.setupEventListeners();
+        ui.addReadAloudButtons();
 
         // Initialize i18n
         i18n.updatePageTranslations();

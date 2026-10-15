@@ -57,6 +57,7 @@ class UIManager {
         message.setAttribute('role', kind === 'error' ? 'alert' : 'status');
         message.setAttribute('data-i18n', key);  // re-translated if the language changes
         message.textContent = i18n.translate(key);
+        this.updateReadAloud();
     }
 
     // Ask a consent question in an in-app dialog. Resolves to true (yes),
@@ -65,6 +66,7 @@ class UIManager {
         const dialog = document.getElementById('consent-dialog');
         document.getElementById('consent-title').textContent = i18n.translate(`${kind}ConsentTitle`);
         document.getElementById('consent-text').textContent = i18n.translate(`${kind}ConsentText`);
+        this.updateReadAloud();
         const yes = document.getElementById('consent-yes');
         const no = document.getElementById('consent-no');
         yes.textContent = i18n.translate(`${kind}ConsentYes`);
@@ -84,7 +86,7 @@ class UIManager {
     }
 
     // A "Read aloud" button for whatever getText returns (U3).
-    readAloudButton(getText, id = null) {
+    readAloudButton(getText, id = null, target = null) {
         const button = el('button', 'btn btn-secondary read-aloud');
         button.type = 'button';
         if (id) button.id = id;
@@ -93,8 +95,18 @@ class UIManager {
         button.append(el('span', '', '🔊 '), label);
         button.firstChild.setAttribute('aria-hidden', 'true');
         button.addEventListener('click', () => reader.read(getText(), i18n.getCurrentLanguage()));
+        button.readTarget = target;  // hidden while this element has no text
         button.hidden = !reader.canRead(i18n.getCurrentLanguage());
         return button;
+    }
+
+    // A read-aloud button after every element marked data-read-aloud:
+    // instructions, dialog texts and messages (U3).
+    addReadAloudButtons() {
+        document.querySelectorAll('[data-read-aloud]').forEach((target) => {
+            target.after(this.readAloudButton(() => target.textContent, null, target));
+        });
+        this.updateReadAloud();
     }
 
     // Show read-aloud buttons only when there is a voice on this device for
@@ -103,7 +115,8 @@ class UIManager {
     updateReadAloud() {
         const available = reader.canRead(i18n.getCurrentLanguage());
         document.querySelectorAll('.read-aloud').forEach((button) => {
-            button.hidden = !available;
+            const empty = button.readTarget && !button.readTarget.textContent.trim();
+            button.hidden = !available || Boolean(empty);
         });
     }
 
@@ -112,6 +125,7 @@ class UIManager {
         message.textContent = '';
         message.removeAttribute('data-i18n');
         message.removeAttribute('role');
+        this.updateReadAloud();
     }
 
     showAuthPage() {
@@ -384,6 +398,7 @@ class UIManager {
         box.className = `app-message-box ${kind}`;
         box.setAttribute('role', kind === 'error' ? 'alert' : 'status');
         box.hidden = false;
+        this.updateReadAloud();
     }
 
     clearNotice() {

@@ -43,7 +43,7 @@
     <main class="container">
         <!-- Messages from the app, in words (no browser pop-ups, U12) -->
         <div id="app-message-box" class="app-message-box" hidden>
-            <p id="app-message"></p>
+            <p id="app-message" data-read-aloud></p>
             <button type="button" id="app-message-ok" class="btn btn-secondary" data-i18n="ok">OK</button>
         </div>
 
@@ -68,7 +68,7 @@
                                 <input type="password" id="login-password" required>
                             </div>
                             <button type="submit" class="btn btn-primary" data-i18n="login">Login</button>
-                            <p id="login-message" class="form-message"></p>
+                            <p id="login-message" class="form-message" data-read-aloud></p>
                         </form>
                         <p class="switch-auth">
                             <span data-i18n="noAccount">Don't have an account?</span>
@@ -97,7 +97,7 @@
                                 <input type="password" id="register-password" required minlength="8" autocomplete="new-password">
                             </div>
                             <button type="submit" class="btn btn-primary" data-i18n="register">Register</button>
-                            <p id="register-message" class="form-message"></p>
+                            <p id="register-message" class="form-message" data-read-aloud></p>
                         </form>
                         <p class="switch-auth">
                             <span data-i18n="haveAccount">Already have an account?</span>
@@ -313,7 +313,7 @@
                         <input type="password" id="new-password" required minlength="8" autocomplete="new-password">
                     </div>
                     <button type="submit" class="btn btn-primary" data-i18n="changePassword">Change password</button>
-                    <p id="password-message" class="form-message"></p>
+                    <p id="password-message" class="form-message" data-read-aloud></p>
                 </form>
             </div>
 
@@ -327,17 +327,17 @@
                     <input type="checkbox" id="consent-speech">
                     <label for="consent-speech" data-i18n="consentSpeechLabel">Use the browser's speech recognition</label>
                 </div>
-                <p id="consent-message" class="form-message"></p>
+                <p id="consent-message" class="form-message" data-read-aloud></p>
             </div>
 
             <div class="card">
                 <h3 data-i18n="yourData">Your data</h3>
-                <p data-i18n="yourDataText">Download everything the app keeps about you, or delete your account.</p>
+                <p id="data-text" data-i18n="yourDataText" data-read-aloud>Download everything the app keeps about you, or delete your account.</p>
                 <div class="data-actions">
                     <button type="button" id="download-data" class="btn btn-secondary" data-i18n="downloadData">Download my data</button>
                     <button type="button" id="delete-account" class="btn btn-danger" data-i18n="deleteAccount">Delete my account</button>
                 </div>
-                <p id="data-message" class="form-message"></p>
+                <p id="data-message" class="form-message" data-read-aloud></p>
                 <p><a class="privacy-link" href="privacy.html#en" data-i18n="privacyNotice">Privacy notice</a></p>
             </div>
         </div>
@@ -345,12 +345,12 @@
         <dialog id="delete-dialog" class="app-dialog" aria-labelledby="delete-title">
             <form id="delete-form">
                 <h3 id="delete-title" data-i18n="deleteTitle">Delete your account?</h3>
-                <p data-i18n="deleteText">This deletes your account, your answers, your scores and your recordings. It cannot be undone. Type your password to confirm.</p>
+                <p id="delete-text" data-i18n="deleteText" data-read-aloud>This deletes your account, your answers, your scores and your recordings. It cannot be undone. Type your password to confirm.</p>
                 <div class="form-group">
                     <label for="delete-password" data-i18n="password">Password</label>
                     <input type="password" id="delete-password" required autocomplete="current-password">
                 </div>
-                <p id="delete-message" class="form-message"></p>
+                <p id="delete-message" class="form-message" data-read-aloud></p>
                 <div class="modal-actions">
                     <button type="button" id="delete-cancel" class="btn btn-secondary" data-i18n="cancel">Cancel</button>
                     <button type="submit" id="delete-confirm" class="btn btn-danger" data-i18n="deleteForGood">Delete for good</button>
@@ -361,7 +361,7 @@
         <!-- Leaving a session -->
         <dialog id="leave-dialog" class="app-dialog" aria-labelledby="leave-title" aria-describedby="leave-text">
             <h3 id="leave-title" data-i18n="leaveTitle">Leave this session?</h3>
-            <p id="leave-text" data-i18n="leaveText">The session stays unfinished and doesn't count towards your scores.</p>
+            <p id="leave-text" data-i18n="leaveText" data-read-aloud>The session stays unfinished and doesn't count towards your scores.</p>
             <div class="modal-actions">
                 <button type="button" id="leave-stay" class="btn btn-secondary" data-i18n="stay">Stay</button>
                 <button type="button" id="leave-go" class="btn btn-primary" data-i18n="leave">Leave</button>
@@ -371,7 +371,7 @@
         <!-- Asked before the first recording and before speech recognition -->
         <dialog id="consent-dialog" class="app-dialog" aria-labelledby="consent-title" aria-describedby="consent-text">
             <h3 id="consent-title"></h3>
-            <p id="consent-text"></p>
+            <p id="consent-text" data-read-aloud></p>
             <div class="modal-actions">
                 <button type="button" id="consent-no" class="btn btn-secondary"></button>
                 <button type="button" id="consent-yes" class="btn btn-primary"></button>
