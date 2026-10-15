@@ -19,6 +19,25 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 46: 2026-10-15 13:25 UTC: P2-2b Sentences and phrases as data
+- **Baseline:** `check.sh` exit code 0: 211 backend tests, smoke, 51 e2e. No human commits. Tests were written in the scratchpad until it finished.
+- **Found while reading:** the options were never shuffled, and the answer was first in 5 of 6 items, so the position leaked the answer. Fixed here.
+- **Test first:** `backend/tests/test_sentences_and_phrases.py`, 13 tests: they failed before (import error).
+- **Did:**
+  - Content files: sentences in PL and EN with grammatical distractors; I dropped two ambiguous old items.
+  - Phrases without punctuation.
+  - Loaders and checks in `app/content.py`, with `content_items()` dispatching per type.
+  - `generate_exercises` shuffles the options of each exercise.
+  - `EXERCISE_DATA` is built from the content (English view).
+  - The small-pool selection test moved to image recognition; what it checks is unchanged.
+  - The e2e sentence answers come from the content file.
+  - Docs (EN/PL), with Polish examples in the Polish guides.
+- **Verified:** `scripts/check.sh` exit code 0: ruff, pip-audit "No known vulnerabilities found", 229 backend tests, smoke, 51 e2e.
+- **Gate:** G8 text updated; it stays 🔴 (assets, cues and review are still missing).
+- **Commit:** 250d1de (pushed: yes)
+- **Discovered:** the options-order leak, fixed here.
+- **Next:** P2-3 (naming with a cueing hierarchy). P2-2c waits on H2/H3.
+
 ### 45: 2026-10-15 13:06 UTC: P2-2a Naming concepts as data
 - **Baseline:** `check.sh` exit code 0: 181 backend tests, smoke, 51 e2e. No human commits. Tests were written in the scratchpad until it finished.
 - **Split:** P2-2 became a (naming concepts), b (the other types) and c (assets, waiting on H2/H3).
