@@ -203,7 +203,7 @@ class UIManager {
     }
 
     updateUserStats(user) {
-        document.getElementById('total-points').textContent = user.total_points || 0;
+        document.getElementById('total-points').textContent = i18n.formatNumber(user.total_points || 0);
         document.getElementById('current-streak').textContent = user.current_streak || 0;
     }
 
@@ -277,7 +277,7 @@ class UIManager {
     renderSessionItem(session) {
         const meta = el('div', 'session-meta');
         meta.append(
-            el('span', '', new Date(session.started_at).toLocaleDateString()),
+            el('span', '', i18n.formatDate(session.started_at)),
             translated('span', `badge badge-${session.difficulty}`, session.difficulty)
         );
         if (session.is_completed) {
@@ -296,7 +296,7 @@ class UIManager {
         const header = el('div', 'session-header');
         header.append(details);
         if (session.is_completed) {
-            header.append(el('div', 'session-score', `${Math.round(session.score)}%`));
+            header.append(el('div', 'session-score', i18n.formatPercent(session.score)));
         }
 
         const item = el('div', 'session-item');
@@ -307,7 +307,7 @@ class UIManager {
     renderScheduledItem(session) {
         const meta = el('div', 'session-meta');
         meta.append(
-            el('span', '', `📅 ${new Date(session.scheduled_time).toLocaleString()}`),
+            el('span', '', `📅 ${i18n.formatDateTime(session.scheduled_time)}`),
             translated('span', `badge badge-${session.difficulty}`, session.difficulty)
         );
 
@@ -333,16 +333,29 @@ class UIManager {
         }
     }
 
+    // Lists with dates and numbers are written in the language; after a
+    // change of language, write the ones on screen again.
+    refreshLists() {
+        if (this.currentPage === 'dashboard') {
+            this.loadRecentSessions();
+            this.loadScheduledSessions();
+        } else if (this.currentPage === 'progress') {
+            this.loadProgress();
+        } else if (this.currentPage === 'admin') {
+            this.loadAdminDashboard();
+        }
+    }
+
     async loadProgress() {
         try {
             const progress = await api.getProgress(30);
             const badges = await api.getBadges();
 
             // Update stats
-            document.getElementById('progress-total-sessions').textContent = progress.total_sessions;
-            document.getElementById('progress-avg-accuracy').textContent = `${progress.average_accuracy}%`;
-            document.getElementById('progress-total-time').textContent = `${progress.total_time_hours}h`;
-            document.getElementById('progress-longest-streak').textContent = progress.longest_streak;
+            document.getElementById('progress-total-sessions').textContent = i18n.formatNumber(progress.total_sessions);
+            document.getElementById('progress-avg-accuracy').textContent = i18n.formatPercent(progress.average_accuracy);
+            document.getElementById('progress-total-time').textContent = i18n.formatDuration(progress.total_time_hours);
+            document.getElementById('progress-longest-streak').textContent = i18n.formatCount(progress.longest_streak, 'day');
             document.getElementById('badge-count').textContent = badges.length;
 
             // Draw chart
@@ -350,7 +363,7 @@ class UIManager {
             const chart = new SimpleChart('progress-chart');
             const history = [...(progress.progress_history || [])].reverse();
             chart.drawLineChart(
-                history.map(p => new Date(p.date).toLocaleDateString()),
+                history.map(p => i18n.formatShortDate(p.date)),
                 [{ label: 'Accuracy %', data: history.map(p => p.accuracy_rate) }]
             );
 
@@ -380,7 +393,7 @@ class UIManager {
             item.append(
                 el('div', 'badge-icon', badgeIcons[badge.badge_type] || '🏅'),
                 translated('div', 'badge-name', BADGE_KEYS[badge.badge_type] || badge.badge_type),
-                el('div', 'badge-date', new Date(badge.earned_at).toLocaleDateString())
+                el('div', 'badge-date', i18n.formatDate(badge.earned_at))
             );
             return item;
         }));
@@ -395,7 +408,7 @@ class UIManager {
             document.getElementById('admin-total-users').textContent = stats.total_users;
             document.getElementById('admin-active-users').textContent = stats.active_users;
             document.getElementById('admin-total-sessions').textContent = stats.total_sessions;
-            document.getElementById('admin-avg-accuracy').textContent = `${stats.average_accuracy}%`;
+            document.getElementById('admin-avg-accuracy').textContent = i18n.formatPercent(stats.average_accuracy);
 
             // Load users
             const container = document.getElementById('admin-users-list');
@@ -416,7 +429,7 @@ class UIManager {
         const name = document.createElement('h4');
         name.textContent = user.username;
         const details = document.createElement('p');
-        details.append(`${user.email} • `, translated('span', '', 'points'), `: ${user.total_points}`);
+        details.append(`${user.email} • `, translated('span', '', 'points'), `: ${i18n.formatNumber(user.total_points)}`);
         info.append(name, details);
 
         const actions = document.createElement('div');

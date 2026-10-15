@@ -141,6 +141,7 @@ class AphasiaApp {
             const newLang = currentLang === 'en' ? 'pl' : 'en';
             i18n.setLanguage(newLang);
             ui.translateLevelButton();
+            ui.refreshLists();
             ui.updateReadAloud();
         });
 

@@ -19,7 +19,7 @@ The buttons at the top right of every screen:
 
 Your browser remembers these choices.
 
-The exercises come in the language you choose. When Polish is chosen, the CSV and PDF exports are still in English, and dates are written the way your browser is set up rather than in the chosen language.
+The exercises come in the language you choose. When Polish is chosen, the CSV and PDF exports are still in English. Dates are written in words, such as "15 October 2026", in the chosen language.
 
 ## Your account
 
@@ -117,7 +117,7 @@ Not available yet: there are no exercises of this type, so the app doesn't offer
 Click **Progress** in the bottom bar. You'll see:
 - **Total Sessions:** finished sessions.
 - **Average Accuracy:** the share of all your answers that were right.
-- **Total Time:** the time from the start of each finished session to its last answer, in hours.
+- **Total Time:** the time from the start of each finished session to its last answer: in minutes, or in hours from one hour up.
 - **Longest Streak.**
 - **Progress Over Time:** a chart of each session's score over the last 30 days.
 - **Earned Badges.**

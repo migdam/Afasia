@@ -19,7 +19,7 @@ Przyciski w prawym górnym rogu każdego ekranu:
 
 Przeglądarka zapamiętuje te wybory.
 
-Ćwiczenia są w wybranym języku. Po wybraniu polskiego eksporty CSV i PDF są jeszcze po angielsku, a daty są zapisane tak, jak ustawiono w przeglądarce, a nie w wybranym języku.
+Ćwiczenia są w wybranym języku. Po wybraniu polskiego eksporty CSV i PDF są jeszcze po angielsku. Daty są zapisane słownie, np. „15 października 2026”, w wybranym języku.
 
 ## Twoje konto
 
@@ -116,7 +116,7 @@ Jeszcze niedostępne: nie ma ćwiczeń tego typu, więc aplikacja ich nie oferuj
 Kliknij **Postęp** na dolnym pasku. Zobaczysz:
 - **Wszystkie sesje:** ukończone sesje.
 - **Średnią dokładność:** jaka część wszystkich odpowiedzi była poprawna.
-- **Całkowity czas:** czas od początku każdej ukończonej sesji do ostatniej odpowiedzi, w godzinach.
+- **Całkowity czas:** czas od początku każdej ukończonej sesji do ostatniej odpowiedzi: w minutach, a od godziny wzwyż w godzinach.
 - **Najdłuższą serię.**
 - **Postęp w czasie:** wykres wyników sesji z ostatnich 30 dni.
 - **Zdobyte odznaki.**

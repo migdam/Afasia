@@ -371,6 +371,28 @@ const translations = {
     }
 };
 
+// The locale of each language, for dates and numbers: day before month and a
+// 24-hour clock in both.
+const LOCALES = { en: 'en-GB', pl: 'pl-PL' };
+
+// Counts in words, by Intl.PluralRules category. Written out here rather
+// than taken from Intl's units, whose Polish "day" differs between browsers
+// (Chromium says "doba").
+const PLURAL_FORMS = {
+    day: {
+        en: { one: '{n} day', other: '{n} days' },
+        pl: { one: '{n} dzień', few: '{n} dni', many: '{n} dni', other: '{n} dnia' },
+    },
+    hour: {
+        en: { one: '{n} hour', other: '{n} hours' },
+        pl: { one: '{n} godzina', few: '{n} godziny', many: '{n} godzin', other: '{n} godziny' },
+    },
+    minute: {
+        en: { one: '{n} minute', other: '{n} minutes' },
+        pl: { one: '{n} minuta', few: '{n} minuty', many: '{n} minut', other: '{n} minuty' },
+    },
+};
+
 class I18n {
     constructor() {
         this.currentLang = localStorage.getItem('language') || 'en';
@@ -431,6 +453,50 @@ class I18n {
 
     getCurrentLanguage() {
         return this.currentLang;
+    }
+
+    locale() {
+        return LOCALES[this.currentLang] || LOCALES.en;
+    }
+
+    // A date in words, such as "15 października 2026", which is easier to
+    // read than 15.10.2026 and the same whatever the browser is set to.
+    formatDate(value) {
+        return new Intl.DateTimeFormat(this.locale(), { dateStyle: 'long' }).format(new Date(value));
+    }
+
+    // A date in words with the time, such as "1 stycznia 2099 10:00".
+    formatDateTime(value) {
+        return new Intl.DateTimeFormat(this.locale(), { dateStyle: 'long', timeStyle: 'short' }).format(new Date(value));
+    }
+
+    // A short date for chart labels, such as "15 paź".
+    formatShortDate(value) {
+        return new Intl.DateTimeFormat(this.locale(), { day: 'numeric', month: 'short' }).format(new Date(value));
+    }
+
+    formatNumber(value, options = {}) {
+        return new Intl.NumberFormat(this.locale(), options).format(value);
+    }
+
+    // A share from 0 to 100, such as "80%".
+    formatPercent(value) {
+        return this.formatNumber(value / 100, { style: 'percent', maximumFractionDigits: 0 });
+    }
+
+    // A count with its unit in words, in the form the language's plural
+    // rules ask for: "1 dzień", "2 dni", "5 dni", "1,5 godziny".
+    formatCount(value, unit, maximumFractionDigits = 0) {
+        // Choose the form for the number as shown: 1.04 shows as "1".
+        const shown = Number(Number(value).toFixed(maximumFractionDigits));
+        const forms = PLURAL_FORMS[unit][this.currentLang] || PLURAL_FORMS[unit].en;
+        const form = forms[new Intl.PluralRules(this.locale()).select(shown)] || forms.other;
+        return form.replace('{n}', this.formatNumber(shown, { maximumFractionDigits }));
+    }
+
+    // Practice time: minutes under an hour ("25 minut"), then hours ("1,5 godziny").
+    formatDuration(hours) {
+        return hours < 1 ? this.formatCount(Math.round(hours * 60), 'minute') : this.formatCount(hours, 'hour', 1);
     }
 }
 
