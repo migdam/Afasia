@@ -19,6 +19,25 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 47: 2026-10-15 13:42 UTC: P2-3a Hints in the API
+- **Baseline:** `check.sh` exit code 0: 229 backend tests, smoke, 51 e2e. No human commits. Tests were written in the scratchpad until it finished.
+- **Split:** P2-3 became a (API, storage, scoring) and b (the button).
+- **Test first:** `backend/tests/test_hints.py`, 9 tests: they failed before.
+- **Did:**
+  - The hint endpoint, with `naming_cue` and plain-label templates in EN/PL.
+  - `ExerciseCue` (its own table, cascading from exercises) and `Exercise.cue_level`.
+  - `calculate_points` uses `HINT_POINT_SHARE` (placeholder, pending review).
+  - `cue_level` in the API and the export.
+  - Privacy notice, READMEs, `docker-smoke.sh`.
+- **Found by a test:** the first full check failed at random. The first hint for "bed" says "in the bedroom". The no-leak check covered descriptions, not features. Extending it found two more leaks (EN "hammering nails", PL "mycie zębów" for "szczoteczka do zębów"); all three were fixed. A deterministic test now checks the first two hints of all 30 concepts in both languages.
+- **Verified:**
+  - `scripts/check.sh` exit code 0: ruff, pip-audit "No known vulnerabilities found", 239 backend tests, smoke, 51 e2e.
+  - `docker-smoke.sh` exit code 0, with a hint before account deletion (it ran before the three content fixes, which don't affect Docker).
+- **Commit:** e7b8178 (pushed: yes)
+- **Discovered:** the feature leaks, fixed here.
+- **Next:** P2-3b.
+- **Protocol notes:** a test that draws content at random can pass for a long time and then fail. For content rules, prefer tests that go through every item.
+
 ### 46: 2026-10-15 13:25 UTC: P2-2b Sentences and phrases as data
 - **Baseline:** `check.sh` exit code 0: 211 backend tests, smoke, 51 e2e. No human commits. Tests were written in the scratchpad until it finished.
 - **Found while reading:** the options were never shuffled, and the answer was first in 5 of 6 items, so the position leaked the answer. Fixed here.
