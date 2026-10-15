@@ -481,8 +481,8 @@ Po uruchomieniu backendu, uzyskaj dostęp do interaktywnej dokumentacji API:
 | GET | `/api/v1/therapy/sessions` | Wyświetl sesje użytkownika |
 | GET | `/api/v1/therapy/sessions/{id}` | Pobierz szczegóły sesji |
 | GET | `/api/v1/therapy/sessions/{id}/exercises` | Pobierz ćwiczenia sesji |
-| POST | `/api/v1/therapy/exercises/{id}/answer` | Prześlij odpowiedź ćwiczenia |
-| POST | `/api/v1/therapy/sessions/{id}/complete` | Oznacz sesję jako ukończoną |
+| POST | `/api/v1/therapy/exercises/{id}/answer` | Prześlij odpowiedź na ćwiczenie (jedna na ćwiczenie; ostatnia kończy sesję) |
+| POST | `/api/v1/therapy/sessions/{id}/complete` | Pobierz wynik ukończonej sesji (liczony przez serwer) |
 
 **Przykład Tworzenia Sesji:**
 ```json

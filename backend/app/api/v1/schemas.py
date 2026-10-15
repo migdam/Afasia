@@ -107,11 +107,6 @@ class SessionResponse(BaseModel):
         from_attributes = True
 
 
-class SessionComplete(BaseModel):
-    score: float
-    duration_seconds: int
-
-
 # Progress schemas
 class ProgressResponse(BaseModel):
     id: int

@@ -11,7 +11,7 @@ from ....db.models import (
 )
 from ....core.security import get_current_user_id
 from ..schemas import (
-    SessionCreate, SessionResponse, SessionComplete,
+    SessionCreate, SessionResponse,
     ExerciseResponse, ExerciseAnswer, BadgeResponse
 )
 import random
@@ -134,6 +134,55 @@ def check_and_award_badges(db: Session, user: User):
     return new_badges
 
 
+def finish_session(db: Session, session: TherapySession):
+    """Score a session whose exercises are all answered, and credit the user.
+
+    Runs once per session: the last answer calls it, and an answered exercise
+    can't be answered again.
+    """
+    now = datetime.utcnow()
+    correct_count = sum(1 for e in session.exercises if e.is_correct)
+    points = sum(calculate_points(e.difficulty, e.is_correct) for e in session.exercises)
+
+    session.is_completed = True
+    session.completed_at = now
+    session.score = (correct_count / session.total_exercises) * 100
+    session.duration_seconds = int((now - session.started_at).total_seconds())
+
+    # Update user stats
+    user = session.user
+    user.total_points += points
+
+    # Update streak
+    today = now.date()
+    if user.last_activity_date:
+        last_date = user.last_activity_date.date()
+        if (today - last_date).days == 1:
+            user.current_streak += 1
+        elif (today - last_date).days > 1:
+            user.current_streak = 1
+    else:
+        user.current_streak = 1
+
+    user.longest_streak = max(user.longest_streak, user.current_streak)
+    user.last_activity_date = now
+
+    # Check for badges
+    check_and_award_badges(db, user)
+
+    # Create progress record
+    progress = Progress(
+        user_id=user.id,
+        exercises_completed=session.total_exercises,
+        accuracy_rate=session.score,
+        total_time_seconds=session.duration_seconds,
+        points_earned=points,
+        difficulty_level=session.difficulty,
+        exercise_type=session.exercise_type,
+    )
+    db.add(progress)
+
+
 @router.post("/sessions", response_model=SessionResponse)
 def create_session(
     session_data: SessionCreate,
@@ -247,7 +296,7 @@ def submit_answer(
     user_id: int = Depends(get_current_user_id),
     db: Session = Depends(get_db)
 ):
-    """Submit answer for an exercise."""
+    """Submit the answer to an exercise. The last answer completes the session."""
     exercise = db.query(Exercise).filter(Exercise.id == exercise_id).first()
 
     if not exercise:
@@ -268,6 +317,14 @@ def submit_answer(
             detail="Access denied"
         )
 
+    # One answer per exercise, so a repeated submission can't change the
+    # score or credit the session twice.
+    if exercise.is_correct is not None:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Exercise already answered"
+        )
+
     # Check answer
     is_correct = answer_data.answer.lower().strip() == exercise.correct_answer.lower().strip()
 
@@ -277,58 +334,10 @@ def submit_answer(
     exercise.attempts += 1
     exercise.completed_at = datetime.utcnow()
 
-    # Update session progress
-    completed = db.query(Exercise).filter(
-        Exercise.session_id == session.id,
-        Exercise.is_correct.isnot(None)
-    ).count()
-
-    session.completed_exercises = completed
-
-    if completed == session.total_exercises:
-        session.is_completed = True
-        session.completed_at = datetime.utcnow()
-
-        # Calculate score
-        correct_count = db.query(Exercise).filter(
-            Exercise.session_id == session.id,
-            Exercise.is_correct == True
-        ).count()
-        session.score = (correct_count / session.total_exercises) * 100
-
-        # Update user stats
-        user = db.query(User).filter(User.id == user_id).first()
-        points = calculate_points(exercise.difficulty, is_correct)
-        user.total_points += points
-
-        # Update streak
-        today = datetime.utcnow().date()
-        if user.last_activity_date:
-            last_date = user.last_activity_date.date()
-            if (today - last_date).days == 1:
-                user.current_streak += 1
-            elif (today - last_date).days > 1:
-                user.current_streak = 1
-        else:
-            user.current_streak = 1
-
-        user.longest_streak = max(user.longest_streak, user.current_streak)
-        user.last_activity_date = datetime.utcnow()
-
-        # Check for badges
-        check_and_award_badges(db, user)
-
-        # Create progress record
-        progress = Progress(
-            user_id=user_id,
-            exercises_completed=session.total_exercises,
-            accuracy_rate=session.score,
-            total_time_seconds=session.duration_seconds,
-            points_earned=points,
-            difficulty_level=session.difficulty,
-            exercise_type=session.exercise_type,
-        )
-        db.add(progress)
+    # Count in memory: nothing is flushed yet, so a query wouldn't see this answer.
+    session.completed_exercises = sum(1 for e in session.exercises if e.is_correct is not None)
+    if session.completed_exercises == session.total_exercises:
+        finish_session(db, session)
 
     db.commit()
     db.refresh(exercise)
@@ -339,11 +348,14 @@ def submit_answer(
 @router.post("/sessions/{session_id}/complete", response_model=SessionResponse)
 def complete_session(
     session_id: int,
-    completion_data: SessionComplete,
     user_id: int = Depends(get_current_user_id),
     db: Session = Depends(get_db)
 ):
-    """Mark session as complete."""
+    """Return a finished session's result.
+
+    The last answer completes and scores the session on the server; a request
+    body (the client's own score or duration) is ignored.
+    """
     session = db.query(TherapySession).filter(
         TherapySession.id == session_id,
         TherapySession.user_id == user_id
@@ -355,12 +367,10 @@ def complete_session(
             detail="Session not found"
         )
 
-    session.is_completed = True
-    session.completed_at = datetime.utcnow()
-    session.score = completion_data.score
-    session.duration_seconds = completion_data.duration_seconds
-
-    db.commit()
-    db.refresh(session)
+    if not session.is_completed:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Not all exercises have been answered"
+        )
 
     return SessionResponse.model_validate(session)

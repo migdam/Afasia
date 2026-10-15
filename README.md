@@ -479,8 +479,8 @@ Once the backend is running, access the interactive API documentation:
 | GET | `/api/v1/therapy/sessions` | List user's sessions |
 | GET | `/api/v1/therapy/sessions/{id}` | Get session details |
 | GET | `/api/v1/therapy/sessions/{id}/exercises` | Get session exercises |
-| POST | `/api/v1/therapy/exercises/{id}/answer` | Submit exercise answer |
-| POST | `/api/v1/therapy/sessions/{id}/complete` | Mark session complete |
+| POST | `/api/v1/therapy/exercises/{id}/answer` | Submit an exercise's answer (one per exercise; the last one completes the session) |
+| POST | `/api/v1/therapy/sessions/{id}/complete` | Get a finished session's result (scored by the server) |
 
 **Example Create Session:**
 ```json
