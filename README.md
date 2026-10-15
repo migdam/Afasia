@@ -66,7 +66,7 @@ docker compose up --build
 ```
 
 - The app: http://localhost:3000. nginx serves the frontend and passes `/api` to the backend.
-- The API directly: http://localhost:8000.
+- The API directly: http://localhost:8000, from this machine only. The backend trusts nginx's `X-Forwarded-For` header to tell clients apart (`FORWARDED_ALLOW_IPS`), so its port must not be reachable from elsewhere.
 - Data is kept in PostgreSQL, in a Docker volume.
 - `docker compose up` refuses to start without the two secrets.
 - Behind a proxy that inspects TLS, set `PIP_CA_FILE` to its CA bundle so the image build can reach PyPI.
@@ -95,6 +95,7 @@ Copy `.env.template` to `.env` at the repository root. The settings:
 | `BACKEND_CORS_ORIGINS` | `http://localhost:3000,http://localhost:8000` | Comma-separated origins allowed to call the API |
 | `ACCESS_TOKEN_EXPIRE_MINUTES` | `30` | Minutes without using the app before a login ends (the app renews the login while it is in use) |
 | `LOGIN_MAX_HOURS` | `12` | Hours after logging in when a login ends anyway |
+| `LOGIN_MAX_FAILURES`, `LOGIN_MAX_FAILURES_PER_ACCOUNT`, `LOGIN_LOCK_MINUTES` | `5`, `50`, `15` | Wrong passwords allowed per username from one client address, and per account from all addresses together, within that many minutes; after that, logins wait (429) |
 | `COOKIE_SECURE` | `true` | Send the login cookie over HTTPS only (browsers allow it on `http://localhost` too). Set to `false` only to test over plain HTTP on another host. |
 | `DEBUG`, `HOST`, `PORT` | `true`, `0.0.0.0`, `8000` | Server options |
 | `UPLOAD_DIR`, `MAX_UPLOAD_SIZE` | `./uploads`, 10 MB | Where voice recordings go |
@@ -152,7 +153,7 @@ Before anyone relies on this app, at least these must be fixed. Each one is in [
 
 - **Security**
   - Logging out removes the login cookie, but the server doesn't revoke tokens: a token copied before logout keeps working until it expires, and can be renewed for up to 12 hours after the login.
-  - The limit on wrong passwords (5 per username in 15 minutes) is kept in memory: each server process counts on its own, and a restart forgets it.
+  - The limits on wrong passwords are kept in memory: each server process counts on its own, and a restart forgets them. Behind a proxy, clients are told apart only if the server trusts the proxy's `X-Forwarded-For` (the Docker setup does); otherwise everyone shares one count per username. Whether 5 and 50 suit people with aphasia is an open question (backlog H7).
 - **Privacy:** there is no privacy notice, no consent step before recording, and no way to export or delete your data (P1-6). The app stores health information.
 - **Roles:** any therapist can see and deactivate every patient. Therapists aren't linked to their own patients yet (P1-3b).
 - **Clinical content:** a handful of English placeholder exercises, not reviewed by a speech-language therapist. There are no pictures or recordings.

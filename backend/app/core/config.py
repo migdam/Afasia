@@ -37,6 +37,11 @@ class Settings(BaseSettings):
     # Send the login cookie over HTTPS only. Browsers make an exception for
     # http://localhost; turn this off only for plain-HTTP testing elsewhere.
     COOKIE_SECURE: bool = True
+    # Wrong passwords (app/core/login_limit.py): per username and client
+    # address, and per account from any address, within LOGIN_LOCK_MINUTES.
+    LOGIN_MAX_FAILURES: int = 5
+    LOGIN_MAX_FAILURES_PER_ACCOUNT: int = 50
+    LOGIN_LOCK_MINUTES: int = 15
 
     # Database
     DATABASE_URL: str = "sqlite:///./aphasia_app.db"

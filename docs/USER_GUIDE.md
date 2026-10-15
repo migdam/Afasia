@@ -128,7 +128,7 @@ Everything you do is stored on the server that runs the app: your account, your 
 |---|---|
 | "Incorrect username or password" | Check the spelling and Caps Lock. Usernames are case-sensitive. |
 | "Inactive user" | Your account was deactivated. Ask your therapist or admin. |
-| "Too many failed attempts" | After 5 wrong passwords, logging in to that account is paused for up to 15 minutes. Wait, then try again. |
+| "Too many failed attempts" | After 5 wrong passwords, logging in to that account from your device is paused for up to 15 minutes. Wait, then try again. |
 | You're back at the login page | Your login ended after 30 minutes without use, or 12 hours after you logged in. Log in again. |
 | "Failed to start session" | The server may be down. Try again later, or tell whoever runs the app. |
 | "Please provide an answer" | Type a word or choose an option before **Submit**. |

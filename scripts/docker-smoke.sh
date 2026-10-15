@@ -83,3 +83,33 @@ stats = urllib.request.Request(base + "/admin/stats", headers={"Authorization": 
 assert urllib.request.urlopen(stats, timeout=10).status == 200
 print("the CLI-made admin can log in and use the admin API")
 EOF
+
+echo "== Wrong passwords are counted per real client, and a forged X-Forwarded-For doesn't help"
+python3 -I - "$frontend_port" <<'EOF'
+import json, sys, urllib.error, urllib.request
+
+base = f"http://127.0.0.1:{sys.argv[1]}/api/v1"
+
+def login(password, forwarded_for):
+    request = urllib.request.Request(
+        base + "/auth/login", method="POST",
+        headers={"Content-Type": "application/json", "X-Forwarded-For": forwarded_for},
+        data=json.dumps({"username": "smokeadmin", "password": password}).encode(),
+    )
+    try:
+        return urllib.request.urlopen(request, timeout=10).status
+    except urllib.error.HTTPError as error:
+        return error.code
+
+statuses = [login("wrong password", f"203.0.113.{n}") for n in range(1, 6)]
+assert statuses == [401] * 5, statuses
+assert login("a long smoke-test password", "198.51.100.1") == 429, "a forged address got around the limit"
+print("5 wrong passwords lock out the real client, whatever X-Forwarded-For says")
+EOF
+nginx_ip="$("${compose[@]}" exec -T frontend hostname -i | tr -d '[:space:]')"
+last_login="$("${compose[@]}" logs backend | grep 'POST /api/v1/auth/login' | tail -1)"
+echo "nginx is $nginx_ip; the backend logged: $last_login"
+if [[ -z "$nginx_ip" || "$last_login" == *" $nginx_ip:"* ]]; then
+  echo "The backend sees nginx's address instead of the client's." >&2
+  exit 1
+fi

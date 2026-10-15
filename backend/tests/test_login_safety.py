@@ -63,3 +63,35 @@ def test_a_deactivated_or_deleted_account_is_logged_out_at_once(client):
         db.delete(db.query(User).filter(User.username == "sam").one())
         db.commit()
     assert client.get("/api/v1/therapy/sessions", headers=other).status_code == 401
+
+
+def from_address(address):
+    from fastapi.testclient import TestClient
+
+    from app.main import app
+
+    return TestClient(app, client=(address, 50000))
+
+
+def test_someone_elses_wrong_guesses_do_not_lock_you_out(client):
+    # People with aphasia may mistype, and a stranger mistyping on purpose
+    # must not lock them out too.
+    register(client, "pat")
+    stranger, patient = from_address("203.0.113.9"), from_address("198.51.100.7")
+
+    for _ in range(5):
+        assert login(stranger, "pat", "wrong password").status_code == 401
+    assert login(stranger, "pat").status_code == 429
+
+    assert login(patient, "pat").status_code == 200
+
+
+def test_guessing_from_many_addresses_still_hits_a_limit_for_the_account(client):
+    from app.core.config import settings
+
+    register(client, "pat")
+    for n in range(settings.LOGIN_MAX_FAILURES_PER_ACCOUNT):
+        address = f"10.0.{n // 4}.{n % 4 + 1}"  # 4 tries each, under the per-address limit
+        assert login(from_address(address), "pat", "wrong password").status_code == 401
+
+    assert login(from_address("192.0.2.1"), "pat").status_code == 429

@@ -1,24 +1,35 @@
-"""Slows down password guessing: too many wrong passwords lock a username for a while.
+"""Slows down password guessing.
 
-The record is kept in memory, so it is per process: with several workers each
-one counts on its own, and a restart forgets it.
+Wrong passwords are counted per username and client address: after
+LOGIN_MAX_FAILURES within LOGIN_LOCK_MINUTES, that address must wait. So a
+stranger guessing someone's password doesn't lock its owner out. A looser
+limit per account, LOGIN_MAX_FAILURES_PER_ACCOUNT, still stops guessing
+spread over many addresses.
+
+The client address is the one the server sees. Behind a proxy that is the
+proxy's, unless the server is told to trust the proxy's X-Forwarded-For
+header (docker-compose.yml does this for its nginx).
+
+The counts are kept in memory, so they are per process: with several
+workers each one counts on its own, and a restart forgets them.
 """
 import time
 from threading import Lock
 
-MAX_FAILURES = 5
-WINDOW_SECONDS = 15 * 60
+from .config import settings
 
-_failures: dict[str, list[float]] = {}
+_failures: dict[tuple, list[float]] = {}
 _lock = Lock()
 
 
-def _key(username: str) -> str:
-    return username.strip().lower()
+def _keys(username: str, client: str) -> tuple[tuple, tuple]:
+    name = username.strip().lower()
+    return ("client", name, client), ("account", name)
 
 
-def _recent(key: str, now: float) -> list[float]:
-    times = [t for t in _failures.get(key, []) if now - t < WINDOW_SECONDS]
+def _recent(key: tuple, now: float) -> list[float]:
+    window = settings.LOGIN_LOCK_MINUTES * 60
+    times = [t for t in _failures.get(key, []) if now - t < window]
     if times:
         _failures[key] = times
     else:
@@ -26,26 +37,32 @@ def _recent(key: str, now: float) -> list[float]:
     return times
 
 
-def retry_after(username: str) -> int:
-    """Seconds until this username may try again; 0 if it may try now."""
+def retry_after(username: str, client: str) -> int:
+    """Seconds until this client may try this username again; 0 if it may try now."""
+    now = time.monotonic()
+    window = settings.LOGIN_LOCK_MINUTES * 60
+    limits = (settings.LOGIN_MAX_FAILURES, settings.LOGIN_MAX_FAILURES_PER_ACCOUNT)
+    wait = 0
+    with _lock:
+        for key, limit in zip(_keys(username, client), limits):
+            times = _recent(key, now)
+            if len(times) >= limit:
+                # Free again once enough of the failures leave the window.
+                wait = max(wait, int(times[-limit] + window - now) + 1)
+    return wait
+
+
+def record_failure(username: str, client: str) -> None:
     now = time.monotonic()
     with _lock:
-        times = _recent(_key(username), now)
-        if len(times) < MAX_FAILURES:
-            return 0
-        return max(1, int(times[0] + WINDOW_SECONDS - now) + 1)
+        for key in _keys(username, client):
+            _failures[key] = _recent(key, now) + [now]
 
 
-def record_failure(username: str) -> None:
-    now = time.monotonic()
-    key = _key(username)
+def record_success(username: str, client: str) -> None:
+    """A right password clears this client's count; the account's count stays."""
     with _lock:
-        _failures[key] = _recent(key, now) + [now]
-
-
-def record_success(username: str) -> None:
-    with _lock:
-        _failures.pop(_key(username), None)
+        _failures.pop(_keys(username, client)[0], None)
 
 
 def reset() -> None:

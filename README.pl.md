@@ -66,7 +66,7 @@ docker compose up --build
 ```
 
 - Aplikacja: http://localhost:3000. nginx serwuje frontend i przekazuje `/api` do backendu.
-- API bezpośrednio: http://localhost:8000.
+- API bezpośrednio: http://localhost:8000, tylko z tego komputera. Backend ufa nagłówkowi `X-Forwarded-For` od nginx, żeby rozróżniać klientów (`FORWARDED_ALLOW_IPS`), więc jego port nie może być dostępny z zewnątrz.
 - Dane są w PostgreSQL, w wolumenie Dockera.
 - Bez tych dwóch sekretów `docker compose up` się nie uruchomi.
 - Za proxy, które podgląda ruch TLS, ustaw `PIP_CA_FILE` na jego pakiet certyfikatów CA, żeby budowanie obrazu mogło pobrać pakiety z PyPI.
@@ -95,6 +95,7 @@ Skopiuj `.env.template` do `.env` w katalogu głównym repozytorium. Ustawienia:
 | `BACKEND_CORS_ORIGINS` | `http://localhost:3000,http://localhost:8000` | Adresy stron (oddzielone przecinkami), które mogą wywoływać API |
 | `ACCESS_TOKEN_EXPIRE_MINUTES` | `30` | Po ilu minutach bez korzystania z aplikacji kończy się zalogowanie (aplikacja odnawia je, gdy jest używana) |
 | `LOGIN_MAX_HOURS` | `12` | Po ilu godzinach od zalogowania zalogowanie kończy się mimo wszystko |
+| `LOGIN_MAX_FAILURES`, `LOGIN_MAX_FAILURES_PER_ACCOUNT`, `LOGIN_LOCK_MINUTES` | `5`, `50`, `15` | Ile błędnych haseł wolno podać dla jednej nazwy użytkownika z jednego adresu klienta oraz dla konta ze wszystkich adresów łącznie w ciągu tylu minut; potem logowanie musi poczekać (429) |
 | `COOKIE_SECURE` | `true` | Wysyłaj ciasteczko logowania tylko przez HTTPS (przeglądarki dopuszczają też `http://localhost`). Ustaw `false` tylko do testów przez zwykłe HTTP na innym hoście. |
 | `DEBUG`, `HOST`, `PORT` | `true`, `0.0.0.0`, `8000` | Opcje serwera |
 | `UPLOAD_DIR`, `MAX_UPLOAD_SIZE` | `./uploads`, 10 MB | Gdzie trafiają nagrania głosu |
@@ -152,7 +153,7 @@ Zanim ktokolwiek zacznie polegać na tej aplikacji, trzeba naprawić co najmniej
 
 - **Bezpieczeństwo**
   - Wylogowanie usuwa ciasteczko logowania, ale serwer nie unieważnia tokenów: token skopiowany przed wylogowaniem działa, dopóki nie wygaśnie, i można go odnawiać do 12 godzin od zalogowania.
-  - Limit błędnych haseł (5 na nazwę użytkownika w ciągu 15 minut) jest trzymany w pamięci: każdy proces serwera liczy osobno, a restart go kasuje.
+  - Limity błędnych haseł są trzymane w pamięci: każdy proces serwera liczy osobno, a restart je kasuje. Za serwerem pośredniczącym klienci są rozróżniani tylko wtedy, gdy serwer ufa jego nagłówkowi `X-Forwarded-For` (konfiguracja Docker tak robi); w przeciwnym razie wszyscy dzielą jeden licznik na nazwę użytkownika. Czy wartości 5 i 50 pasują osobom z afazją, to otwarte pytanie (backlog H7).
 - **Prywatność:** brak informacji o prywatności, zgody przed nagrywaniem oraz możliwości eksportu i usunięcia swoich danych (P1-6). Aplikacja przechowuje dane o zdrowiu.
 - **Role:** każdy terapeuta widzi i może dezaktywować wszystkich pacjentów. Terapeuci nie są jeszcze powiązani ze swoimi pacjentami (P1-3b).
 - **Treść kliniczna:** kilka tymczasowych ćwiczeń po angielsku, niesprawdzonych przez logopedę. Nie ma obrazków ani nagrań.

@@ -9,9 +9,14 @@ services:
       context: ./backend
       secrets:
         - pip_ca
+    # Only reachable from this machine: the backend trusts X-Forwarded-For
+    # (below), so nothing but nginx and local tools may talk to it directly.
     ports:
-      - "${BACKEND_PORT:-8000}:8000"
+      - "127.0.0.1:${BACKEND_PORT:-8000}:8000"
     environment:
+      # Take the client address from nginx's X-Forwarded-For (read by
+      # uvicorn), so wrong passwords are counted per client.
+      FORWARDED_ALLOW_IPS: "*"
       DATABASE_URL: postgresql://aphasia:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@db:5432/aphasia_db
       SECRET_KEY: ${SECRET_KEY:?Set SECRET_KEY in .env}
       DEBUG: "true"

@@ -128,7 +128,7 @@ Wszystko, co robisz, jest zapisywane na serwerze, na którym działa aplikacja: 
 |---|---|
 | „Incorrect username or password” | Sprawdź pisownię i Caps Lock. W nazwie użytkownika liczy się wielkość liter. |
 | „Inactive user” | Twoje konto zostało dezaktywowane. Zapytaj logopedę lub administratora. |
-| „Too many failed attempts” | Po 5 błędnych hasłach logowanie na to konto jest wstrzymane na maksymalnie 15 minut. Odczekaj i spróbuj ponownie. |
+| „Too many failed attempts” | Po 5 błędnych hasłach logowanie na to konto z Twojego urządzenia jest wstrzymane na maksymalnie 15 minut. Odczekaj i spróbuj ponownie. |
 | Wracasz na stronę logowania | Zalogowanie wygasło po 30 minutach bez korzystania z aplikacji albo 12 godzinach od zalogowania. Zaloguj się ponownie. |
 | „Failed to start session” | Serwer może nie działać. Spróbuj później albo powiadom osobę, która uruchamia aplikację. |
 | „Please provide an answer” | Przed **Zatwierdź** wpisz słowo albo wybierz odpowiedź. |

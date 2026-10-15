@@ -2,7 +2,7 @@
 import time
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from fastapi.security import HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from ....db.database import get_db
@@ -71,9 +71,10 @@ def register(user_data: UserCreate, response: Response, db: Session = Depends(ge
 
 
 @router.post("/login", response_model=TokenResponse)
-def login(credentials: UserLogin, response: Response, db: Session = Depends(get_db)):
+def login(credentials: UserLogin, request: Request, response: Response, db: Session = Depends(get_db)):
     """Login user."""
-    wait = login_limit.retry_after(credentials.username)
+    client = request.client.host if request.client else "unknown"
+    wait = login_limit.retry_after(credentials.username, client)
     if wait:
         raise HTTPException(
             status_code=status.HTTP_429_TOO_MANY_REQUESTS,
@@ -84,7 +85,7 @@ def login(credentials: UserLogin, response: Response, db: Session = Depends(get_
     user = db.query(User).filter(User.username == credentials.username).first()
 
     if not user or not verify_password(credentials.password, user.hashed_password):
-        login_limit.record_failure(credentials.username)
+        login_limit.record_failure(credentials.username, client)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
@@ -97,7 +98,7 @@ def login(credentials: UserLogin, response: Response, db: Session = Depends(get_
             detail="Inactive user"
         )
 
-    login_limit.record_success(credentials.username)
+    login_limit.record_success(credentials.username, client)
     return login_response(response, user, create_access_token(user.id))
 
 
