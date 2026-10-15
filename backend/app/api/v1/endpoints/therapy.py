@@ -35,10 +35,44 @@ EXERCISE_DATA = {
 }
 
 
+# The most of a session given to items missed last time, so a session is
+# never all the hard ones. Placeholder, pending clinical review (C3, C7).
+REVIEW_SHARE = 0.5
+
+
+def missed_items(db: Session, user_id: int, exercise_type: ExerciseType,
+                 difficulty: DifficultyLevel, language: str) -> List[tuple]:
+    """The items whose last answer was wrong, most recently missed first, as
+    (question, answer) pairs (C3, backlog P2-8a). Only this person's answers,
+    for the same type, difficulty and language."""
+    answered = (
+        db.query(Exercise.question, Exercise.correct_answer, Exercise.is_correct)
+        .join(TherapySession, Exercise.session_id == TherapySession.id)
+        .filter(
+            TherapySession.user_id == user_id,
+            TherapySession.exercise_type == exercise_type,
+            TherapySession.difficulty == difficulty,
+            TherapySession.language == language,
+            Exercise.completed_at.isnot(None),
+        )
+        .order_by(Exercise.completed_at, Exercise.id)
+    )
+    last = {}
+    for question, answer, is_correct in answered:
+        last.pop((question, answer), None)
+        last[(question, answer)] = is_correct
+    return [item for item, is_correct in reversed(last.items()) if not is_correct]
+
+
 def generate_exercises(
     exercise_type: ExerciseType, difficulty: DifficultyLevel, count: int, language: str = "en",
+    review: List[tuple] = (),
 ) -> List[dict]:
     """Pick random exercises of a type and difficulty, repeating items if needed.
+
+    Items in review, (question, answer) pairs, come first, up to
+    REVIEW_SHARE of the session (at least one); the rest are drawn at random
+    from the other items.
 
     Raises LookupError when there is no content for that type and difficulty,
     rather than substituting another difficulty or looping forever.
@@ -49,8 +83,17 @@ def generate_exercises(
     if not available:
         raise LookupError(f"no {exercise_type.value} exercises at {difficulty.value} difficulty")
 
+    by_key = {(item["question"], item["answer"]): item for item in available}
+    missed = [by_key[key] for key in review if key in by_key]
+    due = missed[:max(1, int(count * REVIEW_SHARE))]
+    # Fill up with items not missed, and only then with the other missed ones.
+    fresh = [item for item in available if item not in missed]
+    exercises = due + random.sample(fresh, min(len(fresh), count - len(due)))
+    rest = missed[len(due):]
+    exercises += random.sample(rest, min(len(rest), count - len(exercises)))
+    random.shuffle(exercises)
+
     # Repeat if needed
-    exercises = []
     while len(exercises) < count:
         exercises.extend(random.sample(available, min(len(available), count - len(exercises))))
 
@@ -196,6 +239,8 @@ def create_session(
             session_data.difficulty,
             session_data.num_exercises,
             session_data.language,
+            missed_items(db, user_id, session_data.exercise_type, session_data.difficulty,
+                         session_data.language),
         )
     except LookupError:
         raise HTTPException(

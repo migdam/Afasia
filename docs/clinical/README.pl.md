@@ -47,6 +47,10 @@ Każdy rodzaj ćwiczeń, który zna aplikacja: co robi dziś i na czym powinien 
 - **Dziś:** niedostępne. Nie ma obrazków (H2), więc ten rodzaj nie ma ćwiczeń.
 - **Podstawa:** planowane dopasowywanie słowa do obrazka (rozumienie ze słuchu lub czytanie) [citation needed].
 
+### Pomylone ćwiczenia wracają
+
+Od P2-8a ćwiczenie, na które ostatnia odpowiedź była błędna, wraca w następnej sesji tej osoby tego samego rodzaju, poziomu i języka i zajmuje w niej najwyżej połowę (`REVIEW_SHARE`, wartość tymczasowa, oczekuje na ocenę). To pierwszy krok w stronę zasady C3 (utrzymać wysoki odsetek sukcesów: dostosowywać trudność i przywracać pomylone ćwiczenia w odstępach czasu). Dłuższych odstępów dla ćwiczeń z dobrą odpowiedzią i dopasowania trudności jeszcze nie ma (backlog P2-8b, P2-8c). Podstawa powtórek w odstępach oraz właściwy udział i odstępy: [citation needed].
+
 ### Planowane: trening skryptów
 
 Ćwiczenie krótkich, ważnych dla danej osoby wypowiedzi z codziennych rozmów, aż zaczną przychodzić bez wysiłku (Youmans, Holland, Muñoz i Bourgeois, 2005: dwie osoby z afazją niepłynną). W tym badaniu obie osoby opanowały swoje skrypty. Na ile przenosi się to na inne wypowiedzi, jest mniej jasne [citation needed]. Tego jeszcze nie ma w aplikacji.

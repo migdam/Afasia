@@ -68,6 +68,8 @@ Na górze ekranu ćwiczenia:
 
 Po ostatnim ćwiczeniu kliknij **Zobacz wynik**: wracasz na tablicę, a komunikat u góry mówi np. „Sesja zakończona. Twój wynik: 80%.”. Kliknij **OK**, żeby go zamknąć.
 
+To, co się nie udało, wraca: następna sesja tego samego rodzaju, poziomu i języka zawiera te ćwiczenia, wymieszane z innymi. Stanowią najwyżej połowę sesji, więc sesja nigdy nie składa się z samych trudnych ćwiczeń. Gdy odpowiesz na nie dobrze, przestają mieć pierwszeństwo.
+
 ### Nazywanie słów
 
 Czytasz krótki opis codziennej rzeczy, np. „Zwierzę, które szczeka i merda ogonem”. Wpisz jej nazwę (**pies**) w polu i kliknij **Zatwierdź**.

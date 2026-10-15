@@ -68,6 +68,8 @@ At the top of the exercise screen:
 
 After the last exercise, click **See my result**: you return to the dashboard, and a message at the top says, for example, "Session finished. Your score: 80%." Click **OK** to close it.
 
+What you got wrong comes back: your next session of the same type, difficulty and language includes those exercises, mixed in with others. They make up at most half of it, so a session is never only the hard ones. Once you get one right, it stops coming back first.
+
 ### Word Naming
 
 You read a short description of an everyday thing, such as "A pet that barks and wags its tail". Type its name (**dog**) in the box and click **Submit**.

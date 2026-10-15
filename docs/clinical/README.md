@@ -47,6 +47,10 @@ Each type the app knows, what it does today, and what it should be based on.
 - **Today:** not offered. There are no pictures (H2), so the type has no exercises.
 - **Basis:** a planned word–picture matching task (auditory or reading comprehension) [citation needed].
 
+### Missed items come back
+
+Since P2-8a, an item whose last answer was wrong comes back in the person's next session of the same type, difficulty and language, taking up at most half of it (`REVIEW_SHARE`, a placeholder pending review). This is a first step towards principle C3 (keep success high: adapt difficulty and bring missed items back with spaced repetition). Longer gaps for items answered right, and adapting the difficulty, are not built yet (backlog P2-8b, P2-8c). The basis for spacing, and the right share and intervals: [citation needed].
+
 ### Planned: script training
 
 Practising short, personally relevant conversational scripts until they come easily (Youmans, Holland, Muñoz & Bourgeois, 2005: two people with non-fluent aphasia). In that study, both participants mastered their scripts. How far this carries over to other speech is less clear [citation needed]. Not in the app yet.

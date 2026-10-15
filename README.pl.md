@@ -16,7 +16,7 @@ Konta, sesje ćwiczeń, informacja zwrotna, wyniki, wykres postępów i panel ad
   - *Nazywanie słów*: przeczytaj krótki opis („A pet that barks and wags its tail”) i wpisz słowo.
   - *Uzupełnianie zdań*: wybierz słowo, które kończy zdanie.
 
-  Po każdej odpowiedzi pojawia się „Poprawnie! Świetna robota!” albo prawidłowa odpowiedź. Serwer liczy wynik sesji, gdy przyjdzie ostatnia odpowiedź.
+  Po każdej odpowiedzi pojawia się „Poprawnie! Świetna robota!” albo prawidłowa odpowiedź. Serwer liczy wynik sesji, gdy przyjdzie ostatnia odpowiedź. Ćwiczenia z błędną odpowiedzią wracają w następnej sesji tego samego rodzaju, poziomu i języka; zajmują w niej najwyżej połowę.
 - **Postępy.** Punkty za poprawne odpowiedzi, codzienne serie, trzy odznaki (pierwsza sesja, seria 7 i 30 dni), strona postępów z podsumowaniem i wykresem trafności oraz eksport do CSV i PDF.
 - **Planowanie.** Można zaplanować przyszłe sesje. Aplikacja jeszcze o nich nie przypomina.
 - **Panel terapeuty/administratora.** Lista wszystkich pacjentów, aktywowanie i dezaktywowanie kont. Rejestracja w aplikacji zawsze tworzy konto pacjenta; konta personelu zakłada się na serwerze (zob. [Konta personelu](#konta-personelu)).
