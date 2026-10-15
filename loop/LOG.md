@@ -19,6 +19,25 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 25: 2026-10-15 08:35 UTC: P1-5c2 Web app uses the cookie
+- **Baseline:** `check.sh` exit code 0: 121 backend tests, smoke, 17 e2e. No human commits.
+- **Found while planning:** with a cookie login, `/auth/refresh` still returned the token in its body, so an injected script could fetch it and defeat httpOnly. Fixed in the same change.
+- **Test first:**
+  - Backend: 2 new tests in `test_cookie_login.py`. Both failed before: the token came back in the body of a cookie renewal, and there were no `issued_at`/`expires_at` fields.
+  - E2E: 3 new account tests, and the renewal tests rewritten for cookies. On the old frontend, 3 failed: the token was readable from `localStorage`, an old token wasn't removed, and the cookie wasn't renewed. The logout test passed both times, because the old frontend never stored the cookie.
+- **Did:**
+  - `api.js`: `credentials: 'include'` and `X-Requested-With` on every call, including the CSV/PDF export and recording upload; no token kept; renewal from `issued_at`/`expires_at` in memory; `logout()` waits for any renewal, then calls `/auth/logout`.
+  - `app.js`: start-up asks the server whether you're logged in, and logout waits for the server.
+  - Backend: `TokenResponse` gains `issued_at`/`expires_at`; `access_token` is `null` for a renewal made through the cookie.
+  - E2E: the tests read the httpOnly cookie through Playwright (`login_cookie`, `browser_token` in conftest).
+  - READMEs (EN/PL): the API section; open the dev app on `localhost`, not `127.0.0.1`; Known limitations now says tokens survive logout.
+- **Verified:**
+  - `scripts/check.sh` exit code 0: ruff, pip-audit "No known vulnerabilities found", 123 backend tests, smoke, 20 e2e.
+  - `scripts/docker-smoke.sh` exit code 0: "page, /api, sign-up, login and profile all work through nginx", and the CLI admin works.
+- **Commit:** b3315c5 (pushed: yes)
+- **Discovered:** P1-5d. Logout doesn't revoke tokens, and a copied token can be renewed with Bearer for up to 12 hours.
+- **Next:** P1-5c3 (the lockout review; its numbers depend on H7), or P1-5d if P1-5c3 can't go further without H7.
+
 ### 24: 2026-10-15 08:24 UTC: P1-5c1 Login cookie on the server
 - **Baseline:** green at the end of iteration 23, with the same code (only `loop/` changed since): 115 backend, smoke, 17 e2e. No human commits.
 - **Split:** P1-5c became c1 (the server side), c2 (the web app switches to the cookie) and c3 (the follow-ups on the wrong-password limit). Docker runs one uvicorn worker, so the shared-count item is only needed if that changes.
