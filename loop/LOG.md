@@ -19,6 +19,21 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 62: 2026-10-15 18:13 UTC: P2-8b Spaced intervals
+- **Baseline:** `check.sh` exit code 0: 277 backend tests, smoke, 103 e2e. No human commits. The tests and the patch were written in the scratchpad until the baseline finished.
+- **Test first:** `backend/tests/test_spaced_review.py`. All 3 tests failed before the change. Time is moved with a monkeypatched `therapy.utcnow`.
+- **Did:**
+  - `review_plan()` replaces `missed_items()`. Per item, it reads the last answer and how many times in a row the item was found alone.
+    - Missed items are due now.
+    - Items answered right wait `REVIEW_GAP_DAYS[streak]`: 1 day after help, then 2, 4, 8 and 16 days.
+  - `generate_exercises` fills sessions in this order: review (capped at `REVIEW_SHARE`), new items, items not yet due, then the remaining review items.
+  - The schedule is derived from the history, not stored, so no new table was needed (the backlog had suggested one).
+  - Updated the docs (EN/PL).
+- **Verified:** `scripts/check.sh` exit code 0: ruff "All checks passed!", pip-audit "No known vulnerabilities found", 280 backend tests, smoke, 103 e2e. The selection tests ran 3 times in a row, all green.
+- **Commit:** b5ab10d (pushed: yes)
+- **Discovered:** nothing new. The gaps and the "help means shortest gap" rule wait for H1.
+- **Next:** P2-8c (suggest an easier or harder level).
+
 ### 61: 2026-10-15 17:57 UTC: P2-8a Missed items come back
 - **Baseline:** `check.sh` exit code 0: 273 backend tests, smoke, 103 e2e. No human commits. Tests were written in the scratchpad until it finished.
 - **Split:** P2-8 became a (missed items come back), b (spaced intervals) and c (adaptive difficulty).
