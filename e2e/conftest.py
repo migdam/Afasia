@@ -114,9 +114,7 @@ def browser():
 
 @pytest.fixture
 def page(browser, servers):
-    # The service worker caches the app (being redesigned in backlog P1-7);
-    # keep it out of the tests.
-    context = browser.new_context(service_workers="block")
+    context = browser.new_context()
     context.add_init_script(f"window.API_BASE_URL = {json.dumps(servers['api'])};")
     page = context.new_page()
     errors = []

@@ -71,6 +71,16 @@ except urllib.error.HTTPError as error:
     assert error.code == 401, f"profile after logout: {error.code}"
 print("page, /api, sign-up, login, profile and logout all work through nginx")
 
+# Caching and headers (P1-7): files are revalidated, never kept for a year,
+# every response has the security headers, and the privacy notice is there.
+for path in ("/", "/js/app.js", "/css/styles.css", "/sw.js", "/privacy.html"):
+    with urllib.request.urlopen(base + path, timeout=10) as response:
+        headers, page = response.headers, response.read()
+    assert headers["Cache-Control"] == "no-cache", f"{path}: Cache-Control {headers['Cache-Control']}"
+    assert headers["X-Content-Type-Options"] == "nosniff", f"{path}: no security headers"
+assert b"Informacja o prywatno" in page, "privacy.html is missing from the image"
+print("pages, scripts and styles are revalidated, with security headers; the privacy notice is served")
+
 # Your data (P1-6c1), on PostgreSQL, which enforces the foreign keys that
 # SQLite in the tests doesn't: export, then delete an account with a recording.
 status, body = call("POST", "/api/v1/auth/login", {"username": name, "password": account["password"]})
