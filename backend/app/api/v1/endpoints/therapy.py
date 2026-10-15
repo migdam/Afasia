@@ -9,6 +9,7 @@ from ....db.models import (
     User, TherapySession, Exercise, Progress, UserBadge,
     DifficultyLevel, ExerciseType, BadgeType
 )
+from ....core.clock import utcnow
 from ....core.security import get_current_user_id
 from ..schemas import (
     SessionCreate, SessionResponse,
@@ -150,7 +151,7 @@ def finish_session(db: Session, session: TherapySession):
     Runs once per session: submit_answer calls it only after atomically
     marking the session completed.
     """
-    now = datetime.utcnow()
+    now = utcnow()
     correct_count = sum(1 for e in session.exercises if e.is_correct)
     points = sum(calculate_points(e.difficulty, e.is_correct) for e in session.exercises)
 
@@ -349,7 +350,7 @@ def submit_answer(
         Exercise.is_correct: is_correct,
         Exercise.time_taken_seconds: answer_data.time_taken_seconds,
         Exercise.attempts: Exercise.attempts + 1,
-        Exercise.completed_at: datetime.utcnow(),
+        Exercise.completed_at: utcnow(),
     }, synchronize_session=False)
     if not claimed:
         db.rollback()

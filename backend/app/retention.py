@@ -11,6 +11,7 @@ from pathlib import Path
 
 from sqlalchemy.orm import Session
 
+from .core.clock import utcnow
 from .core.config import settings
 from .core.logging import logger
 from .db.database import SessionLocal
@@ -24,7 +25,7 @@ def delete_old_recordings(db: Session, days: int) -> int:
 
     Returns how many were deleted.
     """
-    cutoff = datetime.utcnow() - timedelta(days=days)
+    cutoff = utcnow() - timedelta(days=days)
     old = db.query(AudioRecording).filter(AudioRecording.created_at < cutoff).all()
     files = [Path(recording.file_path) for recording in old]
     for recording in old:

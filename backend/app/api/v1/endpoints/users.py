@@ -12,6 +12,7 @@ from ....db.models import (
     User, TherapySession, Exercise, Progress, UserBadge,
     ScheduledSession, AudioRecording, LoginCutoff, Consent
 )
+from ....core.clock import as_utc, utcnow
 from ....core.config import settings
 from ....core import login_limit
 from ....core.security import (
@@ -96,7 +97,7 @@ def update_consents(
             continue
         row = db.get(Consent, (user_id, kind)) or Consent(user_id=user_id, kind=kind)
         row.granted = granted
-        row.updated_at = datetime.utcnow()
+        row.updated_at = utcnow()
         db.add(row)
     db.commit()
     return get_consents(db, user_id)
@@ -110,7 +111,7 @@ def as_data(row, leave_out=()) -> dict:
             continue
         value = getattr(row, column.name)
         if isinstance(value, datetime):
-            value = value.isoformat()
+            value = as_utc(value).isoformat()
         elif isinstance(value, enum.Enum):
             value = value.value
         data[column.name] = value
@@ -126,7 +127,7 @@ def export_my_data(user_id: int = Depends(get_current_user_id), db: Session = De
     """
     user = db.get(User, user_id)
     data = {
-        "exported_at": datetime.utcnow().isoformat(),
+        "exported_at": as_utc(utcnow()).isoformat(),
         "account": as_data(user, leave_out={"hashed_password"}),
         "consents": get_consents(db, user_id).model_dump(),
         "sessions": [
@@ -228,7 +229,7 @@ def update_profile(
     if update_data.language is not None:
         user.language = update_data.language
 
-    user.updated_at = datetime.utcnow()
+    user.updated_at = utcnow()
 
     db.commit()
     db.refresh(user)
@@ -252,7 +253,7 @@ def get_progress(
         )
 
     # Get progress history
-    cutoff_date = datetime.utcnow() - timedelta(days=days)
+    cutoff_date = utcnow() - timedelta(days=days)
     progress_records = db.query(Progress).filter(
         Progress.user_id == user_id,
         Progress.date >= cutoff_date
@@ -314,7 +315,7 @@ def get_scheduled_sessions(
     """Get user's scheduled sessions."""
     sessions = db.query(ScheduledSession).filter(
         ScheduledSession.user_id == user_id,
-        ScheduledSession.scheduled_time >= datetime.utcnow()
+        ScheduledSession.scheduled_time >= utcnow()
     ).order_by(ScheduledSession.scheduled_time).all()
 
     return [ScheduledSessionResponse.model_validate(s) for s in sessions]
@@ -404,7 +405,7 @@ def export_progress_csv(
     return StreamingResponse(
         iter([output.getvalue()]),
         media_type="text/csv",
-        headers={"Content-Disposition": f"attachment; filename=progress_{datetime.now().strftime('%Y%m%d')}.csv"}
+        headers={"Content-Disposition": f"attachment; filename=progress_{utcnow().strftime('%Y%m%d')}.csv"}
     )
 
 
@@ -431,7 +432,7 @@ def export_progress_pdf(
     # User info
     c.setFont("Helvetica", 12)
     c.drawString(50, height - 80, f"User: {user.username}")
-    c.drawString(50, height - 100, f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    c.drawString(50, height - 100, f"Generated: {utcnow().strftime('%Y-%m-%d %H:%M:%S')} UTC")
 
     # Stats
     c.setFont("Helvetica-Bold", 14)
@@ -467,7 +468,7 @@ def export_progress_pdf(
     return StreamingResponse(
         buffer,
         media_type="application/pdf",
-        headers={"Content-Disposition": f"attachment; filename=progress_report_{datetime.now().strftime('%Y%m%d')}.pdf"}
+        headers={"Content-Disposition": f"attachment; filename=progress_report_{utcnow().strftime('%Y%m%d')}.pdf"}
     )
 
 

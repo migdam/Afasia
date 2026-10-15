@@ -4,6 +4,7 @@ from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, F
 from sqlalchemy.orm import relationship
 import enum
 from .database import Base
+from ..core.clock import utcnow
 
 
 class DifficultyLevel(str, enum.Enum):
@@ -50,8 +51,8 @@ class User(Base):
     language = Column(String, default="en")  # en or pl
     role = Column(Enum(UserRole), default=UserRole.PATIENT)
     is_active = Column(Boolean, default=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=utcnow)
+    updated_at = Column(DateTime, default=utcnow, onupdate=utcnow)
 
     # Gamification
     total_points = Column(Integer, default=0)
@@ -82,7 +83,7 @@ class TherapySession(Base):
     completed_exercises = Column(Integer, default=0)
     score = Column(Float, default=0.0)
     duration_seconds = Column(Integer, default=0)
-    started_at = Column(DateTime, default=datetime.utcnow)
+    started_at = Column(DateTime, default=utcnow)
     completed_at = Column(DateTime)
     is_completed = Column(Boolean, default=False)
 
@@ -120,7 +121,7 @@ class Progress(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    date = Column(DateTime, default=datetime.utcnow)
+    date = Column(DateTime, default=utcnow)
     exercises_completed = Column(Integer, default=0)
     accuracy_rate = Column(Float, default=0.0)
     total_time_seconds = Column(Integer, default=0)
@@ -139,7 +140,7 @@ class UserBadge(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     badge_type = Column(Enum(BadgeType), nullable=False)
-    earned_at = Column(DateTime, default=datetime.utcnow)
+    earned_at = Column(DateTime, default=utcnow)
     # Additional badge information ("metadata" is reserved by SQLAlchemy)
     details = Column(JSON)
 
@@ -160,7 +161,7 @@ class ScheduledSession(Base):
     difficulty = Column(Enum(DifficultyLevel), default=DifficultyLevel.MEDIUM)
     is_completed = Column(Boolean, default=False)
     reminder_sent = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=utcnow)
 
     # Relationships
     user = relationship("User", back_populates="scheduled_sessions")
@@ -177,7 +178,7 @@ class AudioRecording(Base):
     duration_seconds = Column(Float)
     transcription = Column(Text)  # Speech-to-text result
     accuracy_score = Column(Float)  # Pronunciation accuracy
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=utcnow)
 
     # Relationships
     user = relationship("User", back_populates="audio_recordings")
@@ -217,4 +218,4 @@ class Consent(Base):
     user_id = Column(Integer, primary_key=True)
     kind = Column(String(32), primary_key=True)  # see CONSENT_KINDS in the users endpoints
     granted = Column(Boolean, nullable=False)
-    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = Column(DateTime, nullable=False, default=utcnow)

@@ -1,8 +1,19 @@
 """Pydantic schemas for request/response validation."""
 from datetime import datetime
+from typing import Annotated
 from typing import Optional, List
-from pydantic import BaseModel, ConfigDict, EmailStr, StrictBool, field_validator
+from pydantic import AfterValidator, BaseModel, ConfigDict, EmailStr, PlainSerializer, StrictBool, field_validator
+from ...core.clock import as_utc, to_naive_utc
 from ...db.models import DifficultyLevel, ExerciseType, UserRole, BadgeType
+
+
+# A time at the API's edge: what comes in becomes naive UTC (as the database
+# keeps it); what goes out says +00:00 (app/core/clock.py).
+UTCDateTime = Annotated[
+    datetime,
+    AfterValidator(to_naive_utc),
+    PlainSerializer(lambda value: as_utc(value).isoformat(), return_type=str, when_used="json"),
+]
 
 
 def check_new_password(password: str) -> str:
@@ -70,7 +81,7 @@ class UserResponse(BaseModel):
     total_points: int
     current_streak: int
     longest_streak: int
-    created_at: datetime
+    created_at: UTCDateTime
 
     class Config:
         from_attributes = True
@@ -148,8 +159,8 @@ class SessionResponse(BaseModel):
     completed_exercises: int
     score: float
     duration_seconds: int
-    started_at: datetime
-    completed_at: Optional[datetime]
+    started_at: UTCDateTime
+    completed_at: Optional[UTCDateTime]
     is_completed: bool
 
     class Config:
@@ -159,7 +170,7 @@ class SessionResponse(BaseModel):
 # Progress schemas
 class ProgressResponse(BaseModel):
     id: int
-    date: datetime
+    date: UTCDateTime
     exercises_completed: int
     accuracy_rate: float
     total_time_seconds: int
@@ -186,7 +197,7 @@ class ProgressStats(BaseModel):
 class BadgeResponse(BaseModel):
     id: int
     badge_type: BadgeType
-    earned_at: datetime
+    earned_at: UTCDateTime
     details: Optional[dict]
 
     class Config:
@@ -195,7 +206,7 @@ class BadgeResponse(BaseModel):
 
 # Scheduled session schemas
 class ScheduledSessionCreate(BaseModel):
-    scheduled_time: datetime
+    scheduled_time: UTCDateTime
     title: str
     description: Optional[str] = None
     exercise_type: ExerciseType
@@ -204,13 +215,13 @@ class ScheduledSessionCreate(BaseModel):
 
 class ScheduledSessionResponse(BaseModel):
     id: int
-    scheduled_time: datetime
+    scheduled_time: UTCDateTime
     title: str
     description: Optional[str]
     exercise_type: ExerciseType
     difficulty: DifficultyLevel
     is_completed: bool
-    created_at: datetime
+    created_at: UTCDateTime
 
     class Config:
         from_attributes = True
@@ -222,7 +233,7 @@ class AudioRecordingResponse(BaseModel):
     duration_seconds: Optional[float]
     transcription: Optional[str]
     accuracy_score: Optional[float]
-    created_at: datetime
+    created_at: UTCDateTime
 
     class Config:
         from_attributes = True

@@ -108,7 +108,7 @@ Copy `.env.template` to `.env` at the repository root. The settings:
 
 ## API
 
-FastAPI serves interactive documentation at `/docs` and `/redoc`. All endpoints are under `/api/v1`, and all of them except sign-up, login and logout need a login. Sign-up, login and `/auth/refresh` set the token as an httpOnly `access_token` cookie (path `/api`, `SameSite=Strict`), and say when it was issued and when it ends (`issued_at`, `expires_at`). They also return it in the body, except for a renewal made through the cookie, so that page scripts never see it. Send it either as an `Authorization: Bearer <token>` header or as that cookie. Requests that change something through the cookie must also carry an `X-Requested-With` header, or they get 403; this guards against cross-site request forgery. A missing or invalid token gets 401.
+FastAPI serves interactive documentation at `/docs` and `/redoc`. All endpoints are under `/api/v1`, and all of them except sign-up, login and logout need a login. Sign-up, login and `/auth/refresh` set the token as an httpOnly `access_token` cookie (path `/api`, `SameSite=Strict`), and say when it was issued and when it ends (`issued_at`, `expires_at`). They also return it in the body, except for a renewal made through the cookie, so that page scripts never see it. Send it either as an `Authorization: Bearer <token>` header or as that cookie. Requests that change something through the cookie must also carry an `X-Requested-With` header, or they get 403; this guards against cross-site request forgery. A missing or invalid token gets 401. Times are UTC: the API sends them with `+00:00`, and takes times without an offset as UTC.
 
 | Area | Endpoints |
 |---|---|
