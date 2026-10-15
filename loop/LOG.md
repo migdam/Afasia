@@ -17,6 +17,23 @@ Newest entry first. One entry per iteration.
 
 ---
 
+### 5: 2026-10-15 05:00 UTC: P0-5 Image-recognition sessions hang the server
+- **Baseline:** `check.sh` green (27 passed, smoke OK), same as entry 4. No human commits.
+- **Did:**
+  - `generate_exercises` raises `LookupError` when there is no content for the requested type and difficulty. It also no longer substitutes medium items for a missing difficulty.
+  - `create_session` picks exercises before creating the session row, so a refused request leaves nothing behind (the row used to be committed first), and answers 422.
+  - Both READMEs and both user guides mark image recognition as not available yet.
+  - Added `test_exercise_selection.py` (3 tests, with a 5 s thread guard so a regression fails instead of hanging) and one API test in `test_sessions.py`. They patch the content, so they stay valid once image content exists.
+- **Verified:**
+  ```
+  old code: empty pool -> "did not return within 5 s" · missing difficulty -> returned a medium item
+            API test -> still running after 60 s, killed (exit 124)
+  now:      ruff "All checks passed!" · pytest "31 passed, 31 warnings" · "README quick start: the backend answered /health"
+  ```
+- **Commit:** dff1068 (pushed: yes), plus this log/backlog commit.
+- **Discovered:** `num_exercises` is unbounded (measured with a throwaway database). 0 and -5 are accepted. 20,000 takes 1.6 s and inserts 20,000 rows, and it scales linearly. Filed as **P1-9**, moved up from P3-7's API-hygiene list. P0-7 now notes that the dropdowns still offer image recognition.
+- **Next:** P0-6. Naming prompts contain their answers ("What is this? (cat)").
+
 ### 4: 2026-10-15 04:52 UTC: P0-4 Sessions never complete
 - **Baseline:** `check.sh` green (21 passed, smoke OK), same as entry 3. No human commits.
 - **Did:**

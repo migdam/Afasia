@@ -20,7 +20,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 | Gate | Status | Evidence |
 |------|--------|----------|
 | G1 Runs | 🟡 | `scripts/check.sh` passes, including `scripts/smoke.sh`: the README backend quick start in a copy of the tree answers `/health`. Not yet covered: a from-scratch install in the copy (it reuses `.venv`) and the frontend half of the quick start (P0-7) |
-| G2 Backend tests | 🔴 | 27 tests pass, including register → login → profile and a full scored session; coverage not measured |
+| G2 Backend tests | 🔴 | 31 tests pass, including register → login → profile and a full scored session; coverage not measured |
 | G3 End-to-end | 🔴 | No e2e tests |
 | G4 Authorization | 🔴 | P1-3 |
 | G5 Security | 🔴 | P1-1, P1-2, P1-4 |
@@ -55,7 +55,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
   - `POST /sessions/{id}/complete` overwrites the server-computed score with whatever the client sends.
 
   **Acceptance:** tests for completion on the last answer, points summed over correct answers, idempotent re-submission (no double points or records), server-only scoring, and a recorded duration.
-- [ ] **P0-5 Image-recognition sessions hang the server** ✅. `EXERCISE_DATA` has no `image_recognition` content, and `generate_exercises` loops forever on an empty pool. Reproduced: still spinning after 3 s, pinning a worker thread at 100% CPU. Fail fast with a clear 4xx when there is no content, and add a test.
+- [x] **P0-5 Image-recognition sessions hang the server** ✅ (dff1068). A type or difficulty without content now gets 422 and creates no session. There's no more silent fallback to medium. Docs mark image recognition as not available yet. Original report: `EXERCISE_DATA` has no `image_recognition` content, and `generate_exercises` loops forever on an empty pool. Reproduced: still spinning after 3 s, pinning a worker thread at 100% CPU. Fail fast with a clear 4xx when there is no content, and add a test.
 - [ ] **P0-6 Naming prompts contain the answer** ✅. For example, `"What is this? (cat)"` has the answer `cat`. Fix the naming prompts, and add a test that no naming prompt contains its answer (C4). Repetition prompts like "Say: Hello" are fine. The full content model is P2-2.
 - [ ] **P0-7 Frontend flow is broken against the real API** 🔎:
   - The final score is always 0%: `completeSession()` counts `is_correct` on the exercise list fetched at session start (all `null`) and shows that. Since P0-4 the server ignores the client's score, and `POST /complete` returns the server-computed session: show its `score`, and stop sending score and duration.
@@ -66,6 +66,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
   - The dashboard badge count only updates after visiting Progress.
   - `API_BASE_URL` is hard-coded to `http://localhost:8000`.
   - The images and audio that exercises reference (`/assets/images/*.jpg`, `/assets/audio/*.mp3`) don't exist.
+  - Both exercise-type dropdowns offer Image Recognition, which the server refuses (422) since P0-5. Hide it until P2-2 adds content.
   - The progress chart draws dots but no line (`beginPath()` inside the path loop), the canvas has no height, and its colors are hard-coded for the light theme.
 
   **Acceptance:** a Playwright e2e test, in EN and PL: register → one session per working exercise type → correct feedback → progress shows the session with the right score.
@@ -126,6 +127,12 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
   - `/health/detailed` exposes configuration.
   - Datetimes are naive (`datetime.utcnow()`, deprecated in Python 3.12).
 
+- [ ] **P1-9 Unbounded session size** ✅. `num_exercises` has no limits. Measured on 2026-10-15:
+  - 0 and -5 are accepted, creating sessions that can never complete (`total_exercises=-5`).
+  - 20,000 takes 1.6 s and inserts 20,000 rows. That's linear, so one request from any signed-in user can tie up a worker for minutes and fill the database.
+
+  Validate it in `SessionCreate`, and test the limits. The UI and the user guide say 5–50; U9 asks for short sessions by default.
+
 ## P2: Clinically sound and aphasia-friendly
 
 - [ ] **P2-1 Clinical foundation.** Write `docs/clinical/README.md` and `docs/clinical/README.pl.md` covering the evidence-based approach behind each exercise type (with verified references), the content model, and the review process. Mark everything "pending clinical review" (C1, C7).
@@ -162,7 +169,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 - [ ] **P3-4** Frontend as ES modules: no globals, no inline handlers. Stay with vanilla JS.
 - [ ] **P3-5** Move business logic (scoring, streaks, badges, content selection) out of route handlers into testable services.
 - [ ] **P3-6** `.gitignore` ignores all `*.mp3`, `*.wav` and `lib/` paths, so licensed audio assets can't be committed. Scope those rules to `uploads/`.
-- [ ] **P3-7** API hygiene: server-side bounds for `num_exercises`, a consistent error schema, pagination limits, and a `/health` that checks the DB.
+- [ ] **P3-7** API hygiene: a consistent error schema, pagination limits, and a `/health` that checks the DB. (Bounds for `num_exercises` moved to P1-9.)
 - [ ] **P3-8** Performance: the "Inter" font is declared but never loaded; self-host it or drop it. Add a Lighthouse budget (G12).
 - [ ] **P3-9** PWA: the icons referenced by `manifest.json` don't exist.
 - [ ] **P3-10** Deprecation warnings in the test run ✅ (`pytest -W default`):
