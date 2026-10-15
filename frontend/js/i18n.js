@@ -323,6 +323,10 @@ class I18n {
     }
 
     updatePageTranslations() {
+        // Screen readers and the browser's own tools use this to pick the
+        // pronunciation and spelling rules.
+        document.documentElement.lang = this.currentLang;
+
         document.querySelectorAll('[data-i18n]').forEach(element => {
             const key = element.getAttribute('data-i18n');
             const translation = this.translate(key);

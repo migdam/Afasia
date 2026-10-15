@@ -38,6 +38,8 @@ class UIManager {
         if (page) {
             page.classList.add('active');
             this.currentPage = pageName;
+            // Start keyboard and screen-reader users at the new page's heading.
+            this.focusHeading(page.querySelector('h2'));
         }
 
         // Update bottom nav
@@ -126,6 +128,13 @@ class UIManager {
         message.removeAttribute('data-i18n');
         message.removeAttribute('role');
         this.updateReadAloud();
+    }
+
+    // Move the focus to a heading (not a control, so it gets tabindex -1).
+    focusHeading(heading) {
+        if (!heading) return;
+        heading.tabIndex = -1;
+        heading.focus();
     }
 
     showAuthPage() {

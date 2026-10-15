@@ -459,6 +459,9 @@ class AphasiaApp {
         ui.updateReadAloud();
         document.getElementById('submit-answer').style.display = '';
 
+        // The question first, for keyboard and screen-reader users.
+        ui.focusHeading(document.getElementById('exercise-question-text'));
+
         // Hints: for naming only, starting afresh for every exercise.
         document.getElementById('hint-list').replaceChildren();
         document.getElementById('hint-btn').disabled = false;

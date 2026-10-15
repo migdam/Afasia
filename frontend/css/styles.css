@@ -1035,3 +1035,9 @@ button,
 #account-logout {
     margin-top: 1rem;
 }
+
+/* Headings get the focus when a page or exercise changes (ui.focusHeading);
+   they aren't controls, so no focus ring. */
+h2[tabindex="-1"]:focus {
+    outline: none;
+}
