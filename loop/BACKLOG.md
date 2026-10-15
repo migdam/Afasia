@@ -20,7 +20,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 | Gate | Status | Evidence |
 |------|--------|----------|
 | G1 Runs | 🟡 | `scripts/check.sh` passes, including `scripts/smoke.sh`: the README backend quick start in a copy of the tree answers `/health`. Not yet covered: a from-scratch install in the copy (it reuses `.venv`) and the frontend half of the quick start (P0-7) |
-| G2 Backend tests | 🔴 | 21 tests pass, including register → login → profile; coverage not measured |
+| G2 Backend tests | 🔴 | 27 tests pass, including register → login → profile and a full scored session; coverage not measured |
 | G3 End-to-end | 🔴 | No e2e tests |
 | G4 Authorization | 🔴 | P1-3 |
 | G5 Security | 🔴 | P1-1, P1-2, P1-4 |
@@ -49,7 +49,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
   - Return 401, not 403, for missing or invalid tokens.
 
   **Acceptance:** tests for register → login → `GET /users/profile` = 200, and for a bad or missing token = 401.
-- [ ] **P0-4 Sessions never complete, so there are no points, progress, streaks or badges** ✅. In `submit_answer`, the "all answered?" count runs before the current answer is flushed (`autoflush=False`). Reproduced: after answering 3/3 correctly, the session shows `completed_exercises=2`, is not completed, has 0 points and no progress record. Re-submitting any answer then "completes" it, and every re-submit awards points again and adds another progress record (10 → 20 points, 1 → 2 records). Further problems in the same flow:
+- [x] **P0-4 Sessions never complete, so there are no points, progress, streaks or badges** ✅ (cc1a0b0). The last answer now completes the session once, in `finish_session()`: points are summed over correct answers, the score and duration are computed on the server, and the progress record comes last. Re-answering gets 409. `POST /complete` returns the server's result and ignores the client. Original report: in `submit_answer`, the "all answered?" count runs before the current answer is flushed (`autoflush=False`). Reproduced: after answering 3/3 correctly, the session shows `completed_exercises=2`, is not completed, has 0 points and no progress record. Re-submitting any answer then "completes" it, and every re-submit awards points again and adds another progress record (10 → 20 points, 1 → 2 records). Further problems in the same flow:
   - Points are computed only for the last answer, not the session.
   - The progress record is written before the duration is known, so time is always 0.
   - `POST /sessions/{id}/complete` overwrites the server-computed score with whatever the client sends.
@@ -58,9 +58,9 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 - [ ] **P0-5 Image-recognition sessions hang the server** ✅. `EXERCISE_DATA` has no `image_recognition` content, and `generate_exercises` loops forever on an empty pool. Reproduced: still spinning after 3 s, pinning a worker thread at 100% CPU. Fail fast with a clear 4xx when there is no content, and add a test.
 - [ ] **P0-6 Naming prompts contain the answer** ✅. For example, `"What is this? (cat)"` has the answer `cat`. Fix the naming prompts, and add a test that no naming prompt contains its answer (C4). Repetition prompts like "Say: Hello" are fine. The full content model is P2-2.
 - [ ] **P0-7 Frontend flow is broken against the real API** 🔎:
-  - The final score is always 0%: `completeSession()` counts `is_correct` on the exercise list fetched at session start (all `null`) and POSTs that score, which the server accepts (P0-4).
+  - The final score is always 0%: `completeSession()` counts `is_correct` on the exercise list fetched at session start (all `null`) and shows that. Since P0-4 the server ignores the client's score, and `POST /complete` returns the server-computed session: show its `score`, and stop sending score and duration.
   - Wrong-answer feedback reads "Incorrect. Try again! Correct! Well done!: undefined". It concatenates both messages and reads `correct_answer`, a field the API never returns (✅ confirmed absent).
-  - Submit stays enabled during the 2 s feedback delay, so a double click submits twice and skips an exercise.
+  - Submit stays enabled during the 2 s feedback delay, so a double click submits twice and skips an exercise. Since P0-4 the second submission gets 409 "Exercise already answered", which the UI shows as an error alert.
   - `recordedAudio` and the hidden text input aren't reset between exercises or sessions.
   - The admin list reads `user.is_active`, which `UserResponse` doesn't include.
   - The dashboard badge count only updates after visiting Progress.
@@ -83,6 +83,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
   - Links to `docs/API.md`, `docs/DEPLOYMENT.md` and `LICENSE`, none of which exist.
   - Invented contact details: `support@aphasia-therapy.app`, `@AphasiaTherapy`, a website.
   - `.env.template` offers `SMTP_*` settings "for notifications", but nothing sends email and Settings ignores those keys. Remove them until P4-4 uses them.
+  - `docs/USER_GUIDE.md` says total time "excludes paused time". There is no pause: a session's time runs from its start to its last answer (since P0-4).
 
   Replace them with an accurate status ("early development"), a "Known limitations" section, and links that resolve, in both languages.
 
@@ -149,7 +150,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 - [ ] **P2-6 Answering without typing** (U6). Offer word choice, picture choice and letter tiles; typing becomes optional.
 - [ ] **P2-7 Speech practice that works** (C5). Today, recognition starts only at submit time and listens to new audio, so the recording itself is never transcribed. Redesign the flow as listen → record → play back → self-rate (plus a recognizer suggestion, with consent) → continue. Fall back gracefully where speech recognition is unsupported, and store the transcription and confidence.
 - [ ] **P2-8 Adaptive difficulty and spaced repetition** (C3).
-- [ ] **P2-9 Motivation that doesn't punish** (U10). Use weekly goals or rest days. Three of the six badge types (perfectionist, dedicated, master) are never awarded; implement or remove them. The first-session badge counts unfinished sessions.
+- [ ] **P2-9 Motivation that doesn't punish** (U10). Use weekly goals or rest days. Streak days are UTC dates, not the user's local day: practice at 00:30 in Poland counts for the day before. Use the user's time zone. Three of the six badge types (perfectionist, dedicated, master) are never awarded; implement or remove them. The first-session badge counts unfinished sessions.
 - [ ] **P2-10 Full i18n** (G9). Remove the hard-coded English from JS: alerts, "Completed", "Activate"/"Deactivate", "Recording...", "Session complete", chart labels, badge names. Translate the CSV and PDF exports too. Add a key-parity test, Polish plurals (`Intl.PluralRules`) and localized dates (`Intl.DateTimeFormat`).
 - [ ] **P2-11 Accessible progress chart.** Draw the line correctly, use theme-aware colors, and provide a data-table alternative.
 

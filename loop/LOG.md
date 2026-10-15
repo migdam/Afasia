@@ -17,6 +17,33 @@ Newest entry first. One entry per iteration.
 
 ---
 
+### 4: 2026-10-15 04:52 UTC: P0-4 Sessions never complete
+- **Baseline:** `check.sh` green (21 passed, smoke OK), same as entry 3. No human commits.
+- **Did:**
+  - `submit_answer` counts answered exercises in memory. The old query ran before the unflushed answer was visible, so it was always one short.
+  - Completion moved, otherwise unchanged, into `finish_session()`, which only the last new answer reaches. Points are summed over all correct answers. The score is computed there. The duration runs from the session start to the last answer. The progress record is written after both.
+  - Re-answering an exercise gets 409.
+  - `POST /sessions/{id}/complete` returns the server's result (409 before the last answer) and ignores the client's body. Removed the `SessionComplete` schema.
+  - Updated the API table rows in both READMEs.
+  - Added `test_sessions.py` (6 tests).
+  - Checked first that the frontend still works: it calls `/complete` after the last answer and only then returns to the dashboard, so the endpoint had to stay.
+- **Design choices:**
+  - One answer per exercise for now. Retries with feedback (U8) are a scoring decision for P2-3/P2-4.
+  - Duration is server-side wall-clock time, so the client can't set it.
+- **Verified:**
+  ```
+  old code, new tests:  6 failed — "assert False" (is_completed) · "assert 0 == 20" (points)
+                        "assert 0.0 == 100" (client score accepted) · "assert 422 == 409" · "assert 90 <= 0" (duration)
+  now: ruff "All checks passed!" · pytest "27 passed, 30 warnings" · "README quick start: the backend answered /health"
+  ```
+  The warnings are the same 5 kinds as entry 2 (P3-10). The count rose because more tests create a test client.
+- **Commit:** cc1a0b0 (pushed: yes), plus this log/backlog commit.
+- **Discovered (added to the backlog):**
+  - Streak days are UTC dates, not local days (P2-9).
+  - `USER_GUIDE.md` claims total time "excludes paused time" (P0-9).
+  - P0-7 now notes that `/complete` returns the server's score and that a double submit gets 409.
+- **Next:** P0-5. Image-recognition sessions hang the server (empty content pool, infinite loop).
+
 ### 3: 2026-10-15 04:44 UTC: P0-3 Every authenticated request returns 401
 - **Baseline:** `check.sh` green (10 passed, smoke OK), same as entry 2. No human commits.
 - **Did:**
