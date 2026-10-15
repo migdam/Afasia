@@ -9,3 +9,6 @@ pip-audit==2.10.1
 # Code cloud sessions (Chromium build 1194), which can't download others;
 # elsewhere scripts/check.sh downloads the matching build.
 playwright==1.56.0
+# Reads docker-compose.yml in tests/test_docker_settings.py (installed before
+# only as a dependency of another tool; pinned so the test can rely on it).
+pyyaml==6.0.3

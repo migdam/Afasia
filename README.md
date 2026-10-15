@@ -69,6 +69,7 @@ docker compose up --build
 - The API directly: http://localhost:8000, from this machine only. The backend trusts nginx's `X-Forwarded-For` header to tell clients apart (`FORWARDED_ALLOW_IPS`), so its port must not be reachable from elsewhere.
 - Data is kept in PostgreSQL, in a Docker volume.
 - `docker compose up` refuses to start without the two secrets.
+- Every setting in the table below is taken from `.env`, except `DATABASE_URL`, `UPLOAD_DIR`, `HOST` and `PORT`, which the Docker setup fixes. `.env.template` turns `DEBUG` on; set `DEBUG=false` anywhere but your own machine.
 - Behind a proxy that inspects TLS, set `PIP_CA_FILE` to its CA bundle so the image build can reach PyPI.
 
 `scripts/docker-smoke.sh` builds and starts a separate copy of the stack, signs up and logs in through nginx, and then removes everything.

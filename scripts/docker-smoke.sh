@@ -22,6 +22,8 @@ SECRET_KEY=$(python3 -c 'import secrets; print(secrets.token_hex(32))')
 POSTGRES_PASSWORD=$(python3 -c 'import secrets; print(secrets.token_hex(16))')
 FRONTEND_PORT=$frontend_port
 BACKEND_PORT=$backend_port
+# Not a default, so the check below shows that .env settings reach the backend.
+ACCESS_TOKEN_EXPIRE_MINUTES=17
 EOF
 compose=(docker compose -p afasia-smoke --env-file "$work/.env" -f "$root/docker-compose.yml")
 cleanup() {
@@ -59,7 +61,9 @@ status, _ = call("POST", "/api/v1/auth/register", account)
 assert status == 201, f"register: {status}"
 status, body = call("POST", "/api/v1/auth/login", {"username": name, "password": account["password"]})
 assert status == 200, f"login: {status}"
-token = json.loads(body)["access_token"]
+login = json.loads(body)
+assert login["expires_at"] - login["issued_at"] == 17 * 60, "ACCESS_TOKEN_EXPIRE_MINUTES from .env didn't reach the backend"
+token = login["access_token"]
 status, body = call("GET", "/api/v1/users/profile", token=token)
 assert status == 200 and json.loads(body)["username"] == name, f"profile: {status}"
 status, _ = call("POST", "/api/v1/auth/logout", token=token)

@@ -17,11 +17,24 @@ services:
       # Take the client address from nginx's X-Forwarded-For (read by
       # uvicorn), so wrong passwords are counted per client.
       FORWARDED_ALLOW_IPS: "*"
+      # Only what is listed here reaches the backend, so every setting is
+      # listed, taken from .env, with the app's own default (checked by
+      # backend/tests/test_docker_settings.py). DATABASE_URL, UPLOAD_DIR,
+      # HOST and PORT are fixed by this setup.
       DATABASE_URL: postgresql://aphasia:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@db:5432/aphasia_db
       SECRET_KEY: ${SECRET_KEY:?Set SECRET_KEY in .env}
       DEBUG: ${DEBUG:-false}
-      BACKEND_CORS_ORIGINS: http://localhost:${FRONTEND_PORT:-3000}
+      ALGORITHM: ${ALGORITHM:-HS256}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-30}
+      LOGIN_MAX_HOURS: ${LOGIN_MAX_HOURS:-12}
+      COOKIE_SECURE: ${COOKIE_SECURE:-true}
+      LOGIN_MAX_FAILURES: ${LOGIN_MAX_FAILURES:-5}
+      LOGIN_MAX_FAILURES_PER_ACCOUNT: ${LOGIN_MAX_FAILURES_PER_ACCOUNT:-50}
+      LOGIN_LOCK_MINUTES: ${LOGIN_LOCK_MINUTES:-15}
       RECORDING_RETENTION_DAYS: ${RECORDING_RETENTION_DAYS:-0}
+      # nginx also caps uploads at 10 MB (client_max_body_size).
+      MAX_UPLOAD_SIZE: ${MAX_UPLOAD_SIZE:-10485760}
+      BACKEND_CORS_ORIGINS: ${BACKEND_CORS_ORIGINS:-http://localhost:${FRONTEND_PORT:-3000}}
     volumes:
       - uploads:/app/uploads
     depends_on:
