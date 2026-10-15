@@ -19,6 +19,28 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 38: 2026-10-15 11:23 UTC: P1-7 Retire the caching service worker
+- **Baseline:** `check.sh` exit code 0: 153 backend tests, smoke, 46 e2e. No human commits. Tests were written in the scratchpad until it finished.
+- **Found while reading:**
+  - The old worker cached every same-origin GET, so in Docker it cached `/api/...` responses with personal data, and could serve them after logout.
+  - nginx's per-location `add_header` dropped the security headers on JS and CSS.
+  - The Dockerfile never copied `privacy.html` (my miss in iteration 35), so in Docker the privacy link showed the app instead.
+- **Test first:** `e2e/test_service_worker.py`, 2 tests: both failed on the old code (one registration; one registration and the old cache left). My first version of the second test used an async predicate in `wait_for_function`, and it passed on the old code: the Promise was taken as true. It now polls from Python.
+- **Did:**
+  - `sw.js` is a clean-up worker (`skipWaiting`, delete caches, unregister, reload pages).
+  - Removed `js/sw-register.js` and its script tag.
+  - nginx caching and `security-headers.inc`.
+  - Dockerfile copies `privacy.html` and the include.
+  - New checks in `docker-smoke.sh`.
+  - The e2e fixture no longer blocks service workers.
+  - READMEs (EN/PL).
+- **Verified:**
+  - `scripts/check.sh` exit code 0: ruff, pip-audit "No known vulnerabilities found", 153 backend tests, smoke, 48 e2e.
+  - `scripts/docker-smoke.sh` exit code 0: "pages, scripts and styles are revalidated, with security headers; the privacy notice is served". Not run against the old image.
+- **Commit:** 14bdae4 (pushed: yes)
+- **Discovered:** the three problems above, all fixed here.
+- **Next:** P1-8 (safe defaults). It has grown, so split it first.
+
 ### 37: 2026-10-15 11:10 UTC: P1-6f No third parties, no personal data in logs
 - **Baseline:** `check.sh` exit code 0: 152 backend tests, smoke, 44 e2e. No human commits. Tests were written in the scratchpad until it finished.
 - **Audit:**
