@@ -114,6 +114,7 @@ FastAPI udostępnia interaktywną dokumentację pod `/docs` i `/redoc`. Wszystki
 |---|---|
 | Konta | `POST /auth/register`, `POST /auth/login`, `POST /auth/refresh` (odnawia zalogowanie), `POST /auth/logout` (kończy to zalogowanie na serwerze i usuwa ciasteczko; inne urządzenia pozostają zalogowane), `POST /users/password` (zmiana hasła: wymaga obecnego; pozostałe zalogowania się kończą, a to dostaje nowy token) |
 | Sesje | `POST /therapy/sessions` (`num_exercises` od 1 do 50; formularz oferuje od 5 do 50), `GET /therapy/sessions`, `GET /therapy/sessions/{id}`, `GET /therapy/sessions/{id}/exercises` |
+| Podpowiedzi | `POST /therapy/exercises/{id}/hint`: kolejna podpowiedź do nazywania (1 do czego służy, 2 pierwsza litera, 3 całe słowo); mniej punktów za każdą użytą podpowiedź (proporcje oczekują na ocenę kliniczną) |
 | Odpowiedzi | `POST /therapy/exercises/{id}/answer`: jedna odpowiedź na ćwiczenie. Odpowiedź serwera zawiera prawidłową odpowiedź, a ostatnia odpowiedź kończy sesję i ją ocenia. |
 | Wyniki | `POST /therapy/sessions/{id}/complete`: wynik ukończonej sesji, policzony przez serwer |
 | Twoje dane | `GET`/`PUT /users/profile`, `GET /users/progress`, `GET /users/badges`, `GET /users/progress/export/csv`, `GET /users/progress/export/pdf` |

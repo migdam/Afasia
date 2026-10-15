@@ -106,6 +106,10 @@ upload = urllib.request.Request(
          + f"\r\n--{boundary}--\r\n".encode(),
 )
 assert urllib.request.urlopen(upload, timeout=10).status == 200, "recording upload"
+naming = json.loads(call("POST", "/api/v1/therapy/sessions", {"title": "smoke", "exercise_type": "word_naming",
+                                                               "difficulty": "easy", "num_exercises": 1}, token=token)[1])
+naming_exercise = json.loads(call("GET", f"/api/v1/therapy/sessions/{naming['id']}/exercises", token=token)[1])[0]
+assert call("POST", f"/api/v1/therapy/exercises/{naming_exercise['id']}/hint", token=token)[0] == 200, "hint"
 status, body = call("GET", "/api/v1/users/me/export", token=token)
 assert status == 200 and len(json.loads(body)["recordings"]) == 1, "export"
 status, _ = call("DELETE", "/api/v1/users/me", {"password": account["password"]}, token=token)
@@ -115,7 +119,7 @@ try:
     raise AssertionError("the deleted account can still log in")
 except urllib.error.HTTPError as error:
     assert error.code == 401, f"login after deletion: {error.code}"
-print("export, and deleting an account with a recording, work on PostgreSQL")
+print("export, and deleting an account with a recording and a hint, work on PostgreSQL")
 EOF
   "${compose[@]}" logs --tail 40 >&2 || true
   exit 1

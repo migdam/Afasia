@@ -123,6 +123,8 @@ class ExerciseResponse(BaseModel):
     user_answer: Optional[str]
     is_correct: Optional[bool]
     time_taken_seconds: Optional[int]
+    # Naming hints used (0 to 3); see POST /therapy/exercises/{id}/hint.
+    cue_level: int = 0
 
     class Config:
         from_attributes = True
@@ -131,6 +133,13 @@ class ExerciseResponse(BaseModel):
 class ExerciseAnswer(BaseModel):
     answer: str
     time_taken_seconds: int
+
+
+class Hint(BaseModel):
+    """One naming hint: level 1 the meaning, 2 the first letter, 3 the word."""
+    level: int
+    cue: str
+    last: bool
 
 
 class AnswerResult(ExerciseResponse):

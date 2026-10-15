@@ -282,7 +282,7 @@
         "features": {
           "category": "furniture",
           "use": "sleeping",
-          "location": "in the bedroom"
+          "location": "at home"
         }
       },
       "pl": {
@@ -710,7 +710,7 @@
         "description": "Myje się nią zęby rano i wieczorem.",
         "features": {
           "category": "przybór toaletowy",
-          "use": "mycie zębów",
+          "use": "codzienna higiena",
           "location": "w łazience"
         }
       },
@@ -875,7 +875,7 @@
         "description": "You hit nails into wood with it.",
         "features": {
           "category": "tool",
-          "use": "hammering nails",
+          "use": "hitting nails",
           "location": "in a toolbox"
         }
       },

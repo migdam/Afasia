@@ -30,6 +30,15 @@ class ContentError(Exception):
     """The content file breaks a rule; the message says which."""
 
 
+def gives_away(text: str, answer: str) -> bool:
+    """Whether a text contains an answer, or a word starting with it (C4)."""
+    words = re.findall(r"\w+", text.lower())
+    return any(
+        len(part) >= 3 and any(w.startswith(part) for w in words)
+        for part in answer.lower().split()
+    )
+
+
 class Features(BaseModel):
     """Semantic features, for Semantic Feature Analysis cues (docs/clinical)."""
     model_config = ConfigDict(extra="forbid")
@@ -58,14 +67,15 @@ class Wording(BaseModel):
         return self.word[0]
 
     @model_validator(mode="after")
-    def description_does_not_give_the_answer(self):
-        # C4: no answer in its own prompt. A word that starts with the answer
-        # counts too, which catches inflected forms ("kota" for "kot").
-        words = re.findall(r"\w+", self.description.lower())
-        for answer in self.answers:
-            for part in answer.lower().split():
-                if len(part) >= 3 and any(w.startswith(part) for w in words):
-                    raise ValueError(f"the description gives away {answer!r}")
+    def prompt_and_first_hint_do_not_give_the_answer(self):
+        # C4: no answer in its own prompt, or in the first hint, which shows
+        # the features. A word that starts with the answer counts too, which
+        # catches inflected forms ("kota" for "kot").
+        texts = {"description": self.description, **self.features.model_dump()}
+        for name, text in texts.items():
+            for answer in self.answers:
+                if gives_away(text, answer):
+                    raise ValueError(f"the {name} gives away {answer!r}")
         return self
 
 
@@ -99,15 +109,6 @@ class ContentFile(BaseModel):
             if len(words) != len(set(words)):
                 raise ValueError(f"a {language} word is used twice")
         return concepts
-
-
-def gives_away(text: str, answer: str) -> bool:
-    """Whether a text contains an answer, or a word starting with it (C4)."""
-    words = re.findall(r"\w+", text.lower())
-    return any(
-        len(part) >= 3 and any(w.startswith(part) for w in words)
-        for part in answer.lower().split()
-    )
 
 
 class SentenceWording(BaseModel):
@@ -268,3 +269,35 @@ def content_items(exercise_type, difficulty: DifficultyLevel, language: str):
         ExerciseType.PRONUNCIATION: phrase_items,
     }.get(exercise_type)
     return build(difficulty, language) if build else None
+
+
+# Naming hints, from least to most help (cueing hierarchy, docs/clinical):
+# what the thing is for and where it is, then the first letter, then the
+# word itself. Plain labels, so no grammar depends on the feature phrases.
+CUE_TEMPLATES = {
+    "en": (
+        "Group: {category}. Used for: {use}. Where: {location}.",
+        "It starts with: {letter}",
+        "The word is: {word}",
+    ),
+    "pl": (
+        "Grupa: {category}. Do czego: {use}. Gdzie: {location}.",
+        "Zaczyna się na: {letter}",
+        "To słowo to: {word}",
+    ),
+}
+MAX_CUE_LEVEL = 3
+
+
+def naming_cue(language: str, word: str, level: int) -> str:
+    """The hint at a level (1 to 3) for a naming answer."""
+    language = known(language)
+    for c in concepts():
+        wording = getattr(c, language)
+        if wording.word.lower() == word.lower():
+            return CUE_TEMPLATES[language][level - 1].format(
+                category=wording.features.category, use=wording.features.use,
+                location=wording.features.location, letter=wording.first_letter.upper(),
+                word=wording.word,
+            )
+    raise LookupError(f"no concept for {word!r} in {language}")

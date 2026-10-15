@@ -7,14 +7,14 @@ from sqlalchemy import func
 from ....db.database import get_db
 from ....db.models import (
     User, TherapySession, Exercise, Progress, UserBadge,
-    DifficultyLevel, ExerciseType, BadgeType
+    DifficultyLevel, ExerciseType, BadgeType, ExerciseCue
 )
-from ....content import accepted_answers, content_items
+from ....content import MAX_CUE_LEVEL, accepted_answers, content_items, naming_cue
 from ....core.clock import utcnow
 from ....core.security import get_current_user_id
 from ..schemas import (
     SessionCreate, SessionResponse,
-    ExerciseResponse, ExerciseAnswer, AnswerResult, BadgeResponse
+    ExerciseResponse, ExerciseAnswer, AnswerResult, BadgeResponse, Hint
 )
 import random
 
@@ -61,8 +61,14 @@ def generate_exercises(
     ]
 
 
-def calculate_points(difficulty: DifficultyLevel, is_correct: bool) -> int:
-    """Calculate points based on difficulty and correctness."""
+# The share of an exercise's points kept after 0, 1, 2 or 3 naming hints, so
+# finding a word on one's own counts most. Placeholder values, pending
+# clinical review (loop/PROMPT.md, C3, C7).
+HINT_POINT_SHARE = (1.0, 0.75, 0.5, 0.25)
+
+
+def calculate_points(difficulty: DifficultyLevel, is_correct: bool, cue_level: int = 0) -> int:
+    """Points for an answer: by difficulty, less for each hint used."""
     if not is_correct:
         return 0
 
@@ -71,7 +77,7 @@ def calculate_points(difficulty: DifficultyLevel, is_correct: bool) -> int:
         DifficultyLevel.MEDIUM: 20,
         DifficultyLevel.HARD: 30,
     }
-    return points_map.get(difficulty, 10)
+    return round(points_map.get(difficulty, 10) * HINT_POINT_SHARE[min(cue_level, MAX_CUE_LEVEL)])
 
 
 def check_and_award_badges(db: Session, user: User):
@@ -119,7 +125,7 @@ def finish_session(db: Session, session: TherapySession):
     """
     now = utcnow()
     correct_count = sum(1 for e in session.exercises if e.is_correct)
-    points = sum(calculate_points(e.difficulty, e.is_correct) for e in session.exercises)
+    points = sum(calculate_points(e.difficulty, e.is_correct, e.cue_level) for e in session.exercises)
 
     session.is_completed = True
     session.completed_at = now
@@ -273,6 +279,42 @@ def get_exercises(
 
     exercises = db.query(Exercise).filter(Exercise.session_id == session_id).all()
     return [ExerciseResponse.model_validate(e) for e in exercises]
+
+
+@router.post("/exercises/{exercise_id}/hint", response_model=Hint)
+def next_hint(
+    exercise_id: int,
+    user_id: int = Depends(get_current_user_id),
+    db: Session = Depends(get_db),
+):
+    """The next naming hint: 1 the meaning, 2 the first letter, 3 the word.
+
+    The level reached is kept with the exercise, and the points for a right
+    answer go down with each hint (calculate_points).
+    """
+    exercise = db.query(Exercise).join(TherapySession).filter(
+        Exercise.id == exercise_id, TherapySession.user_id == user_id,
+    ).first()
+    if not exercise:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Exercise not found")
+    if exercise.exercise_type != ExerciseType.WORD_NAMING:
+        raise HTTPException(status_code=422, detail="Only naming exercises have hints")
+    if exercise.is_correct is not None:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="This exercise has been answered")
+    if exercise.cue_level >= MAX_CUE_LEVEL:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="There are no more hints")
+
+    level = exercise.cue_level + 1
+    if exercise.cue:
+        exercise.cue.level = level
+    else:
+        exercise.cue = ExerciseCue(level=level)
+    db.commit()
+    return Hint(
+        level=level,
+        cue=naming_cue(exercise.session.language, exercise.correct_answer, level),
+        last=level == MAX_CUE_LEVEL,
+    )
 
 
 @router.post("/exercises/{exercise_id}/answer", response_model=AnswerResult)

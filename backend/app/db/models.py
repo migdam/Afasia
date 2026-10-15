@@ -113,6 +113,24 @@ class Exercise(Base):
 
     # Relationships
     session = relationship("TherapySession", back_populates="exercises")
+    cue = relationship("ExerciseCue", uselist=False, cascade="all, delete-orphan")
+
+    @property
+    def cue_level(self) -> int:
+        """How many naming hints were given (0 to 3); see ExerciseCue."""
+        return self.cue.level if self.cue else 0
+
+
+class ExerciseCue(Base):
+    """The naming hints given for an exercise (backlog P2-3).
+
+    A table of its own rather than a column on exercises, because there are
+    no migrations yet (backlog P3-1). Deleted with its exercise.
+    """
+    __tablename__ = "exercise_cues"
+
+    exercise_id = Column(Integer, ForeignKey("exercises.id"), primary_key=True)
+    level = Column(Integer, nullable=False)
 
 
 class Progress(Base):
