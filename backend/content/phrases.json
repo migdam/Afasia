@@ -1,0 +1,105 @@
+{
+  "version": 1,
+  "about": "Repetition: a word or phrase to say, written without punctuation so it can be compared with what was said (backlog P2-2b). Every item is pending clinical review (C7). Difficulty is the author's estimate. Polish and English are written natively, not translated word for word.",
+  "items": [
+    {
+      "id": "hello",
+      "difficulty": "easy",
+      "en": {
+        "phrase": "hello"
+      },
+      "pl": {
+        "phrase": "cześć"
+      },
+      "review": "pending"
+    },
+    {
+      "id": "thanks",
+      "difficulty": "easy",
+      "en": {
+        "phrase": "thank you"
+      },
+      "pl": {
+        "phrase": "dziękuję"
+      },
+      "review": "pending"
+    },
+    {
+      "id": "good_night",
+      "difficulty": "easy",
+      "en": {
+        "phrase": "good night"
+      },
+      "pl": {
+        "phrase": "dobranoc"
+      },
+      "review": "pending"
+    },
+    {
+      "id": "how_are_you",
+      "difficulty": "medium",
+      "en": {
+        "phrase": "how are you"
+      },
+      "pl": {
+        "phrase": "jak się masz"
+      },
+      "review": "pending"
+    },
+    {
+      "id": "see_you",
+      "difficulty": "medium",
+      "en": {
+        "phrase": "see you tomorrow"
+      },
+      "pl": {
+        "phrase": "do zobaczenia jutro"
+      },
+      "review": "pending"
+    },
+    {
+      "id": "water",
+      "difficulty": "medium",
+      "en": {
+        "phrase": "water please"
+      },
+      "pl": {
+        "phrase": "poproszę wodę"
+      },
+      "review": "pending"
+    },
+    {
+      "id": "tea",
+      "difficulty": "hard",
+      "en": {
+        "phrase": "I would like a cup of tea"
+      },
+      "pl": {
+        "phrase": "poproszę filiżankę herbaty"
+      },
+      "review": "pending"
+    },
+    {
+      "id": "time",
+      "difficulty": "hard",
+      "en": {
+        "phrase": "what time is it"
+      },
+      "pl": {
+        "phrase": "która jest godzina"
+      },
+      "review": "pending"
+    },
+    {
+      "id": "weather",
+      "difficulty": "hard",
+      "en": {
+        "phrase": "the weather is lovely today"
+      },
+      "pl": {
+        "phrase": "dziś jest piękna pogoda"
+      },
+      "review": "pending"
+    }
+  ]
+}

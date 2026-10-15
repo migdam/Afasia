@@ -9,7 +9,7 @@ from ....db.models import (
     User, TherapySession, Exercise, Progress, UserBadge,
     DifficultyLevel, ExerciseType, BadgeType
 )
-from ....content import accepted_answers, naming_items
+from ....content import accepted_answers, content_items
 from ....core.clock import utcnow
 from ....core.security import get_current_user_id
 from ..schemas import (
@@ -21,47 +21,17 @@ import random
 router = APIRouter()
 
 
-# Sample exercise data: placeholder items, pending clinical review
-# (loop/PROMPT.md, C7). A prompt must not contain its answer, except in
-# repetition (pronunciation); tests/test_content.py checks this.
+# Exercise content lives in backend/content/ (app/content.py), in Polish and
+# English, pending clinical review (loop/PROMPT.md, C7). It is read and
+# checked here, when the app starts. EXERCISE_DATA is the English view of it,
+# listing every type that has content; sessions use their own language
+# (generate_exercises). Image recognition has none until there are pictures
+# (backlog H2).
 EXERCISE_DATA = {
-    # There are no pictures or recordings yet (backlog H2, H3), so items have
-    # no "image" or "audio"; any added must exist under frontend/
-    # (tests/test_content.py). Naming items come from content/concepts.json
-    # (app/content.py), in the session's language; see below.
-    ExerciseType.SENTENCE_COMPLETION: {
-        DifficultyLevel.EASY: [
-            {"question": "The sky is ___", "answer": "blue", "options": ["blue", "green", "red", "yellow"]},
-            {"question": "I am ___", "answer": "happy", "options": ["happy", "table", "run", "cold"]},
-            {"question": "The sun is ___", "answer": "bright", "options": ["bright", "dark", "soft", "loud"]},
-        ],
-        DifficultyLevel.MEDIUM: [
-            {"question": "She went to the ___ to buy groceries", "answer": "store", "options": ["store", "park", "beach", "school"]},
-            {"question": "The ___ is barking loudly", "answer": "dog", "options": ["cat", "dog", "bird", "fish"]},
-        ],
-        DifficultyLevel.HARD: [
-            {"question": "The physician prescribed ___ for the infection", "answer": "antibiotics", "options": ["antibiotics", "vitamins", "exercise", "rest"]},
-        ],
-    },
-    ExerciseType.PRONUNCIATION: {
-        DifficultyLevel.EASY: [
-            {"question": "Say: Hello", "answer": "hello"},
-            {"question": "Say: Thank you", "answer": "thank you"},
-        ],
-        DifficultyLevel.MEDIUM: [
-            {"question": "Say: Beautiful", "answer": "beautiful"},
-            {"question": "Say: Wonderful", "answer": "wonderful"},
-        ],
-        DifficultyLevel.HARD: [
-            {"question": "Say: Extraordinary", "answer": "extraordinary"},
-        ],
-    },
+    exercise_type: {d: content_items(exercise_type, d, "en") for d in DifficultyLevel}
+    for exercise_type in ExerciseType
+    if content_items(exercise_type, DifficultyLevel.EASY, "en") is not None
 }
-
-# Naming, from the content file (read and checked here, when the app
-# starts). EXERCISE_DATA keeps the English items, so every type with content
-# is listed in one place; sessions use their own language (generate_exercises).
-EXERCISE_DATA[ExerciseType.WORD_NAMING] = {d: naming_items(d, "en") for d in DifficultyLevel}
 
 
 def generate_exercises(
@@ -72,9 +42,8 @@ def generate_exercises(
     Raises LookupError when there is no content for that type and difficulty,
     rather than substituting another difficulty or looping forever.
     """
-    if exercise_type == ExerciseType.WORD_NAMING:
-        available = naming_items(difficulty, language)
-    else:
+    available = content_items(exercise_type, difficulty, language)
+    if available is None:  # no content file for this type (tests may add items)
         available = EXERCISE_DATA.get(exercise_type, {}).get(difficulty, [])
     if not available:
         raise LookupError(f"no {exercise_type.value} exercises at {difficulty.value} difficulty")
@@ -84,7 +53,12 @@ def generate_exercises(
     while len(exercises) < count:
         exercises.extend(random.sample(available, min(len(available), count - len(exercises))))
 
-    return exercises[:count]
+    # A fresh order of options for every exercise, so where the right one
+    # sits gives nothing away.
+    return [
+        {**item, "options": random.sample(item["options"], len(item["options"]))} if item.get("options") else item
+        for item in exercises[:count]
+    ]
 
 
 def calculate_points(difficulty: DifficultyLevel, is_correct: bool) -> int:

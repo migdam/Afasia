@@ -18,7 +18,7 @@ The buttons at the top right of every screen:
 
 Your browser remembers both choices.
 
-Word Naming exercises come in the language you choose. The other exercises are still in English in both languages. A few messages also still appear in English when Polish is chosen: pop-up messages, "Completed" in the session list, and the admin buttons.
+The exercises come in the language you choose. A few messages also still appear in English when Polish is chosen: pop-up messages, "Completed" in the session list, and the admin buttons.
 
 ## Your account
 

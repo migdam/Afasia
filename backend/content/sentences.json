@@ -1,0 +1,306 @@
+{
+  "version": 1,
+  "about": "Sentence completion: one gap (___) and four options, all fitting the gap grammatically; only the answer fits its meaning (backlog P2-2b). Every item is pending clinical review (C7). Difficulty is the author's estimate. Polish and English are written natively, not translated word for word.",
+  "items": [
+    {
+      "id": "sky",
+      "difficulty": "easy",
+      "en": {
+        "sentence": "The sky is ___",
+        "answer": "blue",
+        "options": [
+          "blue",
+          "green",
+          "red",
+          "yellow"
+        ]
+      },
+      "pl": {
+        "sentence": "Niebo jest ___",
+        "answer": "niebieskie",
+        "options": [
+          "niebieskie",
+          "zielone",
+          "czerwone",
+          "żółte"
+        ]
+      },
+      "review": "pending"
+    },
+    {
+      "id": "sun",
+      "difficulty": "easy",
+      "en": {
+        "sentence": "The sun is ___",
+        "answer": "bright",
+        "options": [
+          "bright",
+          "dark",
+          "soft",
+          "loud"
+        ]
+      },
+      "pl": {
+        "sentence": "Słońce jest ___",
+        "answer": "jasne",
+        "options": [
+          "jasne",
+          "ciemne",
+          "miękkie",
+          "głośne"
+        ]
+      },
+      "review": "pending"
+    },
+    {
+      "id": "snow",
+      "difficulty": "easy",
+      "en": {
+        "sentence": "Snow is ___",
+        "answer": "cold",
+        "options": [
+          "cold",
+          "hot",
+          "sweet",
+          "loud"
+        ]
+      },
+      "pl": {
+        "sentence": "Śnieg jest ___",
+        "answer": "zimny",
+        "options": [
+          "zimny",
+          "gorący",
+          "słodki",
+          "głośny"
+        ]
+      },
+      "review": "pending"
+    },
+    {
+      "id": "sugar",
+      "difficulty": "easy",
+      "en": {
+        "sentence": "Sugar is ___",
+        "answer": "sweet",
+        "options": [
+          "sweet",
+          "sour",
+          "bitter",
+          "loud"
+        ]
+      },
+      "pl": {
+        "sentence": "Cukier jest ___",
+        "answer": "słodki",
+        "options": [
+          "słodki",
+          "kwaśny",
+          "gorzki",
+          "głośny"
+        ]
+      },
+      "review": "pending"
+    },
+    {
+      "id": "shop",
+      "difficulty": "medium",
+      "en": {
+        "sentence": "She went to the ___ to buy food",
+        "answer": "shop",
+        "options": [
+          "shop",
+          "park",
+          "beach",
+          "school"
+        ]
+      },
+      "pl": {
+        "sentence": "Poszła do ___, żeby kupić jedzenie",
+        "answer": "sklepu",
+        "options": [
+          "sklepu",
+          "parku",
+          "kina",
+          "szkoły"
+        ]
+      },
+      "review": "pending"
+    },
+    {
+      "id": "barking",
+      "difficulty": "medium",
+      "en": {
+        "sentence": "In the garden, a ___ is barking loudly",
+        "answer": "dog",
+        "options": [
+          "dog",
+          "cat",
+          "bird",
+          "fish"
+        ]
+      },
+      "pl": {
+        "sentence": "W ogrodzie głośno szczeka ___",
+        "answer": "pies",
+        "options": [
+          "pies",
+          "kot",
+          "ptak",
+          "ryba"
+        ]
+      },
+      "review": "pending"
+    },
+    {
+      "id": "rain",
+      "difficulty": "medium",
+      "en": {
+        "sentence": "It is raining, so take an ___",
+        "answer": "umbrella",
+        "options": [
+          "umbrella",
+          "apple",
+          "orange",
+          "egg"
+        ]
+      },
+      "pl": {
+        "sentence": "Pada deszcz, więc weź ___",
+        "answer": "parasol",
+        "options": [
+          "parasol",
+          "piłkę",
+          "książkę",
+          "kanapkę"
+        ]
+      },
+      "review": "pending"
+    },
+    {
+      "id": "morning",
+      "difficulty": "medium",
+      "en": {
+        "sentence": "Every morning I brush my ___",
+        "answer": "teeth",
+        "options": [
+          "teeth",
+          "shoes",
+          "windows",
+          "plates"
+        ]
+      },
+      "pl": {
+        "sentence": "Każdego ranka myję ___",
+        "answer": "zęby",
+        "options": [
+          "zęby",
+          "buty",
+          "okna",
+          "talerze"
+        ]
+      },
+      "review": "pending"
+    },
+    {
+      "id": "prescription",
+      "difficulty": "hard",
+      "en": {
+        "sentence": "The doctor wrote me a ___ for my medicine",
+        "answer": "prescription",
+        "options": [
+          "prescription",
+          "letter",
+          "song",
+          "poem"
+        ]
+      },
+      "pl": {
+        "sentence": "Lekarz wypisał mi ___ na lekarstwo",
+        "answer": "receptę",
+        "options": [
+          "receptę",
+          "list",
+          "piosenkę",
+          "wiersz"
+        ]
+      },
+      "review": "pending"
+    },
+    {
+      "id": "fridge",
+      "difficulty": "hard",
+      "en": {
+        "sentence": "We keep the milk cold in the ___",
+        "answer": "fridge",
+        "options": [
+          "fridge",
+          "oven",
+          "wardrobe",
+          "bath"
+        ]
+      },
+      "pl": {
+        "sentence": "Mleko trzymamy w ___, żeby było zimne",
+        "answer": "lodówce",
+        "options": [
+          "lodówce",
+          "piekarniku",
+          "szafie",
+          "wannie"
+        ]
+      },
+      "review": "pending"
+    },
+    {
+      "id": "door",
+      "difficulty": "hard",
+      "en": {
+        "sentence": "You need a ___ to open this door",
+        "answer": "key",
+        "options": [
+          "key",
+          "spoon",
+          "towel",
+          "pillow"
+        ]
+      },
+      "pl": {
+        "sentence": "Żeby otworzyć te drzwi, potrzebujesz ___",
+        "answer": "klucza",
+        "options": [
+          "klucza",
+          "łyżki",
+          "ręcznika",
+          "poduszki"
+        ]
+      },
+      "review": "pending"
+    },
+    {
+      "id": "dark",
+      "difficulty": "hard",
+      "en": {
+        "sentence": "When it gets dark, we turn on the ___",
+        "answer": "light",
+        "options": [
+          "light",
+          "kettle",
+          "washing machine",
+          "oven"
+        ]
+      },
+      "pl": {
+        "sentence": "Gdy robi się ciemno, włączamy ___",
+        "answer": "światło",
+        "options": [
+          "światło",
+          "czajnik",
+          "pralkę",
+          "piekarnik"
+        ]
+      },
+      "review": "pending"
+    }
+  ]
+}

@@ -31,13 +31,13 @@ Each type the app knows, what it does today, and what it should be based on.
 
 ### Sentence completion (`sentence_completion`)
 
-- **Today:** a sentence with a gap ("The sky is ___") and four words to choose from.
+- **Today:** a sentence with a gap ("The sky is ___") and four words to choose from, in a new order each time. All four fit the gap grammatically; only one fits its meaning. The items are in `backend/content/sentences.json`, in Polish and English.
 - **Basis:** none of the established approaches in this document is a fill-the-gap task with choices. A closer model for sentence-level work is **Verb Network Strengthening Treatment (VNeST)**, which practises retrieving content words in sentences around a verb: who does it, and to what (Edmonds, Nadeau & Kiran, 2009). Whether to redesign this type along those lines is a question for clinical review.
 - **Gaps:** the basis of the current task is [citation needed].
 
 ### Pronunciation (`pronunciation`)
 
-- **Today:** a word or phrase to say ("Say: Hello"), which the person records. The browser's speech recognition judges the answer, if the person agrees to it.
+- **Today:** a word or phrase to say ("Say: Hello"; `backend/content/phrases.json`, in Polish and English), which the person records. The browser's speech recognition judges the answer, if the person agrees to it.
 - **Basis:** repetition of words and phrases is a common therapy task [citation needed].
 - **Gaps:** speech recognition is unreliable for aphasic speech, so it must never be the only judge; the person should be able to rate themselves, or a therapist should review the recording (principle C5; backlog P2-7).
 

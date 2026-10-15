@@ -27,13 +27,17 @@ def call_with_timeout(fn, seconds=5):
 
 
 def test_a_small_pool_is_repeated_to_the_requested_count(monkeypatch):
-    monkeypatch.setitem(EXERCISE_DATA, ExerciseType.SENTENCE_COMPLETION, {DifficultyLevel.EASY: [ITEM]})
+    # Image recognition has no content file, so the pool given here is used.
+    monkeypatch.setitem(EXERCISE_DATA, ExerciseType.IMAGE_RECOGNITION, {DifficultyLevel.EASY: [ITEM]})
 
     outcome = call_with_timeout(
-        lambda: generate_exercises(ExerciseType.SENTENCE_COMPLETION, DifficultyLevel.EASY, 3)
+        lambda: generate_exercises(ExerciseType.IMAGE_RECOGNITION, DifficultyLevel.EASY, 3)
     )
 
-    assert outcome["value"] == [ITEM, ITEM, ITEM]
+    # The same item three times; the options come in a shuffled order.
+    assert [(e["question"], sorted(e["options"])) for e in outcome["value"]] == [
+        (ITEM["question"], sorted(ITEM["options"]))
+    ] * 3
 
 
 @pytest.mark.parametrize(

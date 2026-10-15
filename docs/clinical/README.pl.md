@@ -31,13 +31,13 @@ Każdy rodzaj ćwiczeń, który zna aplikacja: co robi dziś i na czym powinien 
 
 ### Uzupełnianie zdań (`sentence_completion`)
 
-- **Dziś:** zdanie z luką („The sky is ___”) i cztery słowa do wyboru.
+- **Dziś:** zdanie z luką („Niebo jest ___”) i cztery słowa do wyboru, za każdym razem w innej kolejności. Wszystkie cztery pasują do luki gramatycznie; tylko jedno pasuje znaczeniem. Ćwiczenia są w `backend/content/sentences.json`, po polsku i po angielsku.
 - **Podstawa:** żadne z uznanych podejść opisanych w tym dokumencie nie jest zadaniem polegającym na uzupełnianiu luki z wyborem odpowiedzi. Bliższym wzorem pracy na poziomie zdania jest **VNeST (Verb Network Strengthening Treatment)**, w którym ćwiczy się przywoływanie wyrazów treściowych w zdaniach budowanych wokół czasownika: kto wykonuje czynność i na czym (Edmonds, Nadeau i Kiran, 2009). Czy przebudować ten rodzaj ćwiczeń w tym kierunku, powinien ocenić logopeda.
 - **Braki:** podstawa obecnego zadania: [citation needed].
 
 ### Wymowa (`pronunciation`)
 
-- **Dziś:** słowo lub zwrot do powiedzenia („Say: Hello”), które osoba nagrywa. Odpowiedź ocenia rozpoznawanie mowy przeglądarki, jeśli osoba się na nie zgodzi.
+- **Dziś:** słowo lub zwrot do powiedzenia („Powiedz: Cześć”; `backend/content/phrases.json`, po polsku i po angielsku), które osoba nagrywa. Odpowiedź ocenia rozpoznawanie mowy przeglądarki, jeśli osoba się na nie zgodzi.
 - **Podstawa:** powtarzanie słów i zwrotów to częste zadanie w terapii [citation needed].
 - **Braki:** rozpoznawanie mowy zawodzi przy mowie osób z afazją, więc nie może być jedynym sędzią; osoba powinna móc sama ocenić swoją wypowiedź albo nagranie powinien odsłuchać logopeda (zasada C5; backlog P2-7).
 

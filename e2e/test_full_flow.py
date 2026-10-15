@@ -4,7 +4,7 @@ Sign up, do one session of each exercise type that works, get feedback in
 the chosen language, and find the right scores on the dashboard and the
 progress page. Pronunciation is left out: it needs a microphone and speech
 recognition, and is redesigned in backlog P2-7. Naming comes in the chosen
-language (P2-2a); sentence completion is still English-only (P2-2b).
+language (P2-2a), and so does sentence completion (P2-2b).
 """
 import json
 from pathlib import Path
@@ -12,6 +12,7 @@ from pathlib import Path
 import pytest
 from playwright.sync_api import expect
 from test_sessions import ANSWERS as SENTENCE_ANSWERS
+from test_sessions import SENTENCES
 from test_sessions import record_dialogs
 
 # The naming concepts, in both languages: question → answer.
@@ -42,6 +43,7 @@ def play_session(page, exercise_type, text, wrong_first):
             right = NAMING_ANSWERS[question]
             page.fill("#answer-input", "not it" if wrong else right)
         else:
+            assert question in {item[text["label"].lower()]["sentence"] for item in SENTENCES}, question
             right = SENTENCE_ANSWERS[question]
             options = page.locator(".option-btn").all_inner_texts()
             choice = next(o for o in options if o != right) if wrong else right

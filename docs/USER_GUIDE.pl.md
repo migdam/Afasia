@@ -18,7 +18,7 @@ Przyciski w prawym górnym rogu każdego ekranu:
 
 Przeglądarka zapamiętuje oba wybory.
 
-Ćwiczenia nazywania są w wybranym języku. Pozostałe ćwiczenia są na razie po angielsku w obu wersjach językowych. Po wybraniu polskiego kilka komunikatów nadal jest też po angielsku: okienka z komunikatami, „Completed” na liście sesji i przyciski w panelu administratora.
+Ćwiczenia są w wybranym języku. Po wybraniu polskiego kilka komunikatów nadal jest też po angielsku: okienka z komunikatami, „Completed” na liście sesji i przyciski w panelu administratora.
 
 ## Twoje konto
 
@@ -75,11 +75,11 @@ Odpowiedź musi się dokładnie zgadzać. Nie liczą się tylko wielkość liter
 
 ### Uzupełnianie zdań
 
-Czytasz zdanie z luką, np. „The sky is ___”. Kliknij pasujące słowo, a potem **Zatwierdź**. Jeśli klikniesz **Zatwierdź** bez wyboru, aplikacja poprosi najpierw o odpowiedź („Please provide an answer”).
+Czytasz zdanie z luką, np. „Niebo jest ___”. Kliknij pasujące słowo, a potem **Zatwierdź**. Jeśli klikniesz **Zatwierdź** bez wyboru, aplikacja poprosi najpierw o odpowiedź („Please provide an answer”).
 
 ### Wymowa
 
-Widzisz słowo lub zwrot do powiedzenia, np. „Say: Hello”. Kliknij **Nagraj**, powiedz je, kliknij przycisk jeszcze raz, żeby zakończyć nagrywanie, a potem **Zatwierdź**. Za pierwszym razem aplikacja zapyta, czy może przechowywać nagrania (zob. [Twoje dane](#twoje-dane)), a przeglądarka poprosi o zgodę na użycie mikrofonu. Mikrofon jest włączony tylko podczas nagrywania: wyłącza się, gdy zakończysz nagrywanie, wyjdziesz z sesji albo się wylogujesz, a przeglądarka przestaje pokazywać, że jest używany.
+Widzisz słowo lub zwrot do powiedzenia, np. „Powiedz: Cześć”. Kliknij **Nagraj**, powiedz je, kliknij przycisk jeszcze raz, żeby zakończyć nagrywanie, a potem **Zatwierdź**. Za pierwszym razem aplikacja zapyta, czy może przechowywać nagrania (zob. [Twoje dane](#twoje-dane)), a przeglądarka poprosi o zgodę na użycie mikrofonu. Mikrofon jest włączony tylko podczas nagrywania: wyłącza się, gdy zakończysz nagrywanie, wyjdziesz z sesji albo się wylogujesz, a przeglądarka przestaje pokazywać, że jest używany.
 
 **To jeszcze nie działa niezawodnie.** Odpowiedź ocenia wbudowane rozpoznawanie mowy przeglądarki. W większości przeglądarek jest ono niedostępne, a tam, gdzie działa, nie radzi sobie z mową osób z afazją. Często poprawna odpowiedź zostaje uznana za błędną. Ten typ ćwiczeń jest projektowany od nowa.
 

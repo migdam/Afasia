@@ -5,7 +5,7 @@
 Aplikacja internetowa do ćwiczenia słów i zdań po udarze lub urazie mózgu. Osoby z afazją ćwiczą w niej samodzielnie, równolegle z terapią u logopedy, a terapeuci widzą, kto ćwiczy. Interfejs jest dostępny po polsku i po angielsku.
 
 > **Stan: wczesna faza rozwoju. Nie do użytku klinicznego.**
-> Ćwiczenia są tymczasowe i nie sprawdził ich jeszcze żaden logopeda, po polsku są na razie tylko ćwiczenia nazywania, a braki wymienione w części [Znane ograniczenia](#znane-ograniczenia) nadal istnieją. Postęp prac jest w [`loop/BACKLOG.md`](loop/BACKLOG.md).
+> Ćwiczenia są tymczasowe i nie sprawdził ich jeszcze żaden logopeda, ćwiczenia są po polsku i po angielsku, a braki wymienione w części [Znane ograniczenia](#znane-ograniczenia) nadal istnieją. Postęp prac jest w [`loop/BACKLOG.md`](loop/BACKLOG.md).
 
 ## Co już działa
 
@@ -163,7 +163,7 @@ Zanim ktokolwiek zacznie polegać na tej aplikacji, trzeba naprawić co najmniej
   - Limity błędnych haseł są trzymane w pamięci: każdy proces serwera liczy osobno, a restart je kasuje. Za serwerem pośredniczącym klienci są rozróżniani tylko wtedy, gdy serwer ufa jego nagłówkowi `X-Forwarded-For` (konfiguracja Docker tak robi); w przeciwnym razie wszyscy dzielą jeden licznik na nazwę użytkownika. Czy wartości 5 i 50 pasują osobom z afazją, to otwarte pytanie (backlog H7).
 - **Prywatność:** nagrania i rozpoznawanie mowy wymagają zgody, o którą aplikacja pyta. Na stronie Konto można pobrać lub usunąć wszystkie swoje dane. Informacja o prywatności (`frontend/privacy.html`, PL i EN, z odnośnikami na stronie logowania i stronie Konto) opisuje, co robi kod; kto prowadzi aplikację, podstawa prawna, miejsce hostingu i kontakt są oznaczone „[do uzupełnienia]”, dopóki ktoś o nich nie zdecyduje (backlog H4, H5). Aplikacja przechowuje dane o zdrowiu.
 - **Role:** każdy terapeuta widzi i może dezaktywować wszystkich pacjentów. Terapeuci nie są jeszcze powiązani ze swoimi pacjentami (P1-3b).
-- **Treść kliniczna:** 30 pojęć do nazywania po polsku i po angielsku (`backend/content/concepts.json`, sprawdzane przy starcie aplikacji) oraz kilka ćwiczeń ze zdaniami i wymową tylko po angielsku; wszystkie tymczasowe i niesprawdzone przez logopedę. Nie ma obrazków ani nagrań. Na czym powinien opierać się każdy rodzaj ćwiczeń, ze sprawdzoną bibliografią, opisuje [`docs/clinical/README.pl.md`](docs/clinical/README.pl.md); ten dokument także oczekuje na ocenę kliniczną.
+- **Treść kliniczna:** po polsku i po angielsku, w `backend/content/` i sprawdzana przy starcie aplikacji: 30 pojęć do nazywania, 12 zdań do uzupełnienia i 9 zwrotów do powtórzenia. Wszystkie są tymczasowe i niesprawdzone przez logopedę. Nie ma obrazków ani nagrań. Na czym powinien opierać się każdy rodzaj ćwiczeń, ze sprawdzoną bibliografią, opisuje [`docs/clinical/README.pl.md`](docs/clinical/README.pl.md); ten dokument także oczekuje na ocenę kliniczną.
 - **Dostępność** nie została zbadana, a zasady projektowania przyjaznego osobom z afazją z [`loop/PROMPT.md`](loop/PROMPT.md) nie są jeszcze spełnione. Na przykład aplikacja nadal sama przechodzi dalej po 2 sekundach.
 - **Kwestie prawne:** nie oceniono, czy aplikacja jest wyrobem medycznym w rozumieniu przepisów UE.
 - **Wdrażanie:** nie ma jeszcze ciągłej integracji (CI).

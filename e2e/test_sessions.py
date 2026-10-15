@@ -1,8 +1,12 @@
 """Therapy sessions in the browser: answering, feedback, and the server's score."""
+import json
+from pathlib import Path
+
 from playwright.sync_api import expect
 
-# The easy sentence-completion items in backend/app/api/v1/endpoints/therapy.py.
-ANSWERS = {"The sky is ___": "blue", "I am ___": "happy", "The sun is ___": "bright"}
+# Sentence completion, both languages: sentence → answer (backend/content/).
+SENTENCES = json.loads((Path(__file__).resolve().parents[1] / "backend/content/sentences.json").read_text())["items"]
+ANSWERS = {item[language]["sentence"]: item[language]["answer"] for item in SENTENCES for language in ("en", "pl")}
 
 
 def record_dialogs(page):

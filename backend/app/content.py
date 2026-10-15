@@ -1,7 +1,8 @@
 """Exercise content kept as data (backlog P2-2), checked when the app starts.
 
-backend/content/concepts.json holds the naming concepts, written natively
-in Polish and English. The app refuses to start if the file breaks the
+backend/content/ holds the exercise content, written natively in Polish and
+English: concepts.json (naming), sentences.json (sentence completion) and
+phrases.json (repetition). The app refuses to start if a file breaks the
 rules below, so bad content never reaches anyone.
 """
 import json
@@ -14,10 +15,15 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_valida
 
 from .db.models import DifficultyLevel
 
-CONCEPTS_FILE = Path(__file__).resolve().parents[1] / "content" / "concepts.json"
+CONTENT = Path(__file__).resolve().parents[1] / "content"
+CONCEPTS_FILE = CONTENT / "concepts.json"
+SENTENCES_FILE = CONTENT / "sentences.json"
+PHRASES_FILE = CONTENT / "phrases.json"
+GAP = "___"
 LANGUAGES = ("en", "pl")
-# How a naming prompt starts, per language.
+# How naming and repetition prompts start, per language.
 NAMING_QUESTION = {"en": "What is it?", "pl": "Co to jest?"}
+SAY = {"en": "Say:", "pl": "Powiedz:"}
 
 
 class ContentError(Exception):
@@ -95,6 +101,93 @@ class ContentFile(BaseModel):
         return concepts
 
 
+def gives_away(text: str, answer: str) -> bool:
+    """Whether a text contains an answer, or a word starting with it (C4)."""
+    words = re.findall(r"\w+", text.lower())
+    return any(
+        len(part) >= 3 and any(w.startswith(part) for w in words)
+        for part in answer.lower().split()
+    )
+
+
+class SentenceWording(BaseModel):
+    """A sentence with one gap, its answer, and four options that all fit
+    the gap grammatically; only the answer fits its meaning."""
+    model_config = ConfigDict(extra="forbid")
+
+    sentence: str
+    answer: str = Field(min_length=1)
+    options: list[str] = Field(min_length=4, max_length=4)
+
+    @model_validator(mode="after")
+    def one_gap_and_a_fair_choice(self):
+        if self.sentence.count(GAP) != 1:
+            raise ValueError(f"{self.sentence!r} must have exactly one gap ({GAP})")
+        if self.answer not in self.options:
+            raise ValueError(f"the answer {self.answer!r} is not among the options")
+        if len({o.lower() for o in self.options}) != len(self.options):
+            raise ValueError("an option is listed twice")
+        if gives_away(self.sentence.replace(GAP, " "), self.answer):
+            raise ValueError(f"the sentence gives away {self.answer!r}")
+        return self
+
+
+class SentenceItem(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    id: str = Field(pattern=r"^[a-z_]+$")
+    difficulty: DifficultyLevel
+    en: SentenceWording
+    pl: SentenceWording
+    review: Literal["pending", "approved"]
+
+
+class PhraseWording(BaseModel):
+    """Something to say, without punctuation, so it compares with what was said."""
+    model_config = ConfigDict(extra="forbid")
+
+    phrase: str = Field(min_length=1, pattern=r"^[^.,!?;:]+$")
+
+
+class PhraseItem(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    id: str = Field(pattern=r"^[a-z_]+$")
+    difficulty: DifficultyLevel
+    en: PhraseWording
+    pl: PhraseWording
+    review: Literal["pending", "approved"]
+
+
+class ItemFile(BaseModel):
+    """sentences.json or phrases.json; the item model is chosen per file."""
+    model_config = ConfigDict(extra="forbid")
+
+    version: int
+    about: str
+    items: list[dict]
+
+
+def load_items(path: Path, model):
+    try:
+        raw = ItemFile.model_validate(json.loads(path.read_text(encoding="utf-8")))
+        items = [model.model_validate(item) for item in raw.items]
+    except (OSError, ValueError, ValidationError) as error:
+        raise ContentError(f"{path}: {error}") from error
+    ids = [item.id for item in items]
+    if len(ids) != len(set(ids)):
+        raise ContentError(f"{path}: an id is used twice")
+    return items
+
+
+def load_sentences(path: Path = SENTENCES_FILE) -> list[SentenceItem]:
+    return load_items(path, SentenceItem)
+
+
+def load_phrases(path: Path = PHRASES_FILE) -> list[PhraseItem]:
+    return load_items(path, PhraseItem)
+
+
 def load_concepts(path: Path = CONCEPTS_FILE) -> list[Concept]:
     """Read and check a content file; raises ContentError if it breaks a rule."""
     try:
@@ -109,9 +202,23 @@ def concepts() -> list[Concept]:
     return load_concepts()
 
 
+@lru_cache(maxsize=1)
+def sentences() -> list[SentenceItem]:
+    return load_sentences()
+
+
+@lru_cache(maxsize=1)
+def phrases() -> list[PhraseItem]:
+    return load_phrases()
+
+
+def known(language: str) -> str:
+    return language if language in LANGUAGES else "en"
+
+
 def naming_items(difficulty: DifficultyLevel, language: str) -> list[dict]:
     """Naming exercises for a difficulty, in a language (English if unknown)."""
-    language = language if language in LANGUAGES else "en"
+    language = known(language)
     return [
         {
             "question": f"{NAMING_QUESTION[language]} {getattr(c, language).description}",
@@ -129,3 +236,35 @@ def accepted_answers(language: str, answer: str) -> set[str]:
         if wording.word.lower() == answer.lower():
             return {a.lower() for a in wording.answers}
     return {answer.lower()}
+
+
+def sentence_items(difficulty: DifficultyLevel, language: str) -> list[dict]:
+    language = known(language)
+    return [
+        {"question": w.sentence, "answer": w.answer, "options": list(w.options)}
+        for w in (getattr(i, language) for i in sentences() if i.difficulty == difficulty)
+    ]
+
+
+def phrase_items(difficulty: DifficultyLevel, language: str) -> list[dict]:
+    """Repetition: the prompt shows what to say (the C4 exception)."""
+    language = known(language)
+    items = []
+    for item in phrases():
+        if item.difficulty == difficulty:
+            phrase = getattr(item, language).phrase
+            items.append({"question": f"{SAY[language]} {phrase[0].upper()}{phrase[1:]}", "answer": phrase.lower()})
+    return items
+
+
+def content_items(exercise_type, difficulty: DifficultyLevel, language: str):
+    """The items for a type, difficulty and language; None for a type that
+    has no content file (image recognition, until there are pictures)."""
+    from .db.models import ExerciseType
+
+    build = {
+        ExerciseType.WORD_NAMING: naming_items,
+        ExerciseType.SENTENCE_COMPLETION: sentence_items,
+        ExerciseType.PRONUNCIATION: phrase_items,
+    }.get(exercise_type)
+    return build(difficulty, language) if build else None
