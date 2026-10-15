@@ -13,9 +13,10 @@ LINK = re.compile(r"\]\(([^)\s]+)\)")
 
 # Claims that were false when the documentation was checked (backlog P0-9).
 # Restore one only together with the check or feature that makes it true.
+# ("csrf" was restored with P1-5c1; tests/test_cookie_login.py checks it.)
 FALSE_CLAIMS = [
     "production-ready", "production ready", "gotow\\w* do produkcji",
-    "wcag 2.1 aa", "lighthouse", "csrf", "rate limit",
+    "wcag 2.1 aa", "lighthouse", "rate limit",
     "native speaker", "calendar integration", "integracja z kalendarzem",
     "leaderboard", "ranking", "background sync", "synchronizacja w tle",
     "support@aphasia-therapy.app", "wsparcie@terapia-afazji.app", "@aphasiatherapy",

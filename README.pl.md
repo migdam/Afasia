@@ -93,17 +93,18 @@ Skopiuj `.env.template` do `.env` w katalogu głównym repozytorium. Ustawienia:
 | `BACKEND_CORS_ORIGINS` | `http://localhost:3000,http://localhost:8000` | Adresy stron (oddzielone przecinkami), które mogą wywoływać API |
 | `ACCESS_TOKEN_EXPIRE_MINUTES` | `30` | Po ilu minutach bez korzystania z aplikacji kończy się zalogowanie (aplikacja odnawia je, gdy jest używana) |
 | `LOGIN_MAX_HOURS` | `12` | Po ilu godzinach od zalogowania zalogowanie kończy się mimo wszystko |
+| `COOKIE_SECURE` | `true` | Wysyłaj ciasteczko logowania tylko przez HTTPS (przeglądarki dopuszczają też `http://localhost`). Ustaw `false` tylko do testów przez zwykłe HTTP na innym hoście. |
 | `DEBUG`, `HOST`, `PORT` | `true`, `0.0.0.0`, `8000` | Opcje serwera |
 | `UPLOAD_DIR`, `MAX_UPLOAD_SIZE` | `./uploads`, 10 MB | Gdzie trafiają nagrania głosu |
 | `POSTGRES_PASSWORD`, `FRONTEND_PORT`, `BACKEND_PORT`, `PIP_CA_FILE` | | Tylko dla Docker Compose |
 
 ## API
 
-FastAPI udostępnia interaktywną dokumentację pod `/docs` i `/redoc`. Wszystkie adresy zaczynają się od `/api/v1`. Wszystkie oprócz rejestracji i logowania wymagają nagłówka `Authorization: Bearer <token>`. Brakujący lub nieprawidłowy token daje 401.
+FastAPI udostępnia interaktywną dokumentację pod `/docs` i `/redoc`. Wszystkie adresy zaczynają się od `/api/v1`. Wszystkie oprócz rejestracji, logowania i wylogowania wymagają zalogowania. Rejestracja, logowanie i `/auth/refresh` zwracają token w treści odpowiedzi, a także ustawiają go jako ciasteczko httpOnly `access_token` (ścieżka `/api`, `SameSite=Strict`). Token można wysłać w nagłówku `Authorization: Bearer <token>` albo jako to ciasteczko. Żądania, które coś zmieniają za pomocą ciasteczka, muszą też mieć nagłówek `X-Requested-With`, inaczej dostają 403; to ochrona przed fałszowaniem żądań z innych stron (CSRF). Brakujący lub nieprawidłowy token daje 401.
 
 | Obszar | Adresy |
 |---|---|
-| Konta | `POST /auth/register`, `POST /auth/login` |
+| Konta | `POST /auth/register`, `POST /auth/login`, `POST /auth/refresh` (odnawia zalogowanie), `POST /auth/logout` (usuwa ciasteczko) |
 | Sesje | `POST /therapy/sessions`, `GET /therapy/sessions`, `GET /therapy/sessions/{id}`, `GET /therapy/sessions/{id}/exercises` |
 | Odpowiedzi | `POST /therapy/exercises/{id}/answer`: jedna odpowiedź na ćwiczenie. Odpowiedź serwera zawiera prawidłową odpowiedź, a ostatnia odpowiedź kończy sesję i ją ocenia. |
 | Wyniki | `POST /therapy/sessions/{id}/complete`: wynik ukończonej sesji, policzony przez serwer |
@@ -148,7 +149,7 @@ Aplikację ulepsza się małymi, przetestowanymi krokami według opisanej pętli
 Zanim ktokolwiek zacznie polegać na tej aplikacji, trzeba naprawić co najmniej poniższe. Każdy punkt jest w [`loop/BACKLOG.md`](loop/BACKLOG.md).
 
 - **Bezpieczeństwo**
-  - Tokeny logowania są przechowywane w `localStorage`, skąd mógłby je odczytać każdy skrypt działający na stronie (P1-5c).
+  - Aplikacja w przeglądarce nadal trzyma token logowania w `localStorage`, skąd mógłby go odczytać każdy skrypt działający na stronie. Serwer obsługuje już ciasteczko httpOnly; przejście aplikacji na nie to P1-5c2.
   - Limit błędnych haseł (5 na nazwę użytkownika w ciągu 15 minut) jest trzymany w pamięci: każdy proces serwera liczy osobno, a restart go kasuje.
 - **Prywatność:** brak informacji o prywatności, zgody przed nagrywaniem oraz możliwości eksportu i usunięcia swoich danych (P1-6). Aplikacja przechowuje dane o zdrowiu.
 - **Role:** każdy terapeuta widzi i może dezaktywować wszystkich pacjentów. Terapeuci nie są jeszcze powiązani ze swoimi pacjentami (P1-3b).

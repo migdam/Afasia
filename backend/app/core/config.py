@@ -34,6 +34,9 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     # ...but never for longer than this after logging in.
     LOGIN_MAX_HOURS: int = 12
+    # Send the login cookie over HTTPS only. Browsers make an exception for
+    # http://localhost; turn this off only for plain-HTTP testing elsewhere.
+    COOKIE_SECURE: bool = True
 
     # Database
     DATABASE_URL: str = "sqlite:///./aphasia_app.db"

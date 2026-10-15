@@ -4,7 +4,7 @@ from typing import Optional
 
 import bcrypt
 import jwt
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, Request, Response, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
@@ -18,6 +18,11 @@ MAX_PASSWORD_BYTES = 72
 # Without auto_error, a missing or non-Bearer Authorization header reaches
 # get_current_user_id, which answers 401 (FastAPI's own answer is 403).
 security = HTTPBearer(auto_error=False)
+
+# Browsers get the token in an httpOnly cookie, out of reach of page scripts.
+# Other clients may still send it as a Bearer header.
+COOKIE_NAME = "access_token"
+SAFE_METHODS = {"GET", "HEAD", "OPTIONS"}
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
@@ -75,19 +80,53 @@ def decode_token(token: str) -> dict:
         raise credentials_error() from None
 
 
-def get_current_user_id(
+def set_login_cookie(response: Response, token: str) -> None:
+    """Hand the browser its login as an httpOnly cookie that ends with the token."""
+    max_age = decode_token(token)["exp"] - int(datetime.now(timezone.utc).timestamp())
+    response.set_cookie(
+        COOKIE_NAME, token, max_age=max(max_age, 0), path="/api",
+        httponly=True, secure=settings.COOKIE_SECURE, samesite="strict",
+    )
+
+
+def clear_login_cookie(response: Response) -> None:
+    response.delete_cookie(
+        COOKIE_NAME, path="/api", httponly=True, secure=settings.COOKIE_SECURE, samesite="strict",
+    )
+
+
+def get_token(
+    request: Request,
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
+) -> str:
+    """The request's token, from the Bearer header or else the login cookie.
+
+    A browser sends the cookie even on requests another site starts, so a
+    change made through the cookie must carry an X-Requested-With header:
+    a cross-site page can only add one after a CORS check, and CORS allows
+    only our own origins.
+    """
+    if credentials is not None:
+        return credentials.credentials
+    token = request.cookies.get(COOKIE_NAME)
+    if not token:
+        raise credentials_error()
+    if request.method not in SAFE_METHODS and not request.headers.get("X-Requested-With"):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Missing X-Requested-With header")
+    return token
+
+
+def get_current_user_id(
+    token: str = Depends(get_token),
     db: Session = Depends(get_db),
 ) -> int:
-    """Get the current user's ID from the Bearer token.
+    """Get the current user's ID from the token.
 
     The account is looked up on every request, so a token stops working as
     soon as its user is deactivated or deleted.
     """
-    if credentials is None:
-        raise credentials_error()
     try:
-        user_id = int(decode_token(credentials.credentials)["sub"])
+        user_id = int(decode_token(token)["sub"])
     except ValueError:
         raise credentials_error() from None
     active = db.query(User.is_active).filter(User.id == user_id).scalar()

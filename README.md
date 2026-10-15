@@ -93,17 +93,18 @@ Copy `.env.template` to `.env` at the repository root. The settings:
 | `BACKEND_CORS_ORIGINS` | `http://localhost:3000,http://localhost:8000` | Comma-separated origins allowed to call the API |
 | `ACCESS_TOKEN_EXPIRE_MINUTES` | `30` | Minutes without using the app before a login ends (the app renews the login while it is in use) |
 | `LOGIN_MAX_HOURS` | `12` | Hours after logging in when a login ends anyway |
+| `COOKIE_SECURE` | `true` | Send the login cookie over HTTPS only (browsers allow it on `http://localhost` too). Set to `false` only to test over plain HTTP on another host. |
 | `DEBUG`, `HOST`, `PORT` | `true`, `0.0.0.0`, `8000` | Server options |
 | `UPLOAD_DIR`, `MAX_UPLOAD_SIZE` | `./uploads`, 10 MB | Where voice recordings go |
 | `POSTGRES_PASSWORD`, `FRONTEND_PORT`, `BACKEND_PORT`, `PIP_CA_FILE` | | Docker Compose only |
 
 ## API
 
-FastAPI serves interactive documentation at `/docs` and `/redoc`. All endpoints are under `/api/v1`, and all of them except sign-up and login need an `Authorization: Bearer <token>` header. A missing or invalid token gets 401.
+FastAPI serves interactive documentation at `/docs` and `/redoc`. All endpoints are under `/api/v1`, and all of them except sign-up, login and logout need a login. Sign-up, login and `/auth/refresh` return the token in the body and also set it as an httpOnly `access_token` cookie (path `/api`, `SameSite=Strict`). Send it either as an `Authorization: Bearer <token>` header or as that cookie. Requests that change something through the cookie must also carry an `X-Requested-With` header, or they get 403; this guards against cross-site request forgery. A missing or invalid token gets 401.
 
 | Area | Endpoints |
 |---|---|
-| Accounts | `POST /auth/register`, `POST /auth/login` |
+| Accounts | `POST /auth/register`, `POST /auth/login`, `POST /auth/refresh` (renews a login), `POST /auth/logout` (removes the cookie) |
 | Sessions | `POST /therapy/sessions`, `GET /therapy/sessions`, `GET /therapy/sessions/{id}`, `GET /therapy/sessions/{id}/exercises` |
 | Answers | `POST /therapy/exercises/{id}/answer`: one answer per exercise. The response includes the right answer, and the last answer completes and scores the session. |
 | Results | `POST /therapy/sessions/{id}/complete`: a finished session's server-computed result |
@@ -148,7 +149,7 @@ The app is improved in small, tested steps by a documented loop. See [`loop/READ
 Before anyone relies on this app, at least these must be fixed. Each one is in [`loop/BACKLOG.md`](loop/BACKLOG.md).
 
 - **Security**
-  - Login tokens are kept in `localStorage`, where any script running on the page could read them (P1-5c).
+  - The web app still keeps its login token in `localStorage`, where any script running on the page could read it. The server already supports the httpOnly cookie; switching the web app to it is P1-5c2.
   - The limit on wrong passwords (5 per username in 15 minutes) is kept in memory: each server process counts on its own, and a restart forgets it.
 - **Privacy:** there is no privacy notice, no consent step before recording, and no way to export or delete your data (P1-6). The app stores health information.
 - **Roles:** any therapist can see and deactivate every patient. Therapists aren't linked to their own patients yet (P1-3b).

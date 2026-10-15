@@ -5,7 +5,7 @@ import pytest
 
 from app.main import app
 
-PUBLIC = {("POST", "/api/v1/auth/register"), ("POST", "/api/v1/auth/login")}
+PUBLIC = {("POST", "/api/v1/auth/register"), ("POST", "/api/v1/auth/login"), ("POST", "/api/v1/auth/logout")}
 # Listed from the OpenAPI schema: app.routes doesn't show the routes of
 # included routers in every FastAPI version, and an empty list would turn
 # these tests into silent skips.

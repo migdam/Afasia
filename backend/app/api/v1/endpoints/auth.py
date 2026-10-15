@@ -1,8 +1,7 @@
 """Authentication endpoints."""
 import time
 
-from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import HTTPAuthorizationCredentials
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy.orm import Session
 from ....db.database import get_db
 from ....db.models import User
@@ -12,10 +11,12 @@ from ....core.security import (
     verify_password,
     get_password_hash,
     create_access_token,
+    clear_login_cookie,
     credentials_error,
     decode_token,
     get_current_user_id,
-    security,
+    get_token,
+    set_login_cookie,
 )
 from ..schemas import UserCreate, UserLogin, TokenResponse, UserResponse
 
@@ -23,7 +24,7 @@ router = APIRouter()
 
 
 @router.post("/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
-def register(user_data: UserCreate, db: Session = Depends(get_db)):
+def register(user_data: UserCreate, response: Response, db: Session = Depends(get_db)):
     """Register a new user."""
     # Check if user exists
     if db.query(User).filter(User.email == user_data.email).first():
@@ -51,14 +52,13 @@ def register(user_data: UserCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(user)
 
-    return TokenResponse(
-        access_token=create_access_token(user.id),
-        user=UserResponse.model_validate(user)
-    )
+    token = create_access_token(user.id)
+    set_login_cookie(response, token)
+    return TokenResponse(access_token=token, user=UserResponse.model_validate(user))
 
 
 @router.post("/login", response_model=TokenResponse)
-def login(credentials: UserLogin, db: Session = Depends(get_db)):
+def login(credentials: UserLogin, response: Response, db: Session = Depends(get_db)):
     """Login user."""
     wait = login_limit.retry_after(credentials.username)
     if wait:
@@ -85,16 +85,16 @@ def login(credentials: UserLogin, db: Session = Depends(get_db)):
         )
 
     login_limit.record_success(credentials.username)
-    return TokenResponse(
-        access_token=create_access_token(user.id),
-        user=UserResponse.model_validate(user)
-    )
+    token = create_access_token(user.id)
+    set_login_cookie(response, token)
+    return TokenResponse(access_token=token, user=UserResponse.model_validate(user))
 
 
 @router.post("/refresh", response_model=TokenResponse)
 def refresh(
+    response: Response,
     user_id: int = Depends(get_current_user_id),
-    credentials: HTTPAuthorizationCredentials = Depends(security),
+    token: str = Depends(get_token),
     db: Session = Depends(get_db),
 ):
     """Swap a valid token for a fresh one, keeping the original login time.
@@ -103,12 +103,17 @@ def refresh(
     after ACCESS_TOKEN_EXPIRE_MINUTES of not using the app, or
     LOGIN_MAX_HOURS after logging in, whichever comes first.
     """
-    auth_time = decode_token(credentials.credentials).get("auth_time")
+    auth_time = decode_token(token).get("auth_time")
     if not isinstance(auth_time, int) or time.time() - auth_time >= settings.LOGIN_MAX_HOURS * 3600:
         raise credentials_error()
 
     user = db.get(User, user_id)
-    return TokenResponse(
-        access_token=create_access_token(user.id, auth_time=auth_time),
-        user=UserResponse.model_validate(user)
-    )
+    new_token = create_access_token(user.id, auth_time=auth_time)
+    set_login_cookie(response, new_token)
+    return TokenResponse(access_token=new_token, user=UserResponse.model_validate(user))
+
+
+@router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
+def logout(response: Response):
+    """Remove the login cookie. (A Bearer token stays valid until it expires.)"""
+    clear_login_cookie(response)
