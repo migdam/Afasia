@@ -17,6 +17,32 @@ Newest entry first. One entry per iteration.
 
 ---
 
+### 1: 2026-10-15 04:23 UTC: P0-1 Verification harness
+- **Baseline:** no `scripts/check.sh` yet, so P0-1 was the task by rule. No human commits since entry 0; no `loop/DONE`.
+- **Did:**
+  - Added `scripts/check.sh`. It creates or reuses `.venv`, reinstalls only when a requirements file changes, then runs ruff and pytest from `backend/`.
+  - Added `backend/requirements-dev.txt`: pytest 9.1.1, ruff 0.17.0, httpx 0.27.2.
+  - Added `backend/pyproject.toml`: strict xfail, strict markers, ruff limited to fatal rules (E9, F63, F7, F82).
+  - Added `backend/tests/`: a conftest with a temp DB and upload dir, the smoke tests, and a guard that every requirement is pinned.
+  - Updated `.gitignore`, plus one line in each README.
+- **Deviations from the backlog text:**
+  - The venv is at the repo root, not `backend/.venv`, so it can't end up in the backend Docker build context.
+  - pytest-cov and pip-audit are not installed yet. They come with the iterations that make `check.sh` use them.
+  - httpx must stay below 0.28: Starlette 0.27's `TestClient` calls `httpx.Client(app=...)` (`starlette/testclient.py:399-400`), which 0.28 removed.
+- **Verified:**
+  ```
+  first run:  real 4m37s (venv + installs) · re-run: real 0m0.98s
+  ruff:       All checks passed!
+  pytest:     2 passed, 2 xfailed, 4 warnings in 0.63s
+  XFAIL tests/test_smoke.py::test_app_imports - P0-2: backend crashes at import time
+  ```
+  - `--runxfail` shows the hidden error is the known one: `ValidationError ... BACKEND_CORS_ORIGINS Input should be a valid string`.
+  - With iteration 0's three P0-2 patches applied in a scratch copy, both smoke tests report `[XPASS(strict)]` and pytest exits 1. So the fix iteration has to delete the marker.
+- **Commit:** 7240b2b (pushed: yes), plus this log/backlog commit.
+- **Discovered:** `.gitignore` ignores `.dockerignore`, so Docker build contexts can't exclude anything. Added to P0-8.
+- **Next:** P0-2. Fix the three import crashes and the `.env` handling, then delete the `crashes_on_import` marker.
+- **Protocol notes:** P0-1 allowed committing a red harness, but PROMPT.md step 5 says never commit red. I resolved it with strict xfails restricted (via `raises=`) to the known crash, so the build stays green, the bug stays visible, and the fix can't forget the marker. Suggest step 5 explicitly allow this for a known bug that a named backlog item will fix.
+
 ### 0: 2026-10-14: Loop set up (by hand, not by the loop)
 - **Baseline:** no tests and no `scripts/check.sh` yet.
 - **What I ran:** the backend in a scratch copy, outside the repo, with exactly the pinned `backend/requirements.txt` on Python 3.11.17. pip resolved bcrypt 5.0.0, passlib 1.7.4, pydantic 2.5.0, pydantic-settings 2.1.0, fastapi 0.104.1, starlette 0.27.0, python-jose 3.3.0 and sqlalchemy 2.0.23.

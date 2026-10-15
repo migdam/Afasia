@@ -19,8 +19,8 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 
 | Gate | Status | Evidence |
 |------|--------|----------|
-| G1 Runs | 🔴 | Backend fails at import (P0-2) |
-| G2 Backend tests | 🔴 | No tests exist |
+| G1 Runs | 🔴 | `scripts/check.sh` passes, but only because the smoke tests are strict xfails: the backend still fails at import (P0-2) |
+| G2 Backend tests | 🔴 | Harness only (P0-1): 2 guard tests pass; no app code is testable until P0-2; coverage not measured |
 | G3 End-to-end | 🔴 | No e2e tests |
 | G4 Authorization | 🔴 | P1-3 |
 | G5 Security | 🔴 | P1-1, P1-2, P1-4 |
@@ -35,7 +35,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 
 ## P0: Make it run
 
-- [ ] **P0-1 Verification harness.** Create `scripts/check.sh` as the single entry point (exit 0 = green). It creates or reuses `backend/.venv`, installs `requirements.txt` plus a new `requirements-dev.txt` (pytest, pytest-cov, httpx, ruff, pip-audit), then runs `ruff check` and `pytest`. Add `.venv/` to `.gitignore`. First tests: the app imports, and `GET /health` returns 200. This item is done when the harness works, even if its first run is red because of P0-2. Later items extend `check.sh` (coverage, pip-audit, e2e).
+- [x] **P0-1 Verification harness.** (7240b2b) `scripts/check.sh` is the single entry point (exit 0 = green). It creates or reuses `.venv` at the repo root (kept out of the backend Docker build context), reinstalls `requirements.txt` + `requirements-dev.txt` only when they change, then runs `ruff check` (fatal rules only until P3-3) and `pytest`. The smoke tests (app imports, `GET /health` = 200) are strict xfails for the P0-2 crash, so the build is green without hiding it. Later items extend `check.sh`: coverage with pytest-cov (G2), pip-audit (P1-4), e2e (P0-7).
 - [ ] **P0-2 Backend can't start** ✅. There are three import-time crashes, each hidden behind the previous one:
   1. `app/core/config.py`: the `BACKEND_CORS_ORIGINS` validator turns the string into a list, which the `str` field then rejects (`Input should be a valid string`). This happens even with defaults, so the app never starts. Two related problems:
      - The README says to copy the template to the repo root (`cp ../.env.template ../.env`), but settings read `.env` from the working directory (`backend/`), so `SECRET_KEY` is reported missing.
@@ -43,7 +43,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
   2. `app/db/models.py`: `UserBadge.metadata` is reserved by SQLAlchemy Declarative (`Attribute name 'metadata' is reserved`).
   3. `app/api/v1/schemas.py`: `EmailStr` needs `email-validator`, which is missing from requirements.
 
-  **Acceptance:** following the README exactly, `uvicorn app.main:app` starts and `/health` returns 200. Tests cover settings parsing: a comma-separated CORS env var, the `.env` location, and unknown keys.
+  **Acceptance:** following the README exactly, `uvicorn app.main:app` starts and `/health` returns 200. Tests cover settings parsing: a comma-separated CORS env var, the `.env` location, and unknown keys. Delete the `crashes_on_import` marker in `backend/tests/test_smoke.py`; strict mode fails the run until you do.
 - [ ] **P0-3 Every authenticated request returns 401** ✅. Registration (201) and login (200) work, but the token they return is rejected: tokens are created with an integer `sub`, and python-jose refuses non-string subjects on decode. Fix it by encoding `str(user.id)` and parsing it back. While here:
   - Replace python-jose (unmaintained, has published advisories) with PyJWT.
   - Return 401, not 403, for missing or invalid tokens.
@@ -73,6 +73,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
   - No PostgreSQL driver in requirements, so the backend can't connect to the compose `db` service.
   - DB password and secret fallback are hard-coded in `docker-compose.yml`.
   - The frontend calls `localhost:8000`, which only works on the developer's own machine. Proxy `/api` through nginx instead.
+  - `.gitignore` ignores `.dockerignore` files, so the build contexts can't exclude anything: local databases, uploads and caches get copied into the images. Stop ignoring it and add a `.dockerignore` per build context.
 
   **Acceptance:** `docker compose up` passes the smoke test. If Docker can't run in the loop's environment, mark the item `[!]` and say so.
 - [ ] **P0-9 Docs claim things that aren't true** 🔎. 27 matches across `README.md`, `README.pl.md`, `README_IMPLEMENTATION.md` and `docs/USER_GUIDE.md` for claims that are false or unverified:
@@ -103,7 +104,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
   - Therapist–patient assignment (invite plus consent).
   - An admin bootstrap command (`python -m app.cli create-admin`).
   - Authorization tests for every endpoint (G4).
-- [ ] **P1-4 Dependency health** 🔎. Pins date from late 2023: fastapi 0.104 / starlette 0.27, python-multipart 0.0.6, python-jose 3.3.0, and passlib 1.7.4, which is unmaintained (it prints a warning with the bcrypt 5.0.0 that pip resolves today). Some of these have published security advisories. Upgrade to current supported versions, drop the unused matplotlib and pillow, and add `pip-audit` to `check.sh` (it must come back clean).
+- [ ] **P1-4 Dependency health** 🔎. Pins date from late 2023: fastapi 0.104 / starlette 0.27, python-multipart 0.0.6, python-jose 3.3.0, and passlib 1.7.4, which is unmaintained (it prints a warning with the bcrypt 5.0.0 that pip resolves today). Some of these have published security advisories. Upgrade to current supported versions, drop the unused matplotlib and pillow, and add `pip-audit` to `requirements-dev.txt` and `check.sh` (it must come back clean). Upgrading to Starlette 0.37.2 or later also lifts the `httpx<0.28` pin in `requirements-dev.txt`: 0.37.2 is the first release whose `TestClient` no longer passes `app=` to `httpx.Client` (checked in the published wheels).
 - [ ] **P1-5 Login sessions that fit the users** 🔎. Tokens last 30 minutes with no refresh, so people get logged out mid-exercise and lose the session; the JWT also lives in `localStorage`. Fixes:
   - httpOnly, Secure, SameSite cookies with CSRF protection, or refresh tokens.
   - An idle timeout suited to slow, effortful use.
