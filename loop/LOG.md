@@ -17,6 +17,33 @@ Newest entry first. One entry per iteration.
 
 ---
 
+### 14: 2026-10-15 07:05 UTC: P0-8 Docker stack
+- **Baseline:** `check.sh` green (51 backend, smoke, 13 e2e). No human commits.
+- **Environment:**
+  - No Docker daemon was running. I started `dockerd`, which works as root here and is still running in this container.
+  - Docker Hub returned 429 for `postgres:15-alpine` once; a retry worked.
+  - pip inside the image build failed with `CERTIFICATE_VERIFY_FAILED`: this sandbox inspects TLS with its own certificate authority. Added an optional `pip_ca` build secret (`PIP_CA_FILE`), which is generic for corporate proxies and never ends up in the image.
+- **Did:**
+  - `docker-compose.yml`: secrets required from `.env`; health checks with `depends_on: service_healthy`; named volumes and no source mounts; no `container_name`; configurable ports.
+  - nginx proxies `^~ /api/`.
+  - `frontend/js/config.js` holds the API base URL (dev default `localhost:8000`; the Docker image writes `/api/v1`).
+  - The frontend image copies only app files.
+  - Added `.dockerignore` files and stopped gitignoring them.
+  - Added `psycopg2-binary==2.9.13`.
+  - Updated `.env.template` and both READMEs.
+  - New `scripts/docker-smoke.sh`. It's not in `check.sh`, because it needs Docker.
+- **Verified:**
+  ```
+  old stack: smoke "HTTP Error 405: Not Allowed" (no /api route) · backend image: "No module named 'psycopg2'"
+  new stack: db, backend and frontend Healthy · "page, /api, sign-up, login and profile all work through nginx" · 0 containers left
+             compose without secrets: "required variable POSTGRES_PASSWORD is missing a value: Set POSTGRES_PASSWORD in .env"
+             frontend image serves only 50x.html, css, index.html, js, manifest.json, sw.js
+  check.sh:  backend "51 passed" · smoke OK · e2e "13 passed" (exit code checked directly)
+  ```
+- **Commit:** e0671a1 (pushed: yes), plus this log/backlog commit.
+- **Discovered:** nothing new. `DEBUG` is still `"true"` in Compose (P1-8).
+- **Next:** P0-9, honest docs.
+
 ### 13: 2026-10-15 06:40 UTC: P0-7g The whole flow in EN and PL (P0-7 done)
 - **Baseline:** `check.sh` green (51 backend, smoke, 11 e2e). No human commits.
 - **Did:** added `e2e/test_full_flow.py`, parametrized over EN and PL. Each run signs up, switches language, then does:

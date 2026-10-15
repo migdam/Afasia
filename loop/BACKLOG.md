@@ -31,7 +31,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 | G10 Privacy | 🔴 | P1-6 |
 | G11 Honest docs | 🔴 | P0-9 |
 | G12 Lighthouse | 🔴 | Not measured |
-| G13 Delivery | 🔴 | No CI; Docker stack untested (P0-8) |
+| G13 Delivery | 🟡 | The Docker Compose stack starts and passes `scripts/docker-smoke.sh` (P0-8). No CI yet (P3-2) |
 
 ## P0: Make it run
 
@@ -75,7 +75,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
     - The images and audio that exercises reference (`/assets/images/*.jpg`, `/assets/audio/*.mp3`) don't exist, so the UI shows broken media. Show nothing until there are assets (H2, H3).
   - [x] **P0-7f Progress chart** (190fc25). The line is drawn, the canvas is 300 px high, colours follow the theme, and an empty history says so. Original report: It draws dots but no line (`beginPath()` inside the path loop), the canvas has no height, and its colors are hard-coded for the light theme.
   - [x] **P0-7g The whole flow in EN and PL** (cd5bbf7). `e2e/test_full_flow.py`: word naming (80%) and sentence completion (100%), with feedback in each language and the scores on the dashboard and progress page. Pronunciation is left out until P2-7.
-- [ ] **P0-8 Docker stack** 🔎:
+- [x] **P0-8 Docker stack** 🔎 (e0671a1). Verified with a real Docker daemon: `scripts/docker-smoke.sh` starts the stack and signs up and logs in through nginx on PostgreSQL. Secrets come from `.env`, `/api` is proxied, health checks are in place, and `.dockerignore` files are added. Original report:
   - No PostgreSQL driver in requirements, so the backend can't connect to the compose `db` service.
   - DB password and secret fallback are hard-coded in `docker-compose.yml`.
   - The frontend calls `localhost:8000`, which only works on the developer's own machine. Proxy `/api` through nginx instead. Since P0-7a a page can set `window.API_BASE_URL` before `api.js` loads; the deployed default should be the same-origin `/api/v1`.
