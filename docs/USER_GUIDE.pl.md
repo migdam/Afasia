@@ -60,6 +60,7 @@ Pasek na dole przełącza między **Tablicą** a **Postępem**. Terapeuci i admi
 3. Odpowiedz na ćwiczenie i kliknij **Zatwierdź**.
 4. Zobaczysz **„Poprawnie! Świetna robota!”** albo **„Nie tym razem. Prawidłowa odpowiedź: …”**, z prawidłową odpowiedzią pogrubioną. Po błędnej odpowiedzi możesz kliknąć **Spróbuj jeszcze raz**, żeby przećwiczyć ją jeszcze raz; ta próba nie jest oceniana, bo liczy się pierwsza odpowiedź.
 5. Nie spiesz się. Kiedy zechcesz, kliknij **Dalej**. Po ostatnim ćwiczeniu przycisk nazywa się **Zobacz wynik**.
+Po kilku sesjach jednego rodzaju na jednym poziomie nad przyciskiem **Rozpocznij** może pojawić się propozycja innego poziomu: trudniejszego, jeśli poszły dobrze, albo łatwiejszego, jeśli były trudne. Kliknij **Przełącz na: …**, żeby ją przyjąć, albo po prostu ćwicz dalej: poziom zmienia się tylko wtedy, gdy go wybierzesz.
 
 Na górze ekranu ćwiczenia:
 - **Wyjdź** kończy sesję. Aplikacja najpierw zapyta: wybierz **Zostań** albo **Wyjdź**. Przerwana sesja zostaje nieukończona i nie liczy się do wyników.

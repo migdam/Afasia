@@ -140,6 +140,7 @@ class AphasiaApp {
             const currentLang = i18n.getCurrentLanguage();
             const newLang = currentLang === 'en' ? 'pl' : 'en';
             i18n.setLanguage(newLang);
+            ui.translateLevelButton();
             ui.updateReadAloud();
         });
 
@@ -180,7 +181,14 @@ class AphasiaApp {
             });
         });
 
-        // New session form
+        // New session form; another level is only suggested (P2-8c).
+        ['exercise-type', 'difficulty'].forEach((id) => {
+            document.getElementById(id).addEventListener('change', () => ui.loadLevelSuggestion());
+        });
+        document.getElementById('level-suggestion-accept').addEventListener('click', (event) => {
+            document.getElementById('difficulty').value = event.currentTarget.dataset.level;
+            ui.loadLevelSuggestion();
+        });
         document.getElementById('new-session-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             await this.startNewSession();

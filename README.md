@@ -101,6 +101,7 @@ Copy `.env.template` to `.env` at the repository root. The settings:
 | `LOGIN_MAX_HOURS` | `12` | Hours after logging in when a login ends anyway |
 | `LOGIN_MAX_FAILURES`, `LOGIN_MAX_FAILURES_PER_ACCOUNT`, `LOGIN_LOCK_MINUTES` | `5`, `50`, `15` | Wrong passwords allowed per username from one client address, and per account from all addresses together, within that many minutes; after that, logins wait (429) |
 | `RECORDING_RETENTION_DAYS` | `0` | Delete recordings older than this many days, at start-up and then daily; `0` keeps them until the person deletes them or their account. Also passed through by Docker Compose |
+| `LEVEL_WINDOW`, `LEVEL_UP_SCORE`, `LEVEL_DOWN_SCORE` | `3`, `85`, `50` | When the dashboard suggests another level: after that many finished sessions of a type at one level, a harder level if they average at least `LEVEL_UP_SCORE` %, an easier one below `LEVEL_DOWN_SCORE` %. Placeholders, pending clinical review |
 | `COOKIE_SECURE` | `true` | Send the login cookie over HTTPS only (browsers allow it on `http://localhost` too). Set to `false` only to test over plain HTTP on another host. |
 | `DEBUG`, `HOST`, `PORT` | `false`, `0.0.0.0`, `8000` | Server options. `.env.template` turns `DEBUG` on for development (more detail in logs, and auto-reload); leave it off anywhere else |
 | `UPLOAD_DIR`, `MAX_UPLOAD_SIZE` | `./uploads`, 10 MB | Where voice recordings go |

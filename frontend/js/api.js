@@ -211,6 +211,11 @@ class APIClient {
         });
     }
 
+    async getLevelSuggestion(exerciseType, difficulty) {
+        const query = new URLSearchParams({ exercise_type: exerciseType, difficulty });
+        return this.request(`/therapy/level-suggestion?${query}`);
+    }
+
     async getSessions(skip = 0, limit = 20) {
         return this.request(`/therapy/sessions?skip=${skip}&limit=${limit}`);
     }

@@ -166,6 +166,12 @@ class AnswerResult(ExerciseResponse):
     almost: bool = False
 
 
+class LevelSuggestion(BaseModel):
+    """Another level to try, or nulls when there is nothing to suggest."""
+    difficulty: Optional[DifficultyLevel]
+    direction: Optional[Literal["harder", "easier"]]
+
+
 # Session schemas
 class SessionCreate(BaseModel):
     title: str

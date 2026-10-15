@@ -61,6 +61,8 @@ The bar at the bottom switches between **Dashboard** and **Progress**. Therapist
 4. You'll see either **"Correct! Well done!"** or **"Not quite. Correct answer: …"**, with the right answer in bold. After a wrong answer you can click **Try again** to practise it once more; this practice try isn't scored, as your first answer is the one that counts.
 5. Take as long as you like. When you're ready, click **Next**. After the last exercise, the button says **See my result**.
 
+After a few sessions of one type at one level, a note above **Start** may suggest another level: a harder one if they went well, an easier one if they were hard. Click **Switch to: …** to take it, or just carry on: the level changes only if you choose.
+
 At the top of the exercise screen:
 - **Exit** leaves the session. The app asks first: choose **Stay** or **Leave**. A session you leave stays unfinished and doesn't count towards your scores.
 - The counter and bar show how far you are, for example **3/10**.

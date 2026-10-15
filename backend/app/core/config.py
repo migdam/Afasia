@@ -52,6 +52,14 @@ class Settings(BaseSettings):
     # 0 keeps them until the person deletes them or their account.
     RECORDING_RETENTION_DAYS: int = 0
 
+    # Suggesting another level (backlog P2-8c): from the average score of
+    # the last LEVEL_WINDOW finished sessions of a type at one level, a
+    # harder level from LEVEL_UP_SCORE (%) up, an easier one below
+    # LEVEL_DOWN_SCORE. Placeholders, pending clinical review (C3, C7).
+    LEVEL_WINDOW: int = 3
+    LEVEL_UP_SCORE: float = 85.0
+    LEVEL_DOWN_SCORE: float = 50.0
+
     # Database
     DATABASE_URL: str = "sqlite:///./aphasia_app.db"
 

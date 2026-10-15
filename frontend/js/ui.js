@@ -182,7 +182,42 @@ class UIManager {
         document.getElementById('current-streak').textContent = user.current_streak || 0;
     }
 
+    // Offer another level after a run of good or hard sessions (P2-8c). It
+    // changes the level only when the person presses the button.
+    async loadLevelSuggestion() {
+        const box = document.getElementById('level-suggestion');
+        const type = document.getElementById('exercise-type').value;
+        const difficulty = document.getElementById('difficulty');
+        const asked = difficulty.value;
+        let suggestion = { difficulty: null };
+        try {
+            suggestion = await api.getLevelSuggestion(type, asked);
+        } catch (error) {
+            console.error('Failed to load the level suggestion:', error);
+        }
+        // Ignore an answer for a choice that has changed since.
+        if (type !== document.getElementById('exercise-type').value || asked !== difficulty.value) return;
+        box.hidden = !suggestion.difficulty;
+        if (suggestion.difficulty) {
+            const text = document.getElementById('level-suggestion-text');
+            text.dataset.i18n = suggestion.direction === 'harder' ? 'levelHarder' : 'levelEasier';
+            text.textContent = i18n.translate(text.dataset.i18n);
+            const accept = document.getElementById('level-suggestion-accept');
+            accept.dataset.level = suggestion.difficulty;
+            this.translateLevelButton();
+        }
+        this.updateReadAloud();
+    }
+
+    translateLevelButton() {
+        const accept = document.getElementById('level-suggestion-accept');
+        if (accept.dataset.level) {
+            accept.textContent = i18n.translate('switchLevel').replace('{level}', i18n.translate(accept.dataset.level));
+        }
+    }
+
     async loadRecentSessions() {
+        this.loadLevelSuggestion();
         try {
             const sessions = await api.getSessions(0, 5);
             const container = document.getElementById('recent-sessions');

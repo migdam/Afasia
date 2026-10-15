@@ -42,6 +42,9 @@ const translations = {
 
         // Difficulty Levels
         easy: "Easy",
+        levelHarder: "Your last sessions at this level went well. You could try a harder level.",
+        levelEasier: "The last sessions at this level were hard. An easier level may help for a while.",
+        switchLevel: "Switch to: {level}",
         medium: "Medium",
         hard: "Hard",
 
@@ -206,6 +209,9 @@ const translations = {
 
         // Difficulty Levels
         easy: "Łatwy",
+        levelHarder: "Ostatnie sesje na tym poziomie poszły dobrze. Możesz spróbować trudniejszego poziomu.",
+        levelEasier: "Ostatnie sesje na tym poziomie były trudne. Łatwiejszy poziom może na razie pomóc.",
+        switchLevel: "Przełącz na: {level}",
         medium: "Średni",
         hard: "Trudny",
 

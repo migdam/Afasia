@@ -15,8 +15,10 @@ from ....core.clock import utcnow
 from ....core.security import get_current_user_id
 from ..schemas import (
     SessionCreate, SessionResponse,
-    ExerciseResponse, ExerciseAnswer, AnswerResult, BadgeResponse, Hint, Choices, Tiles
+    ExerciseResponse, ExerciseAnswer, AnswerResult, BadgeResponse, Hint, Choices, Tiles,
+    LevelSuggestion,
 )
+from ....core.config import settings
 import random
 
 router = APIRouter()
@@ -314,6 +316,40 @@ def create_session(
     db.refresh(session)
 
     return SessionResponse.model_validate(session)
+
+
+LEVELS = list(DifficultyLevel)
+
+
+@router.get("/level-suggestion", response_model=LevelSuggestion)
+def level_suggestion(
+    exercise_type: ExerciseType,
+    difficulty: DifficultyLevel,
+    user_id: int = Depends(get_current_user_id),
+    db: Session = Depends(get_db),
+):
+    """Another level to suggest, from the average score of the person's last
+    finished sessions of this type at this level (C3, backlog P2-8c). Only a
+    suggestion: the level changes only when the person chooses it."""
+    scores = [
+        score for (score,) in db.query(TherapySession.score)
+        .filter(
+            TherapySession.user_id == user_id,
+            TherapySession.exercise_type == exercise_type,
+            TherapySession.difficulty == difficulty,
+            TherapySession.is_completed.is_(True),
+        )
+        .order_by(TherapySession.completed_at.desc(), TherapySession.id.desc())
+        .limit(settings.LEVEL_WINDOW)
+    ]
+    level = LEVELS.index(difficulty)
+    if len(scores) == settings.LEVEL_WINDOW:
+        average = sum(scores) / len(scores)
+        if average >= settings.LEVEL_UP_SCORE and level + 1 < len(LEVELS):
+            return LevelSuggestion(difficulty=LEVELS[level + 1], direction="harder")
+        if average < settings.LEVEL_DOWN_SCORE and level > 0:
+            return LevelSuggestion(difficulty=LEVELS[level - 1], direction="easier")
+    return LevelSuggestion(difficulty=None, direction=None)
 
 
 @router.get("/sessions", response_model=List[SessionResponse])
