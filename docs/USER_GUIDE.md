@@ -72,7 +72,7 @@ After the last exercise, click **See my result**: you return to the dashboard, a
 
 You read a short description of an everyday thing, such as "A pet that barks and wags its tail". Type its name (**dog**) in the box and click **Submit**.
 
-The answer must match exactly, apart from capital letters and spaces at the ends; some words have accepted alternatives, such as **bike** for **bicycle**. There are no pictures yet.
+Small differences don't matter: capital letters, extra spaces, punctuation, and Polish letters typed without their marks (**lozko** counts as **łóżko**). Some words have accepted alternatives, such as **bike** for **bicycle**. If you're a letter or two out, the app says **Almost** and shows the word; that answer still counts as not right. There are no pictures yet.
 
 **🔊 Read aloud**, under the question, under each hint and under the feedback, reads it out. Messages, questions in dialogs and explanations elsewhere in the app have the same button. It uses only voices on your own device; if your device has none for your language, the button isn't shown.
 

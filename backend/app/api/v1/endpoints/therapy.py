@@ -9,6 +9,7 @@ from ....db.models import (
     User, TherapySession, Exercise, Progress, UserBadge,
     DifficultyLevel, ExerciseType, BadgeType, ExerciseCue
 )
+from ....answers import is_near_miss, matches
 from ....content import MAX_CUE_LEVEL, accepted_answers, content_items, naming_cue
 from ....core.clock import utcnow
 from ....core.security import get_current_user_id
@@ -346,12 +347,16 @@ def submit_answer(
         )
 
     # Check answer
-    given = answer_data.answer.lower().strip()
+    # Forgiving: case, spacing, punctuation and missing Polish letters don't
+    # count (app/answers.py). Naming also takes the word's synonyms.
     if exercise.exercise_type == ExerciseType.WORD_NAMING:
-        # The word or any of its synonyms (content/concepts.json).
-        is_correct = given in accepted_answers(session.language, exercise.correct_answer.strip())
+        expected = accepted_answers(session.language, exercise.correct_answer.strip())
     else:
-        is_correct = given == exercise.correct_answer.lower().strip()
+        expected = {exercise.correct_answer}
+    is_correct = matches(answer_data.answer, expected)
+    almost = not is_correct and exercise.exercise_type != ExerciseType.SENTENCE_COMPLETION and any(
+        is_near_miss(answer_data.answer, e) for e in expected
+    )
 
     # One answer per exercise, claimed atomically: of two answers sent at the
     # same moment only one can change the exercise from unanswered, so
@@ -394,7 +399,9 @@ def submit_answer(
     db.commit()
     db.refresh(exercise)
 
-    return AnswerResult.model_validate(exercise)
+    result = AnswerResult.model_validate(exercise)
+    result.almost = almost
+    return result
 
 
 @router.post("/sessions/{session_id}/complete", response_model=SessionResponse)

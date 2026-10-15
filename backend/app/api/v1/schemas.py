@@ -145,6 +145,8 @@ class Hint(BaseModel):
 class AnswerResult(ExerciseResponse):
     """An answered exercise. Only now is the right answer shown, as feedback."""
     correct_answer: str
+    # A wrong answer close to the right one (app/answers.py), for kind feedback.
+    almost: bool = False
 
 
 # Session schemas

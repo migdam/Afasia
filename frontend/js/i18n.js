@@ -57,6 +57,7 @@ const translations = {
         tryAgainPractice: "Try again",
         practiceRight: "That's it.",
         practiceWrong: "Not yet. The answer is:",
+        almostRight: "Almost. The answer is:",
         largerText: "Larger text",
         readAloud: "Read aloud",
 
@@ -209,6 +210,7 @@ const translations = {
         tryAgainPractice: "Spróbuj jeszcze raz",
         practiceRight: "Tak jest.",
         practiceWrong: "Jeszcze nie. Odpowiedź to:",
+        almostRight: "Prawie. Odpowiedź to:",
         largerText: "Większy tekst",
         readAloud: "Przeczytaj",
 

@@ -3,6 +3,15 @@
  * Orchestrates all components and handles application flow
  */
 
+// The same forgiving comparison as the server's (backend/app/answers.py):
+// case, spacing, punctuation and missing Polish letters don't count.
+function normalizeAnswer(text) {
+    return text.replace(/ł/g, 'l').replace(/Ł/g, 'L')
+        .normalize('NFKD').replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, ' ')
+        .split(/\s+/).filter(Boolean).join(' ');
+}
+
 class AphasiaApp {
     constructor() {
         this.currentSession = null;
@@ -586,8 +595,12 @@ class AphasiaApp {
                     feedback.append(` ${i18n.translate('hintsUsed')}: ${result.cue_level}`);
                 }
             } else {
-                // One calm message, with the right answer emphasized.
-                this.showFeedback('incorrect', `${i18n.translate('incorrect')} ${i18n.translate('correctAnswer')}:`, result.correct_answer);
+                // One calm message, with the right answer emphasized; "almost"
+                // for a near miss (the server decides, app/answers.py).
+                const text = result.almost
+                    ? i18n.translate('almostRight')
+                    : `${i18n.translate('incorrect')} ${i18n.translate('correctAnswer')}:`;
+                this.showFeedback('incorrect', text, result.correct_answer);
             }
             // Practice once more after a wrong answer (not for recordings).
             this.lastRightAnswer = result.is_correct || exercise.exercise_type === 'pronunciation'
@@ -722,7 +735,7 @@ class AphasiaApp {
     checkPracticeAnswer(answer) {
         const right = this.practiceAnswer;
         this.practiceAnswer = null;
-        if (answer.trim().toLowerCase() === right.trim().toLowerCase()) {
+        if (normalizeAnswer(answer) === normalizeAnswer(right)) {
             this.showFeedback('correct', i18n.translate('practiceRight'));
             this.lastRightAnswer = null;
         } else {

@@ -72,7 +72,7 @@ Po ostatnim ćwiczeniu kliknij **Zobacz wynik**: wracasz na tablicę, a komunika
 
 Czytasz krótki opis codziennej rzeczy, np. „Zwierzę, które szczeka i merda ogonem”. Wpisz jej nazwę (**pies**) w polu i kliknij **Zatwierdź**.
 
-Odpowiedź musi się dokładnie zgadzać. Nie liczą się tylko wielkość liter i spacje na początku i końcu; niektóre słowa mają też inne przyjmowane odpowiedzi, np. **auto** zamiast **samochód**. Obrazków jeszcze nie ma.
+Drobne różnice się nie liczą: wielkie litery, dodatkowe spacje, znaki interpunkcyjne i polskie litery wpisane bez ogonków (**lozko** liczy się jako **łóżko**). Niektóre słowa mają też inne przyjmowane odpowiedzi, np. **auto** zamiast **samochód**. Jeśli pomylisz się o literę lub dwie, aplikacja napisze **Prawie** i pokaże słowo; taka odpowiedź nadal liczy się jako nieprawidłowa. Obrazków jeszcze nie ma.
 
 **🔊 Przeczytaj**, pod pytaniem, pod każdą podpowiedzią i pod komunikatem, czyta tekst na głos. Taki sam przycisk mają komunikaty, pytania w okienkach i objaśnienia w innych miejscach aplikacji. Korzysta tylko z głosów na Twoim urządzeniu; jeśli nie ma żadnego w Twoim języku, przycisk się nie pojawia.
 
