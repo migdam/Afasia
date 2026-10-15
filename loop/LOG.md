@@ -17,6 +17,28 @@ Newest entry first. One entry per iteration.
 
 ---
 
+### 8: 2026-10-15 05:25 UTC: P0-7b Session result and feedback
+- **Baseline:** `check.sh` green (47 backend, smoke, 2 e2e), same as entry 7. No human commits.
+- **Did:**
+  - New `AnswerResult` response for `POST /exercises/{id}/answer`, which adds `correct_answer`. The exercise list still leaves it out, so nobody can peek.
+  - Wrong-answer feedback is now one calm message with the answer in bold, set with `textContent` and a `<strong>` element rather than HTML. EN "Not quite. Correct answer: …", PL "Nie tym razem. Prawidłowa odpowiedź: …".
+  - "Try again!" is gone, since there is no retry.
+  - The final alert uses the score from the server's `/complete` response. The client no longer sends a score or duration, and the dead `sessionStartTime` is removed.
+  - Updated both user guides' feedback sections.
+  - Tests:
+    - New `e2e/test_sessions.py`: 5 exercises, the first answered wrongly.
+    - New backend test: the right answer is revealed only once the exercise is answered.
+    - New `account` fixture in `e2e/conftest.py`.
+- **Verified:**
+  ```
+  old code: e2e "Expected 'Not quite. Correct answer: blue' · Actual value: Incorrect. Try again! Correct! Well done!: undefined"
+            backend: KeyError: 'correct_answer'
+  now:      ruff "All checks passed!" · backend "48 passed" · smoke OK · e2e "3 passed in 22.13s" · node --check OK for all JS
+  ```
+- **Commit:** 6a0c8b4 (pushed: yes), plus this log/backlog commit.
+- **Discovered:** nothing new. The session e2e test takes about 12 s because the app waits 2 s before each next exercise; P2-4 removes that wait. The e2e test copies the three easy sentence-completion answers from `therapy.py`, so update it when P2-2 changes the content.
+- **Next:** P0-7c. Disable Submit while feedback shows, and reset the answer and recording between exercises.
+
 ### 7: 2026-10-15 05:18 UTC: P0-7a E2E harness (P0-7 split into a–g)
 - **Baseline:** `check.sh` green (47 passed, smoke OK), same as entry 6. No human commits.
 - **Split:** P0-7 is too big for one iteration and every part needs browser tests, so it became P0-7a–g. The harness (a) comes first. Each existing bullet moved to the sub-item that will fix it, and the API-address bullet moved to P0-8.

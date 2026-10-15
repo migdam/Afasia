@@ -20,8 +20,8 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 | Gate | Status | Evidence |
 |------|--------|----------|
 | G1 Runs | 🟡 | `scripts/check.sh` passes, including `scripts/smoke.sh`: the README backend quick start in a copy of the tree answers `/health`. Not yet covered: a from-scratch install in the copy (it reuses `.venv`) and the frontend half of the quick start (P0-7) |
-| G2 Backend tests | 🔴 | 47 tests pass, including register → login → profile and a full scored session; coverage not measured |
-| G3 End-to-end | 🟡 | Harness in place (P0-7a): sign-up, reload, logout and login pass in Chromium. Exercises, feedback, progress, export and Polish are not covered yet (P0-7b–g) |
+| G2 Backend tests | 🔴 | 48 tests pass, including register → login → profile and a full scored session; coverage not measured |
+| G3 End-to-end | 🟡 | In Chromium: sign-up, reload, logout and login, and a whole sentence-completion session with feedback and the server's score. Not covered yet: the other exercise types, the progress page, export, and Polish (P0-7c–g) |
 | G4 Authorization | 🔴 | P1-3 |
 | G5 Security | 🔴 | P1-1, P1-2, P1-4 |
 | G6 Accessibility | 🔴 | Not measured |
@@ -59,7 +59,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 - [x] **P0-6 Naming prompts contain the answer** ✅ (aa67ddf). Naming items now describe the thing to name, since there are no pictures to show. `test_content.py` enforces C4 for every item. The items are placeholders, pending clinical review. Original report: for example, `"What is this? (cat)"` has the answer `cat`. Fix the naming prompts, and add a test that no naming prompt contains its answer (C4). Repetition prompts like "Say: Hello" are fine. The full content model is P2-2.
 - [ ] **P0-7 Frontend flow is broken against the real API** 🔎. Split into P0-7a–g on 2026-10-15; done when all of them are. Each one comes with Playwright tests in `e2e/`. **Acceptance for the whole item:** a Playwright e2e test, in EN and PL: register → one session per working exercise type → correct feedback → progress shows the session with the right score.
   - [x] **P0-7a E2E harness** (5ff957e). `e2e/`: pytest and Playwright against the real backend and the static frontend, run by `check.sh`. Covers sign-up, staying signed in after a reload, logout and login. Found and fixed along the way: logging out left the sign-up form on screen, password included.
-  - [ ] **P0-7b Session result and feedback.**
+  - [x] **P0-7b Session result and feedback** (6a0c8b4). The answer response carries `correct_answer` once the exercise is answered. A wrong answer shows "Not quite. Correct answer: **blue**", and the final alert shows the server's score. Original report:
     - The final score is always 0%: `completeSession()` counts `is_correct` on the exercise list fetched at session start (all `null`) and shows that. Since P0-4 the server ignores the client's score, and `POST /complete` returns the server-computed session: show its `score`, and stop sending score and duration.
     - Wrong-answer feedback reads "Incorrect. Try again! Correct! Well done!: undefined". It concatenates both messages and reads `correct_answer`, a field the API never returns (✅ confirmed absent). Return the correct answer in the answer response only, once the exercise is answered, and show one calm message.
 
