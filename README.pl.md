@@ -135,7 +135,6 @@ Aplikację ulepsza się małymi, przetestowanymi krokami według opisanej pętli
 Zanim ktokolwiek zacznie polegać na tej aplikacji, trzeba naprawić co najmniej poniższe. Każdy punkt jest w [`loop/BACKLOG.md`](loop/BACKLOG.md).
 
 - **Bezpieczeństwo**
-  - Niektóre listy nadal wstawiają dane użytkowników do strony jako HTML (P1-1).
   - Nagrania głosu może pobrać każdy, kto zna ich adres (P1-2).
   - Logowanie nie ma limitu prób, a tokeny są przechowywane w `localStorage` (P1-5).
   - Część zależności jest przestarzała (P1-4).

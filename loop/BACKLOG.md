@@ -23,7 +23,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 | G2 Backend tests | 🔴 | 51 tests pass, including register → login → profile and a full scored session; coverage not measured |
 | G3 End-to-end | 🟡 | 13 tests in Chromium, including the whole flow (sign-up → word naming and sentence completion → feedback → dashboard and progress scores) in EN and PL, the admin list, the chart, and the session edge cases. Not covered yet: pronunciation (P2-7) and export (CSV/PDF) |
 | G4 Authorization | 🔴 | P1-3 |
-| G5 Security | 🔴 | P1-1, P1-2, P1-4 |
+| G5 Security | 🔴 | Done: no untrusted data reaches `innerHTML`, and the CSP forbids inline scripts (P1-1). Still open: recordings served without authentication (P1-2), pip-audit (P1-4), login rate limit (P1-5), secrets from the environment only (P1-8) |
 | G6 Accessibility | 🔴 | Not measured |
 | G7 Aphasia-friendly | 🔴 | Auto-advance, visible timer, typing required (P2-4..P2-6) |
 | G8 Clinical content | 🔴 | No answer leaks (C4, enforced by `test_content.py` since P0-6). Still English-only, assets missing, nothing clinically reviewed |
@@ -108,7 +108,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
   - Complete the session atomically too (`… WHERE is_completed = false`). Two different last exercises answered at once must neither both complete the session nor both miss it.
   - Add tests with concurrent requests.
 
-- [ ] **P1-1 Stored XSS into the therapist/admin dashboard** 🔎. Usernames, emails, session and schedule titles, and exercise options go into `innerHTML` (`frontend/js/ui.js`, `frontend/js/app.js`). Usernames have no validation, so a patient can register a username containing HTML/JS that runs in a therapist's browser, where the JWT sits in `localStorage`. Fixes:
+- [x] **P1-1 Stored XSS into the therapist/admin dashboard** 🔎 (64ae795). Every list and button is built with DOM methods, the inline script is moved into a file, and `index.html` sets a CSP with `script-src 'self'`. Tested with markup in titles, plus a guard test against `innerHTML` and inline handlers. Original report: Usernames, emails, session and schedule titles, and exercise options go into `innerHTML` (`frontend/js/ui.js`, `frontend/js/app.js`). Usernames have no validation, so a patient can register a username containing HTML/JS that runs in a therapist's browser, where the JWT sits in `localStorage`. Fixes:
   - Render with `textContent` or DOM APIs.
   - Remove the inline `onclick=` handlers.
   - Move the inline service-worker script into a file.

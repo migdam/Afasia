@@ -17,6 +17,26 @@ Newest entry first. One entry per iteration.
 
 ---
 
+### 18: 2026-10-15 08:05 UTC: P1-1 No user input as HTML; CSP
+- **Baseline:** `check.sh` green (65 backend, smoke, 13 e2e). No human commits.
+- **Did:**
+  - Replaced every `innerHTML` and inline `onclick` in `ui.js` (recent and scheduled sessions, badges, empty states) and `app.js` (options, record button) with DOM methods. Two helpers, `el()` and `showEmpty()`, put all text in via `textContent`.
+  - Moved the inline service-worker script into `js/sw-register.js`.
+  - Added a CSP `<meta>`: `script-src 'self'` and `object-src 'none'`. `connect-src` stays broad because in development the API is on another port.
+  - Tests:
+    - `test_frontend_safety.py`, a guard against `innerHTML`, `insertAdjacentHTML`, inline handlers and inline `<script>`.
+    - `e2e/test_untrusted_text.py`: titles containing `<b>`/`<img onerror>` are shown as text, and the policy forbids inline scripts.
+- **Verified:**
+  ```
+  old code: guard found 10 places plus the inline <script> · e2e "Expected '<b>bold</b><img …>' · Actual value: bold" (markup rendered)
+  now:      backend "67 passed" · smoke OK · e2e "15 passed" (every flow runs under the CSP) · exit code checked directly
+  ```
+- **Docs:** removed P1-1 from Known limitations in both READMEs.
+- **Slip:** two heredocs in one shell command were in the wrong order, so the commit got the bookkeeping script as its message. It was amended before pushing (now 64ae795).
+- **Commit:** 64ae795 (pushed: yes), plus this log/docs commit.
+- **Discovered:** nothing new.
+- **Next:** P1-2, recordings served without authentication.
+
 ### 17: 2026-10-15 07:50 UTC: P1-10 Simultaneous answers
 - **Baseline:** `check.sh` green (63 backend, smoke, 13 e2e). No human commits.
 - **Did:**

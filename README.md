@@ -135,7 +135,6 @@ The app is improved in small, tested steps by a documented loop. See [`loop/READ
 Before anyone relies on this app, at least these must be fixed. Each one is in [`loop/BACKLOG.md`](loop/BACKLOG.md).
 
 - **Security**
-  - Some lists still put user input into the page as HTML (P1-1).
   - Voice recordings can be downloaded by anyone who knows their address (P1-2).
   - Logins aren't rate-limited, and tokens are kept in `localStorage` (P1-5).
   - Some dependencies are outdated (P1-4).
