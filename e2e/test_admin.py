@@ -28,9 +28,9 @@ def test_an_admin_sees_patients_as_text_and_can_deactivate_them(page, servers, a
 
     row = page.locator(".user-item", has_text=name)
     expect(row.locator("h4")).to_have_text(username)
-    row.get_by_role("button", name="Deactivate").click()
+    row.get_by_role("button", name="Deactivate", exact=True).click()
 
-    expect(row.get_by_role("button", name="Activate")).to_be_visible()
+    expect(row.get_by_role("button", name="Activate", exact=True)).to_be_visible()
     status, body = call_api(servers, "POST", "/auth/login", {"username": username, "password": PASSWORD})
     assert (status, body["detail"]) == (400, "Inactive user")
 
