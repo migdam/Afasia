@@ -19,6 +19,24 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 34: 2026-10-15 10:32 UTC: P1-6c2 Export and delete (web app)
+- **Baseline:** `check.sh` exit code 0: 149 backend tests, smoke, 35 e2e. No human commits. Tests were written in the scratchpad until it finished.
+- **Test first:** `e2e/test_your_data_page.py`. 4 tests failed on the old frontend: download; delete in EN and PL; cancel.
+- **Found by the screenshot check:** at 375 px, "Delete my account" couldn't be clicked; it was behind the fixed bottom nav. The small-screen `.container { padding: 1rem }` overrode `padding-bottom: 6rem`, so on phones the bottom of every page was hidden. I added a test first: it failed with the button bottom at 675.6 px and the nav top at 654 px. Then I fixed the padding.
+- **Did:**
+  - `index.html`: "Your data" card and the delete `<dialog>` (shared `.app-dialog` style).
+  - `api.js`: `exportMyData`, `deleteAccount`.
+  - `app.js`: the handlers. A wrong password is explained in words; any close resets the dialog; success returns to login.
+  - `ui.clearFormMessage`, used at logout too.
+  - `.btn-danger` (white on `#B91C1C`, about 6.5:1, worked out by hand), and the phone padding fix.
+  - i18n EN/PL, user guides and READMEs.
+- **Verified:**
+  - `scripts/check.sh` exit code 0: ruff, pip-audit "No known vulnerabilities found", 149 backend tests, smoke, 40 e2e.
+  - Screenshots at 375 px in PL/dark, before and after the fix.
+- **Commit:** 1ccd0ab (pushed: yes)
+- **Discovered:** the phone padding bug above, fixed in this commit.
+- **Next:** P1-6d (privacy notice).
+
 ### 33: 2026-10-15 10:16 UTC: P1-6c1 Export and delete (API)
 - **Baseline:** `check.sh` exit code 0: 143 backend tests, smoke, 35 e2e. No human commits. Tests were written in the scratchpad until it finished.
 - **Split:** P1-6c became c1 (the API) and c2 (the Account page buttons).
