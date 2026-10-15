@@ -19,7 +19,7 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
-### 77: 2026-10-15 23:36 UTC: P3-3a ESLint
+### 77: 2026-10-15 23:35 UTC: P3-3a ESLint
 - **Baseline:** `check.sh` exit code 0: 325 backend tests, smoke, 128 e2e. No human commits. CI runs for the last two pushes passed.
 - **Split:** P3-3 became a (ESLint), b (`ruff format`) and c (mypy).
 - **Audit first:** ESLint 10 with the recommended rules, run in the scratchpad on a copy of `frontend/`, found 8 problems (7 unused `catch (error)` bindings and a useless initial value) and no undefined names.
