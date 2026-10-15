@@ -29,7 +29,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 | G8 Clinical content | 🔴 | No answer leaks (C4, enforced by `test_content.py` since P0-6). Still English-only, assets missing, nothing clinically reviewed |
 | G9 i18n | 🔴 | Hard-coded English strings in JS (P2-10) |
 | G10 Privacy | 🔴 | P1-6 |
-| G11 Honest docs | 🟡 | The READMEs describe only what exists, links resolve, and a test blocks known-false claims (P0-9a). The user guides are next (P0-9b) |
+| G11 Honest docs | 🟢 | The READMEs and user guides (EN/PL) describe only what exists, Known limitations are listed, and `test_docs.py` checks that every relative link resolves and that no known-false claim returns (P0-9) |
 | G12 Lighthouse | 🔴 | Not measured |
 | G13 Delivery | 🟡 | The Docker Compose stack starts and passes `scripts/docker-smoke.sh` (P0-8). No CI yet (P3-2) |
 
@@ -82,9 +82,9 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
   - `.gitignore` ignores `.dockerignore` files, so the build contexts can't exclude anything: local databases, uploads and caches get copied into the images. Stop ignoring it and add a `.dockerignore` per build context.
 
   **Acceptance:** `docker compose up` passes the smoke test. If Docker can't run in the loop's environment, mark the item `[!]` and say so.
-- [ ] **P0-9 Docs claim things that aren't true** 🔎. Split on 2026-10-15:
+- [x] **P0-9 Docs claim things that aren't true** 🔎 (1276117). Split on 2026-10-15, both parts done:
   - [x] **P0-9a READMEs** (f056514). Both READMEs are rewritten from verified facts: status, what works and is tested, what doesn't work, Known limitations, and no license chosen. `README_IMPLEMENTATION.md` is deleted. `backend/tests/test_docs.py` checks that every relative link resolves and that the READMEs contain no known-false claims.
-  - [ ] **P0-9b User guides and template.**
+  - [x] **P0-9b User guides and template** (1276117). Both guides are rewritten from the real screens and labels, the `SMTP_*` keys are gone, and `test_docs.py` checks the guides too. Original plan:
     - Rewrite `docs/USER_GUIDE.md` and `docs/USER_GUIDE.pl.md` the same way, and add both to `CHECKED_FOR_CLAIMS` in `test_docs.py`.
     - Remove the unused `SMTP_*` keys from `.env.template`.
     - The guides still describe the API and deployment documents that don't exist, picture-based exercises, "Explanation", streak-safe rest days, the FAQ's pricing placeholder, and so on.

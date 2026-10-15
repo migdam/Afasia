@@ -17,6 +17,24 @@ Newest entry first. One entry per iteration.
 
 ---
 
+### 16: 2026-10-15 07:35 UTC: P0-9b User guides (all P0 items done)
+- **Baseline:** `check.sh` green (61 backend, smoke, 13 e2e). No human commits.
+- **Did:**
+  - Rewrote `docs/USER_GUIDE.md` and `docs/USER_GUIDE.pl.md` from the actual screens, labels (the Polish labels from `i18n.js`) and behaviour.
+  - Every specific was checked against the code: the last five sessions, the confirmation on exit, case-sensitive usernames, the export contents, the admin page, and UTC streak days.
+  - The guides say where the Polish UI still shows English (P2-10).
+  - Removed `SMTP_*` from `.env.template`.
+  - `test_docs.py` now checks the guides for false claims, including `API.md`, `DEPLOYMENT.md` and the pricing placeholder.
+- **Verified:**
+  ```
+  old guides: claim test failed (support address, API.md, DEPLOYMENT.md, pricing placeholder; PL: pricing placeholder)
+  now:        backend "63 passed" · README smoke OK · e2e "13 passed" (exit code checked directly)
+  ```
+- **Commit:** 1276117 (pushed: yes), plus this log/backlog commit.
+- **Gates:** G11 is now 🟢. All P0 items are done.
+- **Discovered:** nothing new.
+- **Next:** the P1 list, top to bottom, starting with P1-10 (simultaneous answers are all accepted).
+
 ### 15: 2026-10-15 07:20 UTC: P0-9a READMEs describe only what exists
 - **Baseline:** `check.sh` green (51 backend, smoke, 13 e2e). No human commits.
 - **Split:** P0-9 covers about 3,600 lines of docs, so it became P0-9a (READMEs, done here) and P0-9b (user guides and `.env.template`).
