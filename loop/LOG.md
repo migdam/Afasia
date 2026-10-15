@@ -17,6 +17,25 @@ Newest entry first. One entry per iteration.
 
 ---
 
+### 13: 2026-10-15 06:40 UTC: P0-7g The whole flow in EN and PL (P0-7 done)
+- **Baseline:** `check.sh` green (51 backend, smoke, 11 e2e). No human commits.
+- **Did:** added `e2e/test_full_flow.py`, parametrized over EN and PL. Each run signs up, switches language, then does:
+  - a word-naming session with typed answers, one of them wrong (80%);
+  - a sentence-completion session, all correct (100%).
+
+  It checks each feedback message in that language, both scores on the dashboard, and 2 sessions at 90% average accuracy on the progress page.
+- **Not covered:** pronunciation. It needs a microphone and speech recognition, and recordings are always scored wrong today (P2-7).
+- **Verified:**
+  ```
+  before the P0-7 fixes (5ff957e, temporary worktree): 2 failed —
+      "Actual value: Incorrect. Try again! Correct! Well done!: undefined"
+      "Actual value: Niepoprawnie. Spróbuj ponownie! Poprawnie! Świetna robota!: undefined"
+  now: backend "51 passed" · smoke OK · e2e "13 passed in 107.72s" (exit code checked directly)
+  ```
+- **Commit:** cd5bbf7 (pushed: yes), plus this log/backlog commit.
+- **Discovered:** nothing new. The "Session complete! Score: …" alert is still English in Polish mode (already listed in P2-10). The e2e suite now takes about 1:50, and `check.sh` about 2:30 in total.
+- **Next:** P0-8, the Docker stack.
+
 ### 12: 2026-10-15 06:30 UTC: P0-7f Progress chart
 - **Baseline:** `check.sh` green (51 backend, smoke, 10 e2e). No human commits.
 - **Did:**
