@@ -1,686 +1,138 @@
-# 📘 Przewodnik Użytkownika - Aplikacja Terapii Mowy dla Afazji
+# Przewodnik użytkownika
 
-**Wersja:** 1.0.0
-**Ostatnia aktualizacja:** 2024
+[🇬🇧 Guide in English](USER_GUIDE.md)
 
-[🇬🇧 **English Version** → User Guide](USER_GUIDE.md)
+Ten przewodnik opisuje aplikację w jej obecnej postaci: wczesnej wersji do wypróbowania, nie do użytku klinicznego (zob. [README](../README.pl.md)). Aplikacja ma wspierać pracę z logopedą, a nie ją zastępować.
 
----
+## Zanim zaczniesz
 
-## Spis Treści
+- **Przeglądarka:** aktualny Chrome, Edge, Firefox lub Safari na komputerze, tablecie albo telefonie. Aplikacja jest testowana w Chrome.
+- **Adres:** poda go osoba, która uruchamia aplikację, np. `http://localhost:3000`.
+- **Mikrofon:** potrzebny tylko do ćwiczeń wymowy, które jeszcze nie działają niezawodnie (zob. [Wymowa](#wymowa)).
 
-1. [Rozpoczęcie](#rozpoczęcie)
-2. [Tworzenie Konta](#tworzenie-konta)
-3. [Zrozumienie Panelu](#zrozumienie-panelu)
-4. [Rozpoczęcie Sesji Terapeutycznej](#rozpoczęcie-sesji-terapeutycznej)
-5. [Typy Ćwiczeń](#typy-ćwiczeń)
-6. [Śledzenie Postępów](#śledzenie-postępów)
-7. [Korzystanie z Nagrywania Głosu](#korzystanie-z-nagrywania-głosu)
-8. [Planowanie Sesji](#planowanie-sesji)
-9. [Eksportowanie Raportów](#eksportowanie-raportów)
-10. [Ustawienia i Preferencje](#ustawienia-i-preferencje)
-11. [Rozwiązywanie Problemów](#rozwiązywanie-problemów)
-12. [FAQ](#faq)
+## Język i motyw
 
----
+Przyciski w prawym górnym rogu każdego ekranu:
+- **EN / PL** przełącza język między angielskim a polskim.
+- **🌙 / ☀️** przełącza między motywem jasnym a ciemnym.
 
-## Rozpoczęcie
+Przeglądarka zapamiętuje oba wybory.
 
-### Wymagania Systemowe
+Same ćwiczenia są na razie po angielsku, w obu wersjach językowych. Po wybraniu polskiego kilka komunikatów nadal jest też po angielsku: okienka z komunikatami, „Completed” na liście sesji i przyciski w panelu administratora.
 
-**Minimalne Wymagania:**
-- Nowoczesna przeglądarka internetowa (Chrome 90+, Firefox 88+, Safari 14+, Edge 90+)
-- Połączenie internetowe (do wstępnej konfiguracji)
-- Mikrofon (do ćwiczeń wymowy)
-- Głośniki lub słuchawki (zalecane)
+## Twoje konto
 
-**Zalecane:**
-- Komputer stacjonarny lub laptop dla najlepszego doświadczenia
-- Tablet lub smartfon (responsywne dla urządzeń mobilnych)
-- Stabilne połączenie internetowe
-- Cicha okolica do ćwiczenia wymowy
+**Rejestracja:**
+1. Kliknij **Zarejestruj się** pod formularzem logowania.
+2. Wpisz e-mail, nazwę użytkownika, imię i nazwisko (nieobowiązkowo) oraz hasło.
+3. Kliknij **Zarejestruj się**. Od razu zobaczysz swoją tablicę.
 
-### Dostęp do Aplikacji
+**Logowanie:** wpisz nazwę użytkownika i hasło, a potem kliknij **Zaloguj się**.
 
-1. Otwórz przeglądarkę internetową
-2. Przejdź do adresu URL aplikacji
-3. Zobaczysz stronę logowania/rejestracji
+**Wylogowanie:** kliknij **Wyloguj** w prawym górnym rogu. Formularz logowania zostaje wyczyszczony, więc następna osoba nie zobaczy, co wpisano.
 
----
+Zalogowanie trwa 30 minut. Po tym czasie przy następnym otwarciu lub odświeżeniu strony trzeba zalogować się ponownie. Nie ma jeszcze opcji „nie pamiętam hasła”.
 
-## Tworzenie Konta
+## Tablica
 
-### Proces Rejestracji
+Na górze są trzy liczby:
+- **Punkty:** zob. [Punkty, serie i odznaki](#punkty-serie-i-odznaki).
+- **Seria:** ile dni z rzędu kończysz sesję.
+- **Odznaki:** ile odznak już masz.
 
-1. **Kliknij "Zarejestruj się"** na stronie logowania
+Pod nimi:
+- **Rozpocznij nową sesję:** zacznij ćwiczyć.
+- **Zaplanowane sesje:** sesje zaplanowane na później.
+- **Ostatnie sesje:** pięć ostatnich sesji z wynikami.
 
-2. **Wypełnij swoje dane:**
-   - **Email**: Prawidłowy adres email (do odzyskiwania konta)
-   - **Nazwa użytkownika**: Wybierz unikalną nazwę (3-50 znaków)
-   - **Imię i nazwisko**: Twoje prawdziwe imię (opcjonalne, ale zalecane)
-   - **Hasło**: Silne hasło (min 8 znaków)
+Pasek na dole przełącza między **Tablicą** a **Postępem**. Terapeuci i administratorzy widzą tam też **Administratora**.
 
-3. **Wybierz Język:**
-   - Angielski (EN)
-   - Polski (PL)
+## Ćwiczenie
 
-4. **Kliknij "Zarejestruj się"**
+1. W części **Rozpocznij nową sesję** wybierz:
+   - **Typ ćwiczenia:** Nazywanie słów, Uzupełnianie zdań albo Wymowa.
+   - **Poziom trudności:** Łatwy, Średni albo Trudny.
+   - **Liczbę ćwiczeń:** od 5 do 50. Na początek dobre są krótkie sesje, po 5–10 ćwiczeń.
+2. Kliknij **Rozpocznij**.
+3. Odpowiedz na ćwiczenie i kliknij **Zatwierdź**.
+4. Zobaczysz **„Poprawnie! Świetna robota!”** albo **„Nie tym razem. Prawidłowa odpowiedź: …”**, z prawidłową odpowiedzią pogrubioną.
+5. Po 2 sekundach samo pojawi się następne ćwiczenie.
 
-5. **Zostaniesz automatycznie zalogowany** i przeniesiony do swojego panelu
+Na górze ekranu ćwiczenia:
+- **Wyjdź** kończy sesję. Aplikacja poprosi o potwierdzenie. Przerwana sesja zostaje nieukończona i nie liczy się do wyników.
+- Licznik i pasek pokazują, ile już za tobą, np. **3/10**.
+- Zegar pokazuje, ile trwa sesja. Nie ma limitu czasu.
 
-### Wskazówki Bezpieczeństwa
+Po ostatnim ćwiczeniu pojawia się wynik, np. „Session complete! Score: 80%” (ten komunikat jest jeszcze po angielsku), i wracasz na tablicę.
 
-✅ **Wybierz silne hasło:**
-- Przynajmniej 8 znaków
-- Mieszanka wielkich i małych liter
-- Zawieraj liczby i znaki specjalne
-- Nie używaj popularnych słów
+### Nazywanie słów
 
-✅ **Chroń swoje dane dostępu:**
-- Nie udostępniaj hasła
-- Używaj menedżera haseł
-- Wyloguj się na współdzielonych komputerach
+Czytasz krótki opis codziennej rzeczy, np. „A pet that barks and wags its tail” (zwierzę domowe, które szczeka i macha ogonem). Wpisz jej nazwę (**dog**) w polu i kliknij **Zatwierdź**.
 
----
+Odpowiedź musi się dokładnie zgadzać. Nie liczą się tylko wielkość liter i spacje na początku i końcu. Obrazków jeszcze nie ma.
 
-## Zrozumienie Panelu
+### Uzupełnianie zdań
 
-### Przegląd Panelu
+Czytasz zdanie z luką, np. „The sky is ___”. Kliknij pasujące słowo, a potem **Zatwierdź**. Jeśli klikniesz **Zatwierdź** bez wyboru, aplikacja poprosi najpierw o odpowiedź („Please provide an answer”).
 
-Po zalogowaniu zobaczysz spersonalizowany panel z kilkoma sekcjami:
+### Wymowa
 
-#### 1. **Karty Statystyk Użytkownika**
+Widzisz słowo lub zwrot do powiedzenia, np. „Say: Hello”. Kliknij **Nagraj**, powiedz je, kliknij przycisk jeszcze raz, żeby zakończyć nagrywanie, a potem **Zatwierdź**. Za pierwszym razem przeglądarka zapyta o zgodę na użycie mikrofonu.
 
-```
-┌──────────────┐  ┌──────────────┐  ┌──────────────┐
-│ ⭐ Punkty    │  │ 🔥 Seria     │  │ 🏆 Odznaki   │
-│    1,250     │  │      14      │  │      6       │
-└──────────────┘  └──────────────┘  └──────────────┘
-```
+**To jeszcze nie działa niezawodnie.** Odpowiedź ocenia wbudowane rozpoznawanie mowy przeglądarki. W większości przeglądarek jest ono niedostępne, a tam, gdzie działa, nie radzi sobie z mową osób z afazją. Często poprawna odpowiedź zostaje uznana za błędną. Ten typ ćwiczeń jest projektowany od nowa.
 
-- **Punkty**: Łączne punkty zdobyte z ćwiczeń
-- **Seria**: Kolejne dni praktyki
-- **Odznaki**: Liczba odblokowanych osiągnięć
+### Rozpoznawanie obrazów
 
-#### 2. **Rozpocznij Nową Sesję**
+Jeszcze niedostępne: nie ma ćwiczeń tego typu, więc aplikacja ich nie oferuje.
 
-Szybki formularz do rozpoczęcia sesji terapeutycznej:
-- **Typ Ćwiczenia**: Wybierz typ praktyki
-- **Trudność**: Wybierz swój poziom umiejętności
-- **Liczba Ćwiczeń**: Ustaw długość sesji (5-50)
+## Punkty, serie i odznaki
 
-#### 3. **Zaplanowane Sesje**
+- **Punkty:** każda poprawna odpowiedź daje 10 punktów na poziomie Łatwym, 20 na Średnim i 30 na Trudnym. Punkty dolicza się po ukończeniu sesji.
+- **Seria:** kończenie sesji w kolejne dni buduje serię. Dni liczy się według czasu UTC, więc tuż po północy w Polsce może to być jeszcze poprzedni dzień.
+- **Odznaki:** za pierwszą ukończoną sesję, za serię 7 dni i za serię 30 dni.
 
-Zobacz nadchodzące sesje terapeutyczne, które zaplanowałeś:
-- Data i godzina
-- Typ ćwiczenia i trudność
-- Opcja usunięcia lub zmiany terminu
+## Twój postęp
 
-#### 4. **Ostatnie Sesje**
+Kliknij **Postęp** na dolnym pasku. Zobaczysz:
+- **Wszystkie sesje:** ukończone sesje.
+- **Średnią dokładność:** jaka część wszystkich odpowiedzi była poprawna.
+- **Całkowity czas:** czas od początku każdej ukończonej sesji do ostatniej odpowiedzi, w godzinach.
+- **Najdłuższą serię.**
+- **Postęp w czasie:** wykres wyników sesji z ostatnich 30 dni.
+- **Zdobyte odznaki.**
 
-Historia ukończonych sesji:
-- Tytuł sesji
-- Data ukończenia
-- Wynik dokładności
-- Poziom trudności
-
-### Nawigacja
+**Eksportuj CSV** pobiera wszystkie ukończone sesje jako plik arkusza kalkulacyjnego. **Eksportuj PDF** pobiera krótki raport z podsumowaniem i 10 ostatnimi sesjami. Każdy z nich możesz przekazać logopedzie.
 
-**Górny Pasek Nawigacji:**
-- 🗣️ **Tytuł Aplikacji**: Zawsze widoczny
-- 🌙 **Przełącznik Motywu**: Przełącz między trybem jasnym/ciemnym
-- **PL/EN**: Zmień język
-- **Wyloguj**: Wyloguj się z konta
-
-**Dolna Nawigacja** (pojawia się po zalogowaniu):
-- 🏠 **Panel**: Główny przegląd
-- 📊 **Postęp**: Statystyki i wykresy
-- ⚙️ **Administrator**: (Tylko dla terapeutów) Narzędzia zarządzania
+## Planowanie sesji
 
----
+Kliknij **Dodaj harmonogram** na tablicy. Podaj tytuł, datę i godzinę, typ ćwiczenia i poziom trudności, a potem kliknij **Zaplanuj**. Nadchodzące sesje są na tablicy, a **Usuń** usuwa wybraną.
 
-## Rozpoczęcie Sesji Terapeutycznej
+Aplikacja jeszcze nie przypomina o zaplanowanych sesjach. Sesję trzeba też rozpocząć samodzielnie, w części **Rozpocznij nową sesję**.
 
-### Przewodnik Krok po Kroku
+## Dla terapeutów i administratorów
 
-#### Krok 1: Wybierz Typ Ćwiczenia
+**Administrator** na dolnym pasku pokazuje:
+- liczbę pacjentów, aktywnych pacjentów i ukończonych sesji oraz odsetek poprawnych odpowiedzi wszystkich użytkowników;
+- wszystkich pacjentów z adresem e-mail i punktami;
+- przycisk **Deactivate** przy każdym aktywnym pacjencie: dezaktywowany pacjent nie może się zalogować, dopóki nie klikniesz **Activate**.
 
-Dostępne cztery typy:
+Na razie każdy terapeuta widzi wszystkich pacjentów. W aplikacji nie da się też utworzyć konta terapeuty ani administratora: rolę konta zmienia w bazie danych osoba, która uruchamia serwer.
 
-1. **Nazywanie Słów** 🖼️
-   - Spójrz na obrazy
-   - Nazwij to, co widzisz
-   - Dobre do budowania słownictwa
-
-2. **Uzupełnianie Zdań** ✏️
-   - Przeczytaj niekompletne zdania
-   - Wybierz właściwe słowo
-   - Poprawia umiejętności gramatyczne
+## Twoje dane
 
-3. **Rozpoznawanie Obrazów** 🎨 (jeszcze niedostępne)
-   - Dopasuj obrazy do słów
-   - Uczenie się wizualne
-   - Wzmocnienie pamięci
+Wszystko, co robisz, jest zapisywane na serwerze, na którym działa aplikacja: konto, odpowiedzi, nagrania i wyniki. Informacja o prywatności, zgoda przed nagrywaniem oraz możliwość pobrania lub usunięcia wszystkich swoich danych są planowane, ale jeszcze ich nie ma. Jeśli chcesz usunąć swoje dane, poproś o to osobę, która uruchamia aplikację.
 
-4. **Wymowa** 🎤
-   - Słuchaj słów
-   - Nagraj swoją wymowę
-   - Praktyka mowy
+## Gdy coś nie działa
 
-#### Krok 2: Wybierz Trudność
+| Co się dzieje | Co zrobić |
+|---|---|
+| „Incorrect username or password” | Sprawdź pisownię i Caps Lock. W nazwie użytkownika liczy się wielkość liter. |
+| „Inactive user” | Twoje konto zostało dezaktywowane. Zapytaj logopedę lub administratora. |
+| Wracasz na stronę logowania | Minęło 30 minut zalogowania. Zaloguj się ponownie. |
+| „Failed to start session” | Serwer może nie działać. Spróbuj później albo powiadom osobę, która uruchamia aplikację. |
+| „Please provide an answer” | Przed **Zatwierdź** wpisz słowo albo wybierz odpowiedź. |
+| Mikrofon nie działa | Zezwól na mikrofon w ustawieniach strony w przeglądarce i odśwież stronę. Wymowa i tak działa zawodnie (zob. wyżej). |
 
-- **Łatwy** 🟢
-  - Proste, powszechne słowa
-  - Podstawowe zdania
-  - Mniej opcji
-  - Najlepsze dla początkujących
+## Pytania
 
-- **Średni** 🟡
-  - Umiarkowane słownictwo
-  - Złożone zdania
-  - Bardziej wymagające
-  - Najpopularniejszy wybór
-
-- **Trudny** 🔴
-  - Zaawansowane słowa
-  - Trudne zdania
-  - Poziom ekspercki
-  - Dla doświadczonych użytkowników
-
-#### Krok 3: Ustaw Liczbę Ćwiczeń
-
-- Minimum: 5 ćwiczeń
-- Maksimum: 50 ćwiczeń
-- Zalecane: 10-15 dla początkujących
-
-#### Krok 4: Kliknij "Start"
-
-Sesja rozpocznie się natychmiast!
-
-### Podczas Sesji
-
-**Układ Ekranu Ćwiczenia:**
-
-```
-[Wyjdź] ────── [Postęp: 3/10] ────── [Czas: 02:15]
-                   ▓▓▓▓░░░░░░ 30%
-
-┌─────────────────────────────────────────────────────────┐
-│                                                         │
-│                  [Obraz jeśli dotyczy]                  │
-│                                                         │
-│        Co to jest? (Wybierz poprawną odpowiedź)        │
-│                                                         │
-│   ┌──────────┐  ┌──────────┐  ┌──────────┐           │
-│   │   Kot    │  │   Pies   │  │  Ptak    │           │
-│   └──────────┘  └──────────┘  └──────────┘           │
-│                                                         │
-│              [Przycisk Zatwierdź]                       │
-│                                                         │
-└─────────────────────────────────────────────────────────┘
-```
-
-**Wskaźniki Postępu:**
-- **Licznik**: Pokazuje bieżące ćwiczenie (np. "3/10")
-- **Pasek Postępu**: Wizualny wskaźnik postępu
-- **Licznik Czasu**: Czas spędzony na bieżącej sesji
-
-**Kontrole:**
-- **Wyjdź**: Opuść sesję (postęp zostanie utracony)
-- **Zatwierdź**: Sprawdź swoją odpowiedź
-- **Odtwórz Audio**: (Ćwiczenia wymowy) Usłysz słowo (jeszcze niedostępne: nie ma nagrań)
-
-### Opinia Zwrotna
-
-Po przesłaniu odpowiedzi:
-
-✅ **Poprawna Odpowiedź:**
-- Zielone pole opinii
-- "Poprawnie! Świetna robota!"
-- Automatyczne przejście do następnego ćwiczenia
-
-❌ **Niepoprawna Odpowiedź:**
-- Czerwone pole opinii
-- „Nie tym razem. Prawidłowa odpowiedź: …”, z prawidłową odpowiedzią pogrubioną
-- Automatyczne przejście po 2 sekundach
-
-### Ukończenie Sesji
-
-Po ukończeniu wszystkich ćwiczeń:
-1. Pojawia się podsumowanie sesji
-2. Wyświetlany jest Twój wynik
-3. Przyznawane są punkty
-4. Odznaki mogą zostać odblokowane
-5. Powrót do panelu
-
----
-
-## Typy Ćwiczeń
-
-### 1. Ćwiczenia Nazywania Słów
-
-**Jak to działa:**
-1. Pojawia się krótki opis codziennej rzeczy (obrazki zostaną dodane później)
-2. Pytanie brzmi: „Co to jest?”
-3. Wpisujesz słowo lub wybierasz z opcji
-4. Przesyłasz swoją odpowiedź
-
-**Wskazówki dla Sukcesu:**
-- Uważnie spójrz na obraz
-- Nie spiesz się
-- Pomyśl, co widzisz najpierw
-- Nie zgaduj losowo
-
-**Punktacja:**
-- Wymagane dokładne dopasowanie
-- Pisownia się liczy
-- Nie rozróżnia wielkości liter
-
-### 2. Uzupełnianie Zdań
-
-**Jak to działa:**
-1. Przeczytaj zdanie z luką: "Niebo jest ___"
-2. Wybierz z 4 opcji wielokrotnego wyboru
-3. Wybierz słowo, które najlepiej pasuje
-4. Prześlij swoją odpowiedź
-
-**Wskazówki dla Sukcesu:**
-- Przeczytaj całe zdanie
-- Wyeliminuj oczywiście błędne odpowiedzi
-- Rozważ gramatykę (rzeczownik, czasownik itp.)
-- Pomyśl o znaczeniu
-
-**Punktacja:**
-- Tylko jedna poprawna odpowiedź
-- Brak częściowych punktów
-
-### 3. Rozpoznawanie Obrazów
-
-**Jeszcze niedostępne:** nie ma ćwiczeń rozpoznawania obrazów, więc wybranie tego typu wyświetla komunikat o błędzie.
-
-**Jak to działa:**
-1. Zobacz obraz
-2. Otrzymaj wiele opcji słów
-3. Dopasuj obraz do właściwego słowa
-4. Prześlij swój wybór
-
-**Wskazówki dla Sukcesu:**
-- Skoncentruj się na szczegółach obrazu
-- Rozważ kontekst
-- Użyj metody eliminacji
-- Zaufaj pierwszemu instynktowi
-
-### 4. Ćwiczenie Wymowy
-
-**Jak to działa:**
-1. Zobacz słowo lub frazę
-2. Kliknij "Odtwórz Audio", aby je usłyszeć (jeszcze niedostępne: nie ma nagrań)
-3. Kliknij "Nagraj", aby ćwiczyć
-4. Mów wyraźnie do mikrofonu
-5. Kliknij "Stop", gdy skończysz
-6. Prześlij swoje nagranie
-
-**Wskazówki dla Sukcesu:**
-- Posłuchaj przykładu kilka razy
-- Ćwicz w cichym miejscu
-- Mów wyraźnie i powoli
-- Umieść mikrofon blisko ust
-- Nie spiesz się
-
-**Używana Technologia:**
-- Web Audio API do odtwarzania
-- MediaRecorder API do nagrywania
-- Web Speech API do oceny (jeśli dostępne)
-
----
-
-## Śledzenie Postępów
-
-### Przegląd Strony Postępu
-
-Dostęp poprzez kliknięcie "Postęp" w dolnej nawigacji.
-
-### Karty Statystyk
-
-**Łączne Sesje**
-- Liczba ukończonych sesji terapeutycznych
-- Zawiera wszystkie typy ćwiczeń
-- Liczba przez cały czas
-
-**Średnia Dokładność**
-- Twój procent dokładności
-- Obliczany ze wszystkich ćwiczeń
-- Aktualizowany w czasie rzeczywistym
-
-**Całkowity Czas**
-- Godziny spędzone na ćwiczeniach
-- Suma skumulowana
-- Wyklucza czas pauzy
-
-**Najdłuższa Seria**
-- Twoje najlepsze kolejne dni
-- Rekord osobisty
-- Metryka motywacji
-
-### Wykres Postępu
-
-**Co pokazuje:**
-- Wykres liniowy dokładności w czasie
-- Oś X: Daty
-- Oś Y: Procent dokładności
-- Punkty danych: Średnie dzienne
-
-**Jak to czytać:**
-- Trend wzrostowy = poprawa
-- Płaska linia = stała wydajność
-- Spadki = trudne dni (normalne!)
-
-**Zakres Czasowy:**
-- Domyślnie: Ostatnie 30 dni
-- Konfigurowalny w ustawieniach
-
-### Sekcja Odznak
-
-**Typy Odznak:**
-
-🎯 **Pierwsza Sesja**
-- Ukończ swoją pierwszą sesję terapeutyczną
-- Odblokowana automatycznie
-
-🔥 **Seria Tygodniowa**
-- Ćwicz 7 kolejnych dni
-- Zbuduj nawyk
-
-🏆 **Seria Miesięczna**
-- Ćwicz 30 kolejnych dni
-- Osiągnięcie poświęcenia
-
-💎 **Perfekcjonista**
-- Zdobądź 100% na sesji
-- Doskonała dokładność
-
-⭐ **Oddany**
-- Ukończ 50 sesji łącznie
-- Długoterminowe zaangażowanie
-
-👑 **Mistrz**
-- Ukończ 100 sesji łącznie
-- Poziom eksperta
-
-**Jak Działają Odznaki:**
-- Zdobywane automatycznie
-- Jednorazowe osiągnięcia
-- Wyświetlane na Twoim profilu
-- Możliwość udostępniania (wkrótce)
-
----
-
-## Korzystanie z Nagrywania Głosu
-
-### Konfiguracja
-
-#### 1. **Przyznaj Uprawnienia do Mikrofonu**
-
-Przy pierwszym użyciu ćwiczeń wymowy:
-1. Przeglądarka zapyta o dostęp do mikrofonu
-2. Kliknij "Zezwól"
-3. Uprawnienie jest zapisane na przyszłość
-
-Jeśli przypadkowo odrzuciłeś uprawnienie:
-1. Kliknij ikonę kłódki na pasku adresu
-2. Znajdź ustawienia mikrofonu
-3. Zmień na "Zezwól"
-4. Odśwież stronę
-
-#### 2. **Przetestuj Swój Mikrofon**
-
-Przed rozpoczęciem:
-1. Kliknij przycisk "Nagraj"
-2. Powiedz "Test 1, 2, 3"
-3. Kliknij "Stop"
-4. Posłuchaj odtwarzania
-5. Dostosuj głośność w razie potrzeby
-
-### Proces Nagrywania
-
-**Krok po kroku:**
-
-1. **Posłuchaj Przykładu**
-   - Kliknij przycisk "Odtwórz Audio" (jeszcze niedostępne: nie ma nagrań)
-   - Usłysz poprawną wymowę
-   - Posłuchaj kilka razy, jeśli potrzeba
-
-2. **Przygotuj się do Nagrania**
-   - Kliknij przycisk "Nagraj"
-   - Przycisk staje się czerwony i pulsuje
-   - Mikrofon jest teraz aktywny
-
-3. **Mów Wyraźnie**
-   - Powiedz słowo lub frazę
-   - Mów normalnym tempem
-   - Wymawiaj wyraźnie
-
-4. **Zatrzymaj Nagrywanie**
-   - Kliknij przycisk "Stop"
-   - Nagranie jest zapisywane automatycznie
-
-5. **Prześlij**
-   - Kliknij "Zatwierdź", gdy będziesz gotowy
-   - Nagranie jest przesyłane
-   - Rozpoczyna się ocena (jeśli dostępna)
-
-### Wskazówki dla Najlepszych Rezultatów
-
-✅ **Środowisko:**
-- Cichy pokój
-- Minimalny hałas w tle
-- Zamknięte okna
-- Wyłącz TV/radio
-
-✅ **Pozycja Mikrofonu:**
-- 15-30 cm od ust
-- Lekko z boku
-- Unikaj oddychania bezpośrednio do mikrofonu
-
-✅ **Technika Mowy:**
-- Naturalna głośność (nie za głośno/cicho)
-- Wyraźna artykulacja
-- Normalne tempo
-- Rozluźnij szczękę
-
-✅ **Technicznie:**
-- Użyj słuchawek, aby uniknąć sprzężenia
-- Sprawdź, czy mikrofon działa
-- Zamknij inne aplikacje używające mikrofonu
-- Upewnij się o dobre połączenie internetowe
-
-### Rozwiązywanie Problemów z Nagrywaniem
-
-**Problem: Nie słychać odtwarzania**
-- Sprawdź głośność urządzenia
-- Sprawdź głośność przeglądarki
-- Spróbuj innej przeglądarki
-- Uruchom ponownie urządzenie
-
-**Problem: Nagrywanie nie działa**
-- Sprawdź uprawnienia mikrofonu
-- Spróbuj innej przeglądarki
-- Sprawdź, czy mikrofon jest podłączony
-- Przetestuj mikrofon w innych aplikacjach
-
-**Problem: Słaba jakość**
-- Podejdź bliżej mikrofonu
-- Zmniejsz hałas w tle
-- Sprawdź jakość mikrofonu
-- Użyj zewnętrznego mikrofonu
-
----
-
-## Planowanie Sesji
-
-### Dlaczego Planować?
-
-Korzyści z planowania z wyprzedzeniem:
-- Zbuduj stałą rutynę
-- Otrzymuj przypomnienia
-- Nigdy nie zapomnij o czasie praktyki
-- Zobacz swoje zaangażowanie wizualnie
-
-### Jak Zaplanować
-
-**Metoda 1: Z Panelu**
-
-1. Kliknij przycisk "Dodaj Harmonogram"
-2. Wypełnij formularz:
-   - **Tytuł**: Nazwij swoją sesję (np. "Poranna Praktyka")
-   - **Data i Czas**: Wybierz, kiedy chcesz ćwiczyć
-   - **Typ Ćwiczenia**: Wybierz typ ćwiczenia
-   - **Trudność**: Wybierz poziom trudności
-3. Kliknij "Zaplanuj"
-4. Sesja pojawia się na liście "Zaplanowane Sesje"
-
-**Metoda 2: Szybkie Planowanie**
-
-Po ukończeniu sesji:
-1. Kliknij "Zaplanuj Następną Sesję"
-2. Wstępnie wypełnione tymi samymi ustawieniami
-3. Dostosuj czas w razie potrzeby
-4. Potwierdź
-
-### Zarządzanie Zaplanowanymi Sesjami
-
-**Zobacz Nadchodzące:**
-- Zobacz wszystkie zaplanowane sesje na panelu
-- Posortowane według daty (najwcześniejsze pierwsze)
-- Pokazuje typ, trudność, datę/godzinę
-
-**Usuń Harmonogram:**
-- Kliknij ikonę kosza obok sesji
-- Potwierdź usunięcie
-- Sesja jest usuwana
-
-**Edytuj Harmonogram:**
-- Usuń stary harmonogram
-- Utwórz nowy ze zaktualizowanymi szczegółami
-- (Bezpośrednia edycja w wersji 1.1)
-
-### Najlepsze Praktyki
-
-⏰ **Czas:**
-- Planuj tę samą porę codziennie
-- Wybierz, kiedy jesteś najbardziej czujny
-- Pozwól 15-30 minut
-- Unikaj czasu posiłków
-
-📅 **Częstotliwość:**
-- Zacznij od 3-4 razy w tygodniu
-- Stopniowo zwiększaj
-- Dni odpoczynku są ważne
-- Regularność > intensywność
-
-🎯 **Różnorodność:**
-- Mieszaj typy ćwiczeń
-- Zmieniaj poziomy trudności
-- Utrzymuj sesje interesujące
-- Stopniowo się rzuć wyzwanie
-
----
-
-## Eksportowanie Raportów
-
-### Dlaczego Eksportować Raporty?
-
-- Dziel się postępami z terapeutą
-- Zachowuj osobiste zapisy
-- Śledź poprawę offline
-- Dokumentacja ubezpieczeniowa
-- Motywacja i refleksja
-
-### Formaty Eksportu
-
-#### Eksport CSV 📊
-
-**Co to jest CSV?**
-- Plik wartości rozdzielanych przecinkami
-- Otwiera się w Excel, Google Sheets
-- Zawiera szczegółowe dane
-- Dobry do analizy
-
-**Co Jest Zawarte:**
-- Data każdej sesji
-- Liczba ćwiczeń
-- Procent dokładności
-- Czas spędzony (sekundy)
-- Zdobyte punkty
-- Poziom trudności
-- Typ ćwiczenia
-
-**Jak Eksportować:**
-1. Przejdź do strony Postęp
-2. Kliknij przycisk "Eksportuj CSV"
-3. Plik pobiera się automatycznie
-4. Nazwa: `progress_RRRR-MM-DD.csv`
-
-**Używanie CSV:**
-- Otwórz w Excel/Sheets
-- Twórz niestandardowe wykresy
-- Obliczaj trendy
-- Dziel się z terapeutą
-
-#### Eksport PDF 📄
-
-**Co to jest PDF?**
-- Format Portable Document
-- Profesjonalny format raportu
-- Łatwy do udostępniania i drukowania
-- Uniwersalnie czytelny
-
-**Co Jest Zawarte:**
-- Twoje imię i nazwa użytkownika
-- Data wygenerowania raportu
-- Ogólne statystyki:
-  - Łączne punkty
-  - Obecna seria
-  - Najdłuższa seria
-- Ostatni postęp (ostatnie 10 sesji):
-  - Data
-  - Liczba ćwiczeń
-  - Procent dokładności
-  - Zdobyte punkty
-
-**Jak Eksportować:**
-1. Przejdź do strony Postęp
-2. Kliknij przycisk "Eksportuj PDF"
-3. Plik pobiera się automatycznie
-4. Nazwa: `progress_report_RRRR-MM-DD.pdf`
-
-**Używanie PDF:**
-- Drukuj dla zapisów
-- Email do terapeuty
-- Zapisz w folderze
-- Pokaż rodzinie/opiekunom
-
----
-
-## FAQ
-
-### Ogólne Pytania
-
-**P: Czy to jest darmowe?**
-O: [Określ swój model cenowy]
-
-**P: Czy muszę coś pobierać?**
-O: Nie, to aplikacja webowa. Po prostu użyj przeglądarki. Możesz opcjonalnie zainstalować ją jako PWA na ekranie głównym.
-
-**P: Czy mogę używać na telefonie?**
-O: Tak! Aplikacja jest w pełni responsywna i działa na telefonach i tabletach.
-
-**P: Czy moje dane są prywatne?**
-O: Tak, Twoje dane są przechowywane bezpiecznie. Zobacz naszą Politykę Prywatności dla szczegółów.
-
----
-
-**Ostatnia Aktualizacja:** 2024
-**Wersja:** 1.0.0
-
-[⬆ Powrót na górę](#-przewodnik-użytkownika---aplikacja-terapii-mowy-dla-afazji)
+Zapytaj osobę, która uruchamia dla ciebie aplikację, albo zgłoś problem w repozytorium projektu.
