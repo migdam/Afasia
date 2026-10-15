@@ -27,7 +27,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 | G6 Accessibility | 🔴 | Not measured |
 | G7 Aphasia-friendly | 🔴 | No auto-advance or timer, typing optional, hints, calm feedback, missed items return and known ones are spaced, another level is suggested, streaks allow rest days, every badge can be earned (P2-3..P2-9, tested). Still open: pause and resume (U9, P4-6), pictures and recorded audio (H2, H3) |
 | G8 Clinical content | 🔴 | All content in PL and EN as data, checked at startup (P2-2a, P2-2b); no answer leaks, by word or by option position (C4). Missing: images, audio and licenses (P2-2c, H2/H3), cue levels (P2-3), and clinical review (H1) |
-| G9 i18n | 🔴 | Hard-coded English strings in JS (P2-10) |
+| G9 i18n | 🟡 | No English on Polish screens (e2e scan) and a key-parity test (P2-10a). Still open: dates and numbers via `Intl` and Polish plurals (P2-10b), the exports (P2-10c) |
 | G10 Privacy | 🟢 | Every criterion met (P1-6a–f): export and deletion, consent before recording and before speech recognition, configurable retention, no third-party requests (tested), and a privacy notice in PL and EN. Its legal blanks (who runs the app, legal basis, hosting, contact, retention periods) wait for H4/H5 |
 | G11 Honest docs | 🟢 | The READMEs and user guides (EN/PL) describe only what exists, Known limitations are listed, and `test_docs.py` checks that every relative link resolves and that no known-false claim returns (P0-9) |
 | G12 Lighthouse | 🔴 | Not measured |
@@ -158,6 +158,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
   - [x] **P1-8c A tighter CSP** (8feaeaf). The page's `connect-src` allows only itself and local development ports. Docker's nginx adds a header policy with `connect-src 'self'` and `frame-ancestors 'none'`. An API on another site must be added to `index.html` (README).
   - [x] **P1-8d Times in UTC, with an offset** (e94cf91). The API takes times as UTC and sends them with `+00:00` (`schemas.UTCDateTime`); the database keeps naive UTC until migrations (P3-1); `app/core/clock.py` replaces the deprecated `datetime.utcnow`. A browser in Europe/Warsaw now sees a 10:00 plan at 10:00 (it showed 08:00).
 
+- [ ] **P1-11 Session scores are off-screen on phones** 🔎 (found in iteration 68). At 390 px the recent-sessions card's content is 404 px wide in a 288 px box (419 in Polish), so the "Completed" badge is cut off and the score ("100%") sits at x=400, outside the screen: on a phone you can't see your scores, which the guides promise. It predates P2-10a (measured with the old frontend too). Fix the layout (wrap the meta row, keep the score in view) and add an e2e test that the score and badges are inside the card at phone width, in both languages.
 - [x] **P1-9 Unbounded session size** ✅ (d17e99b). `num_exercises` must be 1 to 50 (422 otherwise, nothing stored). It used to accept 0 and -5 (sessions that could never finish) and 20,000 (20,000 rows in one request). The form offers 5 to 50.
 
 ## P2: Clinically sound and aphasia-friendly
@@ -197,7 +198,10 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
   - [x] **P2-9b** Streak days in the person's time zone, not UTC. The browser sends its IANA zone to `PUT /users/time-zone`; it is kept in `time_zones` (P3-1), exported and deleted with the account, and named in the privacy notice. New pinned dependency: `tzdata`. (f9e5d11)
   - [x] **P2-9c** Rest days: up to `STREAK_REST_DAYS` (2, a placeholder for H1) days off in a row don't break a streak. The streak shown is today's (`User.streak_now`), not the one counted at the last session. Logic in `app/streaks.py`. A weekly goal was not built; whether to add one next to streaks is for H7. (47c7904)
   - [x] **P2-9d** The three badge types that were never awarded (perfectionist, dedicated, master) were removed from the enum and the UI rather than given invented rules; which achievements to add is a question for H7. A test keeps the enum and the icons in step. (eab4f5c)
-- [ ] **P2-10 Full i18n** (G9). Remove the hard-coded English from JS: alerts, "Completed", "Activate"/"Deactivate", "Recording...", "Session complete", chart labels, badge names. Translate the CSV and PDF exports too. Add a key-parity test, Polish plurals (`Intl.PluralRules`) and localized dates (`Intl.DateTimeFormat`).
+- **P2-10 Full i18n** (G9), split in iteration 68:
+  - [x] **P2-10a** No English on Polish screens: the page title and the app's name, the theme and language buttons' labels, the answer placeholder, the picture's alt text, the play-audio button, "Completed", the level badges, session titles (the app's own code titles show as the type's name), badge names, the admin list's "Points" and Activate/Deactivate, the recording lines and Stop, and the chart's "no data". An e2e test walks every screen in Polish looking for English; a key-parity test checks the dictionaries. (3351b61)
+  - [ ] **P2-10b** Dates and numbers in the app's language with `Intl.DateTimeFormat`/`Intl.NumberFormat`, not the browser's: session and plan dates, badge dates, chart labels, and hours ("1,5" in Polish). Polish plurals with `Intl.PluralRules` wherever a count meets a noun.
+  - [ ] **P2-10c** The CSV and PDF exports in the person's language. The PDF needs an embedded font with Polish letters (reportlab's built-in Helvetica has no "ł"), with its license in `frontend/assets/CREDITS.md` or next to it.
 - [ ] **P2-11 Accessible progress chart.** Provide a data-table alternative, and scale the y-axis to 0–100% (it scales to the highest value, so a steady 80% looks like the top of the chart). The line and theme colours were fixed in P0-7f.
 
 ## P3: Engineering quality

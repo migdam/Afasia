@@ -19,6 +19,29 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 68: 2026-10-15 20:01 UTC: P2-10a No English on Polish screens
+- **Baseline:** `check.sh` exit code 0: 305 backend tests, smoke, 107 e2e. No human commits.
+- **Split:** P2-10 became a (UI text), b (dates, numbers, plurals via `Intl`) and c (exports, which need a font with Polish letters).
+- **Audit first:**
+  - A scan of every Polish screen found: the theme and language button labels, "Completed", raw level codes ("easy"), the code titles ("pronunciation - easy"), "first session", and the answer placeholder.
+  - A static pass over `index.html` found the brand name, the picture's alt text and "Play Audio".
+  - A grep of the scripts found "Recording...", "Recording saved. Click submit when ready." (no longer true since P2-7a), "Stop", "Points:", "Activate"/"Deactivate", and the chart's "No data available".
+- **Test first:**
+  - `e2e/test_polish_everywhere.py`: both tests failed before. One walks login, sign-up, the dashboard with a finished session, progress with a badge, account, admin with patients, and an exercise. The other checks recording in Polish.
+  - `e2e/test_translations.py`: key parity (a guard), every key the page and scripts name exists (failed before), and none of the old English literals remain (failed before).
+- **Did:**
+  - 16 new keys (EN/PL).
+  - `translated()` helper (keeps `data-i18n`, so text follows later language changes), `EXERCISE_TYPE_KEYS` and `BADGE_KEYS`.
+  - `data-i18n-alt`, and the document title, are handled in `updatePageTranslations`.
+  - The guides now say only the exports and the date format are not yet in the chosen language.
+- **Caught by the first full run:**
+  - `test_untrusted_text` failed because I had replaced every session title with the type's name. Now only the app's own code titles (`${type} - ${difficulty}`) are translated, and titles given through the API show as given.
+  - The admin list shows the first 50 patients, so the new test waits for any row rather than one patient.
+- **Verified:** `scripts/check.sh` exit code 0: ruff "All checks passed!", pip-audit "No known vulnerabilities found", 305 backend tests, smoke, 112 e2e. Screenshots at 390 px in Polish were sent to the user.
+- **Commit:** 3351b61 (pushed: yes)
+- **Discovered:** P1-11. On phones the recent-sessions card overflows (404 px of content in 288 px), so the "Completed" badge is cut off and the score is off-screen (x = 400 on a 390 px screen). Measured with the old frontend too, so it predates this change.
+- **Next:** P1-11 (P1 comes before the rest of P2-10).
+
 ### 67: 2026-10-15 19:35 UTC: P2-9d Badges that can be earned
 - **Baseline:** `check.sh` exit code 0: 301 backend tests, smoke, 107 e2e. No human commits. The tests and the patch were written in the scratchpad until the baseline finished.
 - **Decision:** I removed the three badge types rather than implement them. Their names (perfectionist, master) suggest pressure. Inventing rules is a gamification decision, which H7 already asks about, and the UI only lists badges a person has earned, so nobody saw these three. H7 now names the open questions: a weekly goal, and which badges.
