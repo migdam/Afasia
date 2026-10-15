@@ -19,6 +19,22 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 56: 2026-10-15 16:19 UTC: P2-4f Calm feedback
+- **Baseline:** `check.sh` exit code 0: 240 backend tests, smoke, 89 e2e. No human commits. Tests were written in the scratchpad until it finished.
+- **Test first:** `e2e/test_calm_feedback.py`, 5 tests: all failed before. My first color test called `page.evaluate` with two arguments; Playwright takes one, so it now passes a list.
+- **Did:**
+  - Calm feedback colors from theme variables, with the red and green dark overrides removed.
+  - "Try again" as unscored practice: checked locally, with the first answer counting.
+  - `showFeedback`/`offerNext`/`tryAgain`/`checkPracticeAnswer` helpers; hints hidden once answered.
+  - Guides (EN/PL).
+- **Found by screenshots:**
+  - (1) An option under the pointer in the dark theme had default black text, 1.43:1. My first test moved the mouse away and so passed without the fix. It now measures each option at rest and hovered, and failed without the fix. Fixed: `.option-btn` uses the theme text color.
+  - (2) "Try again" sat half under the fixed bottom nav. Fixed with `scroll-padding-bottom`.
+- **Verified:** `scripts/check.sh` exit code 0: ruff, pip-audit "No known vulnerabilities found", 240 backend tests, smoke, 95 e2e. Two new screenshots sent to the user.
+- **Commit:** 4826566 (pushed: yes)
+- **Discovered:** the two problems above, both fixed here.
+- **Next:** P2-5 (forgiving answer checking: case, spacing, Polish diacritics, "almost").
+
 ### 55: 2026-10-15 15:51 UTC: P2-4e Language and focus
 - **Baseline:** `check.sh` exit code 0: 240 backend tests, smoke, 85 e2e. No human commits. Tests were written in the scratchpad until it finished.
 - **Test first:** `e2e/test_language_and_focus.py`, 4 tests: all failed before.
