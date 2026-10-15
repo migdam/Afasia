@@ -19,7 +19,7 @@ The buttons at the top right of every screen:
 
 Your browser remembers these choices.
 
-The exercises come in the language you choose. A few words also still appear in English when Polish is chosen: "Completed" in the session list, and the admin buttons.
+The exercises come in the language you choose. When Polish is chosen, the CSV and PDF exports are still in English, and dates are written the way your browser is set up rather than in the chosen language.
 
 ## Your account
 

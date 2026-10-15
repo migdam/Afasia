@@ -38,7 +38,7 @@ class SimpleChart {
             ctx.fillStyle = '#6B7280';
             ctx.font = '14px Inter, sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText('No data available', rect.width / 2, rect.height / 2);
+            ctx.fillText(i18n.translate('noChartData'), rect.width / 2, rect.height / 2);
             return;
         }
 
@@ -134,7 +134,7 @@ class SimpleChart {
             ctx.fillStyle = textColor;
             ctx.font = '14px Inter, sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText('No data available', rect.width / 2, rect.height / 2);
+            ctx.fillText(i18n.translate('noChartData'), rect.width / 2, rect.height / 2);
             return;
         }
 

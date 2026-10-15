@@ -110,6 +110,22 @@ const translations = {
         progressChart: "Progress Over Time",
         earnedBadges: "Earned Badges",
         noBadges: "No badges yet",
+        appName: "Aphasia Therapy",
+        toggleTheme: "Toggle dark mode",
+        changeLanguage: "Change language",
+        exerciseImage: "Exercise picture",
+        playAudio: "▶️ Play audio",
+        answerPlaceholder: "Type your answer…",
+        completed: "Completed",
+        activate: "Activate",
+        deactivate: "Deactivate",
+        stop: "Stop",
+        recordingNow: "Recording…",
+        recordingReady: "Recording ready. Listen to it, then choose how it went.",
+        noChartData: "No results yet.",
+        badgeFirstSession: "First session",
+        badgeWeekStreak: "7-day streak",
+        badgeMonthStreak: "30-day streak",
 
         // Admin
         admin: "Admin",
@@ -277,6 +293,22 @@ const translations = {
         progressChart: "Postęp w czasie",
         earnedBadges: "Zdobyte odznaki",
         noBadges: "Brak odznak",
+        appName: "Terapia Afazji",
+        toggleTheme: "Przełącz tryb ciemny",
+        changeLanguage: "Zmień język",
+        exerciseImage: "Obrazek do ćwiczenia",
+        playAudio: "▶️ Odtwórz nagranie",
+        answerPlaceholder: "Wpisz odpowiedź…",
+        completed: "Ukończona",
+        activate: "Aktywuj",
+        deactivate: "Dezaktywuj",
+        stop: "Zatrzymaj",
+        recordingNow: "Nagrywanie…",
+        recordingReady: "Nagranie gotowe. Odsłuchaj je, a potem wybierz, jak poszło.",
+        noChartData: "Nie ma jeszcze wyników.",
+        badgeFirstSession: "Pierwsza sesja",
+        badgeWeekStreak: "Seria 7 dni",
+        badgeMonthStreak: "Seria 30 dni",
 
         // Admin
         admin: "Administrator",
@@ -385,6 +417,10 @@ class I18n {
         document.querySelectorAll('[data-i18n-label]').forEach((element) => {
             element.setAttribute('aria-label', this.translate(element.getAttribute('data-i18n-label')));
         });
+        document.querySelectorAll('[data-i18n-alt]').forEach((element) => {
+            element.alt = this.translate(element.getAttribute('data-i18n-alt'));
+        });
+        document.title = this.translate('appName');
 
         // Update language toggle button
         const langText = document.getElementById('lang-text');

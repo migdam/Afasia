@@ -647,15 +647,15 @@ class AphasiaApp {
             }
 
             recordBtn.classList.add('recording');
-            recordBtn.replaceChildren(el('span', 'record-icon', '⏹️'), el('span', '', 'Stop'));
-            statusEl.textContent = 'Recording...';
+            recordBtn.replaceChildren(el('span', 'record-icon', '⏹️'), translated('span', '', 'stop'));
+            statusEl.textContent = i18n.translate('recordingNow');
             await this.listenAlong();
         } else {
             // Stop recording, and recognition with it
             this.recordedAudio = await audioRecorder.stopRecording();
             speechRecognizer.stop();
             this.resetRecordButton();
-            statusEl.textContent = 'Recording saved. Click submit when ready.';
+            statusEl.textContent = i18n.translate('recordingReady');
             document.getElementById('play-recording').hidden = false;
         }
     }

@@ -14,6 +14,26 @@ function el(tag, className, text) {
     return element;
 }
 
+/** An element with a translated text that follows later language changes. */
+function translated(tag, className, key) {
+    const element = el(tag, className, i18n.translate(key));
+    element.dataset.i18n = key;
+    return element;
+}
+
+// The dictionary keys of exercise types and badges.
+const EXERCISE_TYPE_KEYS = {
+    word_naming: 'wordNaming',
+    sentence_completion: 'sentenceCompletion',
+    pronunciation: 'pronunciation',
+    image_recognition: 'imageRecognition',
+};
+const BADGE_KEYS = {
+    first_session: 'badgeFirstSession',
+    week_streak: 'badgeWeekStreak',
+    month_streak: 'badgeMonthStreak',
+};
+
 /** Show a translated "nothing here yet" message in a list. */
 function showEmpty(container, key) {
     const message = el('p', 'empty-state', i18n.translate(key));
@@ -258,14 +278,21 @@ class UIManager {
         const meta = el('div', 'session-meta');
         meta.append(
             el('span', '', new Date(session.started_at).toLocaleDateString()),
-            el('span', `badge badge-${session.difficulty}`, session.difficulty)
+            translated('span', `badge badge-${session.difficulty}`, session.difficulty)
         );
         if (session.is_completed) {
-            meta.append(el('span', 'badge badge-completed', 'Completed'));
+            meta.append(translated('span', 'badge badge-completed', 'completed'));
         }
 
+        // The app titles its sessions with codes ("word_naming - easy"); those
+        // show as the type's name in the current language, and any other
+        // title as it was given.
+        const ownTitle = session.title === `${session.exercise_type} - ${session.difficulty}`;
+        const title = ownTitle
+            ? translated('div', 'session-title', EXERCISE_TYPE_KEYS[session.exercise_type] || session.exercise_type)
+            : el('div', 'session-title', session.title);
         const details = el('div');
-        details.append(el('div', 'session-title', session.title), meta);
+        details.append(title, meta);
         const header = el('div', 'session-header');
         header.append(details);
         if (session.is_completed) {
@@ -281,7 +308,7 @@ class UIManager {
         const meta = el('div', 'session-meta');
         meta.append(
             el('span', '', `📅 ${new Date(session.scheduled_time).toLocaleString()}`),
-            el('span', `badge badge-${session.difficulty}`, session.difficulty)
+            translated('span', `badge badge-${session.difficulty}`, session.difficulty)
         );
 
         const details = el('div');
@@ -352,7 +379,7 @@ class UIManager {
             const item = el('div', 'badge-item');
             item.append(
                 el('div', 'badge-icon', badgeIcons[badge.badge_type] || '🏅'),
-                el('div', 'badge-name', badge.badge_type.replace('_', ' ')),
+                translated('div', 'badge-name', BADGE_KEYS[badge.badge_type] || badge.badge_type),
                 el('div', 'badge-date', new Date(badge.earned_at).toLocaleDateString())
             );
             return item;
@@ -389,14 +416,16 @@ class UIManager {
         const name = document.createElement('h4');
         name.textContent = user.username;
         const details = document.createElement('p');
-        details.textContent = `${user.email} • Points: ${user.total_points}`;
+        details.append(`${user.email} • `, translated('span', '', 'points'), `: ${user.total_points}`);
         info.append(name, details);
 
         const actions = document.createElement('div');
         actions.className = 'user-actions';
         const toggle = document.createElement('button');
         toggle.className = `btn btn-sm ${user.is_active ? 'btn-secondary' : 'btn-primary'}`;
-        toggle.textContent = user.is_active ? 'Deactivate' : 'Activate';
+        const action = user.is_active ? 'deactivate' : 'activate';
+        toggle.textContent = i18n.translate(action);
+        toggle.dataset.i18n = action;
         toggle.addEventListener('click', () => this.toggleUserStatus(user.id, user.is_active));
         actions.append(toggle);
 

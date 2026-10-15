@@ -19,7 +19,7 @@ Przyciski w prawym górnym rogu każdego ekranu:
 
 Przeglądarka zapamiętuje te wybory.
 
-Ćwiczenia są w wybranym języku. Po wybraniu polskiego kilka słów nadal jest też po angielsku: „Completed” na liście sesji i przyciski w panelu administratora.
+Ćwiczenia są w wybranym języku. Po wybraniu polskiego eksporty CSV i PDF są jeszcze po angielsku, a daty są zapisane tak, jak ustawiono w przeglądarce, a nie w wybranym języku.
 
 ## Twoje konto
 
