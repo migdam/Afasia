@@ -96,7 +96,9 @@ class UIManager {
         document.getElementById('login-form-submit').reset();
         document.getElementById('register-form-submit').reset();
         document.getElementById('password-form').reset();
-        ['password-message', 'consent-message', 'data-message'].forEach((id) => this.clearFormMessage(id));
+        ['password-message', 'consent-message', 'data-message', 'login-message', 'register-message']
+            .forEach((id) => this.clearFormMessage(id));
+        this.clearNotice();
         document.getElementById('register-form').style.display = 'none';
         document.getElementById('login-form').style.display = 'block';
         this.showPage('auth');
@@ -213,7 +215,7 @@ class UIManager {
             await api.deleteScheduledSession(sessionId);
             await this.loadScheduledSessions();
         } catch (error) {
-            alert('Failed to delete scheduled session');
+            this.notify('deletePlanFailed');
         }
     }
 
@@ -327,7 +329,7 @@ class UIManager {
             }
             await this.loadAdminDashboard();
         } catch (error) {
-            alert('Failed to update user status');
+            this.notify('userStatusFailed');
         }
     }
 
@@ -345,9 +347,43 @@ class UIManager {
         }
     }
 
-    showNotification(message, type = 'info') {
-        // Simple notification (could be enhanced with a toast library)
-        alert(message);
+    // A message from the app at the top of the page, in the current
+    // language (U12). kind: 'error' (read out at once) or 'status'.
+    notify(key, kind = 'error', params = {}) {
+        const box = document.getElementById('app-message-box');
+        const message = document.getElementById('app-message');
+        let text = i18n.translate(key);
+        Object.entries(params).forEach(([name, value]) => {
+            text = text.replace(`{${name}}`, value);
+        });
+        message.textContent = text;
+        box.className = `app-message-box ${kind}`;
+        box.setAttribute('role', kind === 'error' ? 'alert' : 'status');
+        box.hidden = false;
+    }
+
+    clearNotice() {
+        document.getElementById('app-message-box').hidden = true;
+    }
+
+    // Ask in an in-app dialog whether to leave the session; resolves to
+    // true (leave) or false (stay, or the dialog closed with Escape).
+    confirmLeave() {
+        const dialog = document.getElementById('leave-dialog');
+        const stay = document.getElementById('leave-stay');
+        const go = document.getElementById('leave-go');
+        return new Promise((resolve) => {
+            const finish = (answer) => {
+                stay.onclick = go.onclick = dialog.oncancel = null;
+                if (dialog.open) dialog.close();
+                resolve(answer);
+            };
+            stay.onclick = () => finish(false);
+            go.onclick = () => finish(true);
+            dialog.oncancel = (event) => { event.preventDefault(); finish(false); };
+            dialog.showModal();
+            stay.focus();  // staying is the safe default
+        });
     }
 
     async downloadFile(blob, filename) {

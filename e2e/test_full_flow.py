@@ -13,7 +13,6 @@ import pytest
 from playwright.sync_api import expect
 from test_sessions import ANSWERS as SENTENCE_ANSWERS
 from test_sessions import SENTENCES
-from test_sessions import record_dialogs
 
 # The naming concepts, in both languages: question → answer.
 CONCEPTS = json.loads((Path(__file__).resolve().parents[1] / "backend/content/concepts.json").read_text())["concepts"]
@@ -61,7 +60,6 @@ def play_session(page, exercise_type, text, wrong_first):
 @pytest.mark.parametrize("language", ["en", "pl"])
 def test_the_whole_flow(page, account, language):
     text = TEXT[language]
-    record_dialogs(page)
     if language == "pl":
         page.click("#lang-toggle")
     expect(page.locator("#lang-text")).to_have_text(text["label"])

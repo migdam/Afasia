@@ -18,7 +18,7 @@ Przyciski w prawym górnym rogu każdego ekranu:
 
 Przeglądarka zapamiętuje oba wybory.
 
-Ćwiczenia są w wybranym języku. Po wybraniu polskiego kilka komunikatów nadal jest też po angielsku: okienka z komunikatami, „Completed” na liście sesji i przyciski w panelu administratora.
+Ćwiczenia są w wybranym języku. Po wybraniu polskiego kilka słów nadal jest też po angielsku: „Completed” na liście sesji i przyciski w panelu administratora.
 
 ## Twoje konto
 
@@ -61,11 +61,11 @@ Pasek na dole przełącza między **Tablicą** a **Postępem**. Terapeuci i admi
 5. Nie spiesz się. Kiedy zechcesz, kliknij **Dalej**. Po ostatnim ćwiczeniu przycisk nazywa się **Zobacz wynik**.
 
 Na górze ekranu ćwiczenia:
-- **Wyjdź** kończy sesję. Aplikacja poprosi o potwierdzenie. Przerwana sesja zostaje nieukończona i nie liczy się do wyników.
+- **Wyjdź** kończy sesję. Aplikacja najpierw zapyta: wybierz **Zostań** albo **Wyjdź**. Przerwana sesja zostaje nieukończona i nie liczy się do wyników.
 - Licznik i pasek pokazują, ile już za tobą, np. **3/10**.
 - Nie ma zegara ani limitu czasu.
 
-Po ostatnim ćwiczeniu pojawia się wynik, np. „Session complete! Score: 80%” (ten komunikat jest jeszcze po angielsku), i wracasz na tablicę.
+Po ostatnim ćwiczeniu kliknij **Zobacz wynik**: wracasz na tablicę, a komunikat u góry mówi np. „Sesja zakończona. Twój wynik: 80%.”. Kliknij **OK**, żeby go zamknąć.
 
 ### Nazywanie słów
 
@@ -77,7 +77,7 @@ Odpowiedź musi się dokładnie zgadzać. Nie liczą się tylko wielkość liter
 
 ### Uzupełnianie zdań
 
-Czytasz zdanie z luką, np. „Niebo jest ___”. Kliknij pasujące słowo, a potem **Zatwierdź**. Jeśli klikniesz **Zatwierdź** bez wyboru, aplikacja poprosi najpierw o odpowiedź („Please provide an answer”).
+Czytasz zdanie z luką, np. „Niebo jest ___”. Kliknij pasujące słowo, a potem **Zatwierdź**. Jeśli klikniesz **Zatwierdź** bez wyboru, aplikacja poprosi najpierw o odpowiedź („Najpierw wybierz lub wpisz odpowiedź.”).
 
 ### Wymowa
 
@@ -135,12 +135,12 @@ Odnośnik **Informacja o prywatności**, na stronie logowania i na stronie Konto
 
 | Co się dzieje | Co zrobić |
 |---|---|
-| „Incorrect username or password” | Sprawdź pisownię i Caps Lock. W nazwie użytkownika liczy się wielkość liter. |
-| „Inactive user” | Twoje konto zostało dezaktywowane. Zapytaj logopedę lub administratora. |
-| „Too many failed attempts” | Po 5 błędnych hasłach logowanie na to konto z Twojego urządzenia jest wstrzymane na maksymalnie 15 minut. Odczekaj i spróbuj ponownie. |
+| „Nazwa użytkownika lub hasło są nieprawidłowe.” | Sprawdź pisownię i Caps Lock. W nazwie użytkownika liczy się wielkość liter. |
+| „To konto jest wyłączone.” | Twoje konto zostało dezaktywowane. Zapytaj logopedę lub administratora. |
+| „Zbyt wiele błędnych haseł.” | Po 5 błędnych hasłach logowanie na to konto z Twojego urządzenia jest wstrzymane na maksymalnie 15 minut. Odczekaj i spróbuj ponownie. |
 | Wracasz na stronę logowania | Zalogowanie wygasło po 30 minutach bez korzystania z aplikacji albo 12 godzinach od zalogowania. Zaloguj się ponownie. |
-| „Failed to start session” | Serwer może nie działać. Spróbuj później albo powiadom osobę, która uruchamia aplikację. |
-| „Please provide an answer” | Przed **Zatwierdź** wpisz słowo albo wybierz odpowiedź. |
+| „Nie udało się rozpocząć sesji.” | Serwer może nie działać. Spróbuj później albo powiadom osobę, która uruchamia aplikację. |
+| „Najpierw wybierz lub wpisz odpowiedź.” | Przed **Zatwierdź** wpisz słowo albo wybierz odpowiedź. |
 | Mikrofon nie działa | Zezwól na mikrofon w ustawieniach strony w przeglądarce i odśwież stronę. Wymowa i tak działa zawodnie (zob. wyżej). |
 
 ## Pytania

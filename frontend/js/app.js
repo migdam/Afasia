@@ -166,11 +166,13 @@ class AphasiaApp {
         });
 
         // Exercise controls
-        document.getElementById('exit-exercise').addEventListener('click', () => {
-            if (confirm('Are you sure you want to exit? Progress will be lost.')) {
+        document.getElementById('exit-exercise').addEventListener('click', async () => {
+            if (await ui.confirmLeave()) {
                 this.exitExercise();
             }
         });
+
+        document.getElementById('app-message-ok').addEventListener('click', () => ui.clearNotice());
 
         document.getElementById('submit-answer').addEventListener('click', () => {
             this.submitCurrentAnswer();
@@ -195,7 +197,7 @@ class AphasiaApp {
                 const blob = await api.exportProgressCSV();
                 ui.downloadFile(blob, `progress_${new Date().toISOString().split('T')[0]}.csv`);
             } catch (error) {
-                alert('Failed to export CSV');
+                ui.notify('exportFailed');
             }
         });
 
@@ -204,7 +206,7 @@ class AphasiaApp {
                 const blob = await api.exportProgressPDF();
                 ui.downloadFile(blob, `progress_${new Date().toISOString().split('T')[0]}.pdf`);
             } catch (error) {
-                alert('Failed to export PDF');
+                ui.notify('exportFailed');
             }
         });
     }
@@ -219,7 +221,8 @@ class AphasiaApp {
             ui.loadRecentSessions();
             ui.loadScheduledSessions();
         } catch (error) {
-            alert('Login failed: ' + error.message);
+            const key = { 401: 'loginFailed', 400: 'accountInactive', 429: 'tooManyAttempts' }[error.status] || 'tryAgain';
+            ui.showFormMessage('login-message', key, 'error');
         }
     }
 
@@ -241,7 +244,8 @@ class AphasiaApp {
             ui.loadRecentSessions();
             ui.loadScheduledSessions();
         } catch (error) {
-            alert('Registration failed: ' + error.message);
+            const key = { 400: 'accountTaken', 422: 'signUpCheck' }[error.status] || 'tryAgain';
+            ui.showFormMessage('register-message', key, 'error');
         }
     }
 
@@ -363,7 +367,7 @@ class AphasiaApp {
             ui.loadScheduledSessions();
             document.getElementById('schedule-form').reset();
         } catch (error) {
-            alert('Failed to schedule session');
+            ui.notify('scheduleFailed');
         }
     }
 
@@ -390,7 +394,7 @@ class AphasiaApp {
             ui.showPage('exercise');
             this.showCurrentExercise();
         } catch (error) {
-            alert('Failed to start session: ' + error.message);
+            ui.notify('startFailed');
         }
     }
 
@@ -516,7 +520,10 @@ class AphasiaApp {
 
         if (!answer) {
             submitButton.disabled = false;
-            alert('Please provide an answer');
+            const feedback = document.getElementById('feedback');
+            feedback.className = 'feedback';
+            feedback.textContent = i18n.translate('answerFirst');
+            feedback.style.display = 'block';
             return;
         }
 
@@ -555,7 +562,7 @@ class AphasiaApp {
             next.focus();
         } catch (error) {
             submitButton.disabled = false;
-            alert('Failed to submit answer: ' + error.message);
+            ui.notify('answerFailed');
         }
     }
 
@@ -575,7 +582,10 @@ class AphasiaApp {
                 statusEl.textContent = i18n.translate('recordingOff');
                 return;
             }
-            if (!started) return;
+            if (!started) {
+                statusEl.textContent = i18n.translate('microphoneBlocked');
+                return;
+            }
 
             recordBtn.classList.add('recording');
             recordBtn.replaceChildren(el('span', 'record-icon', '⏹️'), el('span', '', 'Stop'));
@@ -609,12 +619,12 @@ class AphasiaApp {
             const session = await api.completeSession(this.currentSession.id);
 
             this.stopListening();
-            alert(`Session complete! Score: ${Math.round(session.score)}%`);
 
-            // Return to dashboard
+            // Back to the dashboard, with the result in words.
             ui.showPage('dashboard');
             ui.loadRecentSessions();
-            this.loadUserData();
+            await this.loadUserData();
+            ui.notify('sessionDone', 'status', { score: Math.round(session.score) });
         } catch (error) {
             console.error('Failed to complete session:', error);
         }

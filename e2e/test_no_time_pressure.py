@@ -2,7 +2,7 @@
 for the person to move on (P2-4a)."""
 import pytest
 from playwright.sync_api import expect
-from test_sessions import choose, record_dialogs, start_session
+from test_sessions import choose, start_session
 
 LABEL = {"en": {"next": "Next", "last": "See my result"}, "pl": {"next": "Dalej", "last": "Zobacz wynik"}}
 
@@ -15,7 +15,6 @@ def test_no_clock_is_shown(page, account):
 
 @pytest.mark.parametrize("language", ["en", "pl"])
 def test_the_exercise_waits_until_the_person_moves_on(page, account, language):
-    record_dialogs(page)
     if language == "pl":
         page.click("#lang-toggle")
     start_session(page)
@@ -36,7 +35,6 @@ def test_the_exercise_waits_until_the_person_moves_on(page, account, language):
 
 
 def test_after_the_last_exercise_the_button_shows_the_result(page, account):
-    record_dialogs(page)
     start_session(page)
     for number in range(1, 6):
         expect(page.locator("#exercise-counter")).to_have_text(f"{number}/5")

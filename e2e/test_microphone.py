@@ -7,7 +7,7 @@ import re
 
 from playwright.sync_api import expect
 from conftest import browser_token, call_api
-from test_sessions import record_dialogs, start_session
+from test_sessions import leave_session, start_session
 
 RECORDING = re.compile(r"\brecording\b")
 COUNT_STREAMS = """
@@ -62,10 +62,9 @@ def test_a_second_recording_turns_it_on_and_off_again(page, servers, account):
 
 
 def test_leaving_the_session_mid_recording_turns_it_off(page, servers, account):
-    record_dialogs(page)  # accepts "Are you sure you want to exit?"
     start_recording(page, servers)
 
-    page.click("#exit-exercise")
+    leave_session(page)
 
     expect(page.locator("#dashboard-page")).to_be_visible()
     page.wait_for_function("() => window.__micStreams.every(s => s.getTracks().every(t => t.readyState === 'ended'))")

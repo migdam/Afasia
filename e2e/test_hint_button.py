@@ -1,7 +1,6 @@
 """The hint button in naming exercises (P2-3b)."""
 import pytest
 from playwright.sync_api import expect
-from test_sessions import record_dialogs
 
 TEXT = {
     "en": {"button": "Hint", "first": "Group:", "second": "It starts with:", "third": "The word is:",
@@ -21,7 +20,6 @@ def start(page, exercise_type):
 
 @pytest.mark.parametrize("language", ["en", "pl"])
 def test_three_hints_then_the_word_and_the_feedback_counts_them(page, account, language):
-    record_dialogs(page)
     text = TEXT[language]
     if language == "pl":
         page.click("#lang-toggle")

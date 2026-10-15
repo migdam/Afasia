@@ -925,3 +925,34 @@ body {
 .hint-list li {
     margin-bottom: 0.5rem;
 }
+
+/* Messages from the app (ui.notify) */
+.app-message-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding: 0.75rem 1rem;
+    border-left: 4px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+    font-size: 1.1rem;
+}
+
+.app-message-box[hidden] {
+    display: none;
+}
+
+.app-message-box.error {
+    border-left-color: var(--error-color);
+}
+
+.app-message-box.status {
+    border-left-color: var(--success-color);
+}
+
+.app-message-box p {
+    margin: 0;
+}

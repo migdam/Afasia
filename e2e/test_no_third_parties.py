@@ -7,11 +7,9 @@ from urllib.parse import urlparse
 from conftest import PASSWORD
 from playwright.sync_api import expect
 from test_full_flow import TEXT, play_session
-from test_sessions import record_dialogs
 
 
 def test_a_whole_visit_requests_nothing_from_other_sites(page, servers, account):
-    record_dialogs(page)
     origins = set()
     page.on("request", lambda request: origins.add(urlparse(request.url).netloc))
 

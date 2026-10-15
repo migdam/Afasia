@@ -29,3 +29,15 @@ def test_the_page_policy_allows_no_other_websites():
     connect = next(d for d in policy.split(";") if d.strip().startswith("connect-src")).split()[1:]
 
     assert "http:" not in connect and "https:" not in connect and "*" not in connect, connect
+
+
+def test_no_browser_popups():
+    # U12: messages are shown in the app, in words, never alert() or confirm().
+    calls = [
+        f"{path.name}:{number}"
+        for path in (FRONTEND / "js").glob("*.js")
+        for number, line in enumerate(path.read_text().splitlines(), 1)
+        if re.search(r"\b(alert|confirm|prompt)\(", line) and not line.strip().startswith("//")
+    ]
+
+    assert calls == []

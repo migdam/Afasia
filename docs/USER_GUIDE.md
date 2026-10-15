@@ -18,7 +18,7 @@ The buttons at the top right of every screen:
 
 Your browser remembers both choices.
 
-The exercises come in the language you choose. A few messages also still appear in English when Polish is chosen: pop-up messages, "Completed" in the session list, and the admin buttons.
+The exercises come in the language you choose. A few words also still appear in English when Polish is chosen: "Completed" in the session list, and the admin buttons.
 
 ## Your account
 
@@ -61,11 +61,11 @@ The bar at the bottom switches between **Dashboard** and **Progress**. Therapist
 5. Take as long as you like. When you're ready, click **Next**. After the last exercise, the button says **See my result**.
 
 At the top of the exercise screen:
-- **Exit** leaves the session. You're asked to confirm. A session you leave stays unfinished and doesn't count towards your scores.
+- **Exit** leaves the session. The app asks first: choose **Stay** or **Leave**. A session you leave stays unfinished and doesn't count towards your scores.
 - The counter and bar show how far you are, for example **3/10**.
 - There is no clock and no time limit.
 
-After the last exercise, a message shows your score, for example "Session complete! Score: 80%", and you return to the dashboard.
+After the last exercise, click **See my result**: you return to the dashboard, and a message at the top says, for example, "Session finished. Your score: 80%." Click **OK** to close it.
 
 ### Word Naming
 
@@ -135,12 +135,12 @@ The **Privacy notice** link, on the login page and the Account page, explains wh
 
 | What happens | What to do |
 |---|---|
-| "Incorrect username or password" | Check the spelling and Caps Lock. Usernames are case-sensitive. |
-| "Inactive user" | Your account was deactivated. Ask your therapist or admin. |
-| "Too many failed attempts" | After 5 wrong passwords, logging in to that account from your device is paused for up to 15 minutes. Wait, then try again. |
+| "The username or password is not right." | Check the spelling and Caps Lock. Usernames are case-sensitive. |
+| "This account is turned off." | Your account was deactivated. Ask your therapist or admin. |
+| "Too many wrong passwords." | After 5 wrong passwords, logging in to that account from your device is paused for up to 15 minutes. Wait, then try again. |
 | You're back at the login page | Your login ended after 30 minutes without use, or 12 hours after you logged in. Log in again. |
-| "Failed to start session" | The server may be down. Try again later, or tell whoever runs the app. |
-| "Please provide an answer" | Type a word or choose an option before **Submit**. |
+| "The session couldn't start." | The server may be down. Try again later, or tell whoever runs the app. |
+| "Choose or type an answer first." | Type a word or choose an option before **Submit**. |
 | The microphone doesn't work | Allow it in your browser's site settings and reload. Pronunciation is unreliable anyway (see above). |
 
 ## Questions

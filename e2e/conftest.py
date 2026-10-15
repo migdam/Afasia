@@ -117,12 +117,15 @@ def page(browser, servers):
     context = browser.new_context()
     context.add_init_script(f"window.API_BASE_URL = {json.dumps(servers['api'])};")
     page = context.new_page()
-    errors = []
+    errors, popups = [], []
     page.on("pageerror", lambda error: errors.append(str(error)))
+    # U12: the app shows messages itself; a browser dialog fails the test.
+    page.on("dialog", lambda dialog: (popups.append(dialog.message), dialog.dismiss()))
     page.goto(servers["web"])
     yield page
     context.close()
     assert not errors, f"JavaScript errors: {errors}"
+    assert not popups, f"Browser dialogs (use in-app messages): {popups}"
 
 
 @pytest.fixture

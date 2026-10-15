@@ -37,6 +37,12 @@
 
     <!-- Main Content -->
     <main class="container">
+        <!-- Messages from the app, in words (no browser pop-ups, U12) -->
+        <div id="app-message-box" class="app-message-box" hidden>
+            <p id="app-message"></p>
+            <button type="button" id="app-message-ok" class="btn btn-secondary" data-i18n="ok">OK</button>
+        </div>
+
         <!-- Login/Register Page -->
         <div id="auth-page" class="page active">
             <div class="auth-container">
@@ -58,6 +64,7 @@
                                 <input type="password" id="login-password" required>
                             </div>
                             <button type="submit" class="btn btn-primary" data-i18n="login">Login</button>
+                            <p id="login-message" class="form-message"></p>
                         </form>
                         <p class="switch-auth">
                             <span data-i18n="noAccount">Don't have an account?</span>
@@ -86,6 +93,7 @@
                                 <input type="password" id="register-password" required minlength="8" autocomplete="new-password">
                             </div>
                             <button type="submit" class="btn btn-primary" data-i18n="register">Register</button>
+                            <p id="register-message" class="form-message"></p>
                         </form>
                         <p class="switch-auth">
                             <span data-i18n="haveAccount">Already have an account?</span>
@@ -338,6 +346,16 @@
                     <button type="submit" id="delete-confirm" class="btn btn-danger" data-i18n="deleteForGood">Delete for good</button>
                 </div>
             </form>
+        </dialog>
+
+        <!-- Leaving a session -->
+        <dialog id="leave-dialog" class="app-dialog" aria-labelledby="leave-title" aria-describedby="leave-text">
+            <h3 id="leave-title" data-i18n="leaveTitle">Leave this session?</h3>
+            <p id="leave-text" data-i18n="leaveText">The session stays unfinished and doesn't count towards your scores.</p>
+            <div class="modal-actions">
+                <button type="button" id="leave-stay" class="btn btn-secondary" data-i18n="stay">Stay</button>
+                <button type="button" id="leave-go" class="btn btn-primary" data-i18n="leave">Leave</button>
+            </div>
         </dialog>
 
         <!-- Asked before the first recording and before speech recognition -->

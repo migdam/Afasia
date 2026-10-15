@@ -17,8 +17,8 @@ class AudioRecorder {
         try {
             this.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         } catch (error) {
+            // The caller explains this in words (app.toggleRecording).
             console.error('Microphone access denied:', error);
-            alert('Microphone access is required for pronunciation exercises.');
             return false;
         }
 
