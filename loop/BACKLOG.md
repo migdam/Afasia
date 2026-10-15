@@ -170,15 +170,14 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 - **P2-3 Naming with a cueing hierarchy** (U7, C1). Split on 2026-10-15; done. A hint button steps through: meaning cue → first sound (audio) or first letter → whole word to repeat. Record the cue level for each answer, and score by independence. Since P0-6, the naming prompt shows a description of the item, because there are no pictures. That is the meaning cue given up front. Once pictures exist (H2), show the picture alone and make the description the first hint.
   - [x] **P2-3a Hints in the API** (e7b8178). `POST /therapy/exercises/{id}/hint`: 1 features (what for, where), 2 first letter, 3 the word, in the session's language. The level is stored (`exercise_cues`) and shown as `cue_level`; points keep 100/75/50/25% (pending review). The no-leak check now covers the features (three leaks fixed).
   - [x] **P2-3b The hint button** (157affb). "Hint"/"Podpowiedź" in naming exercises; hints appear as a numbered `aria-live` list; the button is off after the third; the feedback adds "Hints used: N". Later, with audio (H3), level 2 should also play the first sound.
-- [ ] **P2-4 Aphasia-friendly UI pass** (U1–U5, U8, U11, U12):
-  - Larger type and touch targets.
-  - Remove the 2 s auto-advance and the visible timer.
-  - A read-aloud button for every instruction (SpeechSynthesis, PL/EN).
-  - Accessible dialogs instead of `alert()` and `confirm()`.
-  - `aria-live` feedback and proper focus management.
-  - Update `<html lang>` when the language changes.
-  - Calm feedback copy.
-  - The language button's text ("EN"/"PL") is near-black on the dark header in the dark theme 🔎 (seen in a 375 px screenshot in iteration 29): too little contrast.
+- **P2-4 Aphasia-friendly UI pass** (U1–U5, U8, U11, U12). Split into a–f on 2026-10-15.
+  - [x] **P2-4a No time pressure** (U4; 7eb6b49). No automatic move on and no visible clock; "Next"/"Dalej" (then "See my result") takes the focus after an answer, and the feedback is a `role="status"` region.
+  - [ ] **P2-4b In-app messages instead of `alert()` and `confirm()`** (U12). Every message in plain words, EN and PL, with a clear next step: login and sign-up errors, export errors, session start, "please answer", session complete (with the score), and leaving a session (confirm in an in-app dialog). Reuse `ui.showFormMessage` and `.app-dialog`.
+  - [ ] **P2-4c Larger text and targets** (U1, U5). Body text at least 18 px (default 20), line height 1.5 or more, targets at least 48×48 px with spacing, and a way to enlarge text. The language button's text ("EN"/"PL") is near-black on the dark header in the dark theme 🔎 (seen in a 375 px screenshot in iteration 29): too little contrast.
+  - [ ] **P2-4d Read aloud** (U3). A button for every instruction and prompt that reads it with speech synthesis in the selected language, and works without consent dialogs (speech synthesis stays in the browser) [check this for each browser before claiming it].
+  - [ ] **P2-4e Language and focus.** Update `<html lang>` when the language changes, and move the focus sensibly when pages change.
+  - [ ] **P2-4f Calm feedback** (U8). After a wrong answer, show the right answer (later with picture and audio), and let the person try again or move on; check the colors and copy.
+
 - [ ] **P2-5 Forgiving answer checking** (U6). Normalize case, spacing and diacritics per language, accept synonyms from content, and give "almost" feedback for near misses. Unit tests include Polish (żółw/zolw, ł/l).
 - [ ] **P2-6 Answering without typing** (U6). Offer word choice, picture choice and letter tiles; typing becomes optional.
 - [ ] **P2-7 Speech practice that works** (C5). Today, recognition starts only at submit time and listens to new audio, so the recording itself is never transcribed. Redesign the flow as listen → record → play back → self-rate (plus a recognizer suggestion, with consent) → continue. Fall back gracefully where speech recognition is unsupported, and store the transcription and confidence.

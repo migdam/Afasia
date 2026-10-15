@@ -19,6 +19,22 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 49: 2026-10-15 14:11 UTC: P2-4a No time pressure
+- **Baseline:** `check.sh` exit code 0: 239 backend tests, smoke, 54 e2e. No human commits. Tests were written in the scratchpad until it finished.
+- **Split:** P2-4 became a–f (time pressure, dialogs, sizes, read aloud, language and focus, calm feedback).
+- **Test first:** `e2e/test_no_time_pressure.py`, 4 tests: all failed before.
+- **Did:**
+  - Removed the 2-second advance and the clock (markup, JS, CSS).
+  - A "Next" button, focused, turning into "See my result" at the end.
+  - The feedback has `role="status"`.
+  - Updated e2e tests to click "Next".
+  - User guides and READMEs (EN/PL).
+  - Made the Polish docs gender-neutral ("Kiedy zechcesz", "zalogowanie trwa").
+- **Verified:** `scripts/check.sh` exit code 0: ruff, pip-audit "No known vulnerabilities found", 239 backend tests, smoke, 58 e2e. The gender-neutral wording came afterwards; `tests/test_docs.py` passes on it.
+- **Commit:** 7eb6b49 (pushed: yes)
+- **Discovered:** masculine-only forms in the Polish docs, fixed here.
+- **Next:** P2-4b (in-app messages instead of `alert()`/`confirm()`).
+
 ### 48: 2026-10-15 13:56 UTC: P2-3b The hint button
 - **Baseline:** `check.sh` exit code 0: 239 backend tests, smoke, 51 e2e. No human commits. Tests were written in the scratchpad until it finished.
 - **Test first:** `e2e/test_hint_button.py`. The two hint tests (EN, PL) failed before. "Only naming offers hints" passed before too, as a guard.
