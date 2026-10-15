@@ -19,6 +19,21 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 48: 2026-10-15 13:56 UTC: P2-3b The hint button
+- **Baseline:** `check.sh` exit code 0: 239 backend tests, smoke, 51 e2e. No human commits. Tests were written in the scratchpad until it finished.
+- **Test first:** `e2e/test_hint_button.py`. The two hint tests (EN, PL) failed before. "Only naming offers hints" passed before too, as a guard.
+- **Did:**
+  - `index.html`: hint area and list.
+  - `app.js`: `showNextHint`, a reset per exercise, the button only for naming, and "Hints used" in the feedback.
+  - `api.js`: `getHint`. i18n EN/PL, CSS.
+  - User guides (with a Polish example now) and clinical docs.
+- **Verified:**
+  - `scripts/check.sh` exit code 0: ruff, pip-audit "No known vulnerabilities found", 239 backend tests, smoke, 54 e2e.
+  - A 375 px screenshot in PL/dark.
+- **Commit:** 157affb (pushed: yes)
+- **Discovered:** nothing new. The English answer placeholder in Polish is already part of P2-10.
+- **Next:** P2-4 (aphasia-friendly UI pass). It is large, so split it.
+
 ### 47: 2026-10-15 13:42 UTC: P2-3a Hints in the API
 - **Baseline:** `check.sh` exit code 0: 229 backend tests, smoke, 51 e2e. No human commits. Tests were written in the scratchpad until it finished.
 - **Split:** P2-3 became a (API, storage, scoring) and b (the button).
