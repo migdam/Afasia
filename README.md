@@ -597,6 +597,8 @@ aphasia-therapy-app/
 │   ├── USER_GUIDE.md
 │   ├── API.md
 │   └── DEPLOYMENT.md
+├── e2e/                        # Browser tests (Playwright)
+├── scripts/                    # check.sh (all checks), smoke.sh (README quick start)
 ├── docker-compose.yml
 ├── .env.template
 ├── .gitignore

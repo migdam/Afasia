@@ -3,7 +3,9 @@
  * Handles all API communication with the backend
  */
 
-const API_BASE_URL = 'http://localhost:8000/api/v1';
+// A page can set window.API_BASE_URL before this script runs (the end-to-end
+// tests do, to reach their own backend).
+const API_BASE_URL = window.API_BASE_URL || 'http://localhost:8000/api/v1';
 
 class APIClient {
     constructor() {

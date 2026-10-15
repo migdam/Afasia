@@ -32,6 +32,12 @@ class UIManager {
     }
 
     showAuthPage() {
+        // Start again from an empty login form, so nothing typed earlier (a
+        // password included) is left on screen for the next person.
+        document.getElementById('login-form-submit').reset();
+        document.getElementById('register-form-submit').reset();
+        document.getElementById('register-form').style.display = 'none';
+        document.getElementById('login-form').style.display = 'block';
         this.showPage('auth');
         document.querySelector('.bottom-nav').style.display = 'none';
         document.getElementById('logout-btn').style.display = 'none';

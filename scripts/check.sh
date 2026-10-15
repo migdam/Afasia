@@ -4,8 +4,8 @@
 #   scripts/check.sh
 #
 # Creates or reuses .venv-check at the repository root (rebuilt when the pinned
-# backend requirements change), then runs the linter, the tests, and the
-# README quick start (scripts/smoke.sh).
+# backend requirements change), then runs the linter, the backend tests, the
+# README quick start (scripts/smoke.sh) and the browser tests (e2e/).
 # Set PYTHON to choose the interpreter (default: python3.11, else python3).
 set -euo pipefail
 
@@ -44,9 +44,16 @@ fi
 
 cd "$backend"
 echo "== Lint: ruff"
-"$venv/bin/ruff" check .
+"$venv/bin/ruff" check . "$root/e2e"
 echo "== Tests: pytest"
 "$venv/bin/python" -m pytest
 echo "== Smoke: README quick start"
 "$root/scripts/smoke.sh"
+echo "== End-to-end: Playwright"
+# Environments that provide browsers set PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD;
+# elsewhere, fetch the build this Playwright version needs (cached after once).
+if [[ -z "${PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD:-}" ]]; then
+  "$venv/bin/python" -m playwright install chromium
+fi
+"$venv/bin/python" -m pytest "$root/e2e"
 echo "== All checks passed"

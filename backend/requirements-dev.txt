@@ -5,3 +5,7 @@ ruff==0.17.0
 # passes app= to httpx.Client, which httpx 0.28 removed, so stay on 0.27.x
 # until the FastAPI upgrade (backlog P1-4).
 httpx==0.27.2
+# End-to-end tests (e2e/). 1.56.0 matches the browsers preinstalled in Claude
+# Code cloud sessions (Chromium build 1194), which can't download others;
+# elsewhere scripts/check.sh downloads the matching build.
+playwright==1.56.0
