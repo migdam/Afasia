@@ -98,3 +98,23 @@ def test_on_a_phone_with_large_text_nothing_runs_off_the_screen(page, account):
             .filter((e) => e.offsetParent !== null && e.getBoundingClientRect().right > window.innerWidth + 1)
             .map((e) => e.id || e.className || e.tagName)""")
         assert overflow == [], (name, overflow)
+
+
+def test_answer_options_are_readable_in_both_themes_even_under_the_pointer(page, account):
+    start_session(page)
+    for theme in ("light", "dark"):
+        if theme == "dark":
+            page.click("#theme-toggle")
+        for index in range(page.locator(".option-btn").count()):
+            selector = f"#exercise-options .option-btn:nth-child({index + 1})"
+            for hovered in (False, True):
+                if hovered:
+                    page.hover(selector)
+                else:
+                    page.mouse.move(0, 0)
+                for _ in range(25):  # colors change with a short transition
+                    ratio = page.evaluate(CONTRAST, selector)
+                    if ratio >= 4.5:
+                        break
+                    page.wait_for_timeout(200)
+                assert ratio >= 4.5, (theme, index, "hovered" if hovered else "resting", ratio)

@@ -58,7 +58,7 @@ The bar at the bottom switches between **Dashboard** and **Progress**. Therapist
    - **Number of Exercises:** 5 to 50. Short sessions of 5 to 10 are a good start.
 2. Click **Start**.
 3. Answer the exercise, then click **Submit**.
-4. You'll see either **"Correct! Well done!"** or **"Not quite. Correct answer: …"**, with the right answer in bold.
+4. You'll see either **"Correct! Well done!"** or **"Not quite. Correct answer: …"**, with the right answer in bold. After a wrong answer you can click **Try again** to practise it once more; this practice try isn't scored, as your first answer is the one that counts.
 5. Take as long as you like. When you're ready, click **Next**. After the last exercise, the button says **See my result**.
 
 At the top of the exercise screen:

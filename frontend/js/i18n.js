@@ -54,6 +54,9 @@ const translations = {
         correctAnswer: "Correct answer",
         hint: "Hint",
         nextExercise: "Next",
+        tryAgainPractice: "Try again",
+        practiceRight: "That's it.",
+        practiceWrong: "Not yet. The answer is:",
         largerText: "Larger text",
         readAloud: "Read aloud",
 
@@ -203,6 +206,9 @@ const translations = {
         correctAnswer: "Prawidłowa odpowiedź",
         hint: "Podpowiedź",
         nextExercise: "Dalej",
+        tryAgainPractice: "Spróbuj jeszcze raz",
+        practiceRight: "Tak jest.",
+        practiceWrong: "Jeszcze nie. Odpowiedź to:",
         largerText: "Większy tekst",
         readAloud: "Przeczytaj",
 

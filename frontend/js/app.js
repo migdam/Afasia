@@ -95,6 +95,8 @@ class AphasiaApp {
             await this.handleDeleteAccount();
         });
 
+        document.getElementById('try-again').addEventListener('click', () => this.tryAgain());
+
         document.getElementById('next-exercise').addEventListener('click', () => {
             this.goToNextExercise();
         });
@@ -456,6 +458,9 @@ class AphasiaApp {
         document.getElementById('feedback').style.display = 'none';
         document.getElementById('read-feedback').style.display = 'none';
         document.getElementById('next-exercise').style.display = 'none';
+        document.getElementById('try-again').style.display = 'none';
+        this.practiceAnswer = null;
+        this.lastRightAnswer = null;
         ui.updateReadAloud();
         document.getElementById('submit-answer').style.display = '';
 
@@ -549,6 +554,13 @@ class AphasiaApp {
             answer = document.getElementById('answer-input').value;
         }
 
+        // A practice try after a wrong answer: checked here against the answer
+        // already shown, never sent or scored (the first answer counts).
+        if (answer && this.practiceAnswer) {
+            this.checkPracticeAnswer(answer);
+            return;
+        }
+
         if (!answer) {
             submitButton.disabled = false;
             const feedback = document.getElementById('feedback');
@@ -575,23 +587,12 @@ class AphasiaApp {
                 }
             } else {
                 // One calm message, with the right answer emphasized.
-                feedback.className = 'feedback incorrect';
-                feedback.textContent = `${i18n.translate('incorrect')} ${i18n.translate('correctAnswer')}: `;
-                const rightAnswer = document.createElement('strong');
-                rightAnswer.textContent = result.correct_answer;
-                feedback.append(rightAnswer);
+                this.showFeedback('incorrect', `${i18n.translate('incorrect')} ${i18n.translate('correctAnswer')}:`, result.correct_answer);
             }
-
-            // No automatic move on (U4): offer "Next", or the result after the
-            // last exercise, and put the focus there.
-            const last = this.currentExerciseIndex === this.currentExercises.length - 1;
-            const next = document.getElementById('next-exercise');
-            next.dataset.i18n = last ? 'seeResult' : 'nextExercise';
-            next.textContent = i18n.translate(next.dataset.i18n);
-            submitButton.style.display = 'none';
-            document.getElementById('read-feedback').style.display = '';
-            next.style.display = 'inline-block';
-            next.focus();
+            // Practice once more after a wrong answer (not for recordings).
+            this.lastRightAnswer = result.is_correct || exercise.exercise_type === 'pronunciation'
+                ? null : result.correct_answer;
+            this.offerNext();
         } catch (error) {
             submitButton.disabled = false;
             ui.notify('answerFailed');
@@ -675,6 +676,59 @@ class AphasiaApp {
     setLargeText(large) {
         document.documentElement.classList.toggle('large-text', large);
         document.getElementById('text-size').setAttribute('aria-pressed', String(large));
+    }
+
+    showFeedback(kind, text, answer = null) {
+        const feedback = document.getElementById('feedback');
+        feedback.style.display = 'block';
+        feedback.className = `feedback ${kind}`;
+        feedback.textContent = text;
+        if (answer) {
+            const strong = document.createElement('strong');
+            strong.textContent = answer;
+            feedback.append(' ', strong);
+        }
+    }
+
+    // After an answer: "Next" (or the result after the last exercise), with
+    // the focus on it (U4), and "Try again" after a wrong one (U8).
+    offerNext() {
+        const last = this.currentExerciseIndex === this.currentExercises.length - 1;
+        const next = document.getElementById('next-exercise');
+        next.dataset.i18n = last ? 'seeResult' : 'nextExercise';
+        next.textContent = i18n.translate(next.dataset.i18n);
+        document.getElementById('submit-answer').style.display = 'none';
+        document.getElementById('hint-area').style.display = 'none';  // no hints once answered
+        document.getElementById('read-feedback').style.display = '';
+        document.getElementById('try-again').style.display = this.lastRightAnswer ? 'inline-block' : 'none';
+        next.style.display = 'inline-block';
+        next.focus();
+        ui.updateReadAloud();
+    }
+
+    tryAgain() {
+        this.practiceAnswer = this.lastRightAnswer;
+        document.getElementById('try-again').style.display = 'none';
+        document.getElementById('next-exercise').style.display = 'none';
+        const submit = document.getElementById('submit-answer');
+        submit.style.display = '';
+        submit.disabled = false;
+        document.getElementById('answer-input').value = '';
+        document.querySelectorAll('.option-btn').forEach((b) => b.classList.remove('selected'));
+        const input = document.getElementById('answer-input');
+        (input.offsetParent ? input : document.querySelector('.option-btn'))?.focus();
+    }
+
+    checkPracticeAnswer(answer) {
+        const right = this.practiceAnswer;
+        this.practiceAnswer = null;
+        if (answer.trim().toLowerCase() === right.trim().toLowerCase()) {
+            this.showFeedback('correct', i18n.translate('practiceRight'));
+            this.lastRightAnswer = null;
+        } else {
+            this.showFeedback('incorrect', i18n.translate('practiceWrong'), right);
+        }
+        this.offerNext();
     }
 
     goToNextExercise() {

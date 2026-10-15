@@ -40,6 +40,9 @@
 /* Text size (U1): 20 px by default; "A+" (#text-size) makes it larger. */
 html {
     font-size: 125%;
+    /* Scrolling to an element (focus, scrollIntoView) keeps it clear of the
+       fixed bottom nav. */
+    scroll-padding-bottom: 6rem;
 }
 
 html.large-text {
@@ -466,6 +469,7 @@ body {
     border: 2px solid var(--border-color);
     border-radius: var(--border-radius);
     background: var(--bg-secondary);
+    color: var(--text-primary);  /* not the browser's default black, unreadable in the dark theme */
     cursor: pointer;
     transition: var(--transition);
     font-size: 1rem;
@@ -547,14 +551,17 @@ body {
     font-weight: 500;
 }
 
-.feedback.correct {
-    background-color: #D1FAE5;
-    color: #065F46;
+/* Calm, adult feedback (U8): the usual text color on a quiet background,
+   with a colored edge; never alarm colors. */
+.feedback.correct,
+.feedback.incorrect {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+    border-left: 4px solid var(--success-color);
 }
 
 .feedback.incorrect {
-    background-color: #FEE2E2;
-    color: #991B1B;
+    border-left-color: var(--primary-color);
 }
 
 /* Progress Page */

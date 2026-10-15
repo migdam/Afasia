@@ -53,16 +53,6 @@
     border-color: var(--border-color);
 }
 
-.dark-theme .feedback.correct {
-    background-color: rgba(16, 185, 129, 0.2);
-    color: #6EE7B7;
-}
-
-.dark-theme .feedback.incorrect {
-    background-color: rgba(248, 113, 113, 0.2);
-    color: #FCA5A5;
-}
-
 .dark-theme .modal-content {
     background-color: var(--bg-tertiary);
 }

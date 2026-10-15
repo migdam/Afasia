@@ -58,7 +58,7 @@ Pasek na dole przełącza między **Tablicą** a **Postępem**. Terapeuci i admi
    - **Liczbę ćwiczeń:** od 5 do 50. Na początek dobre są krótkie sesje, po 5–10 ćwiczeń.
 2. Kliknij **Rozpocznij**.
 3. Odpowiedz na ćwiczenie i kliknij **Zatwierdź**.
-4. Zobaczysz **„Poprawnie! Świetna robota!”** albo **„Nie tym razem. Prawidłowa odpowiedź: …”**, z prawidłową odpowiedzią pogrubioną.
+4. Zobaczysz **„Poprawnie! Świetna robota!”** albo **„Nie tym razem. Prawidłowa odpowiedź: …”**, z prawidłową odpowiedzią pogrubioną. Po błędnej odpowiedzi możesz kliknąć **Spróbuj jeszcze raz**, żeby przećwiczyć ją jeszcze raz; ta próba nie jest oceniana, bo liczy się pierwsza odpowiedź.
 5. Nie spiesz się. Kiedy zechcesz, kliknij **Dalej**. Po ostatnim ćwiczeniu przycisk nazywa się **Zobacz wynik**.
 
 Na górze ekranu ćwiczenia:
