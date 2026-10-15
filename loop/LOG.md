@@ -19,6 +19,25 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 29: 2026-10-15 09:23 UTC: P1-5e2 Change password (web app)
+- **Baseline:**  ran the 136 backend tests, smoke and the 20 existing e2e tests, all green. It also collected my new , which I had written while it ran, and those 5 tests failed (rc=1). That doubles as "fails before"; the existing code was green.
+- **Test first:** , 5 tests (EN and PL): change the password, then log out and log in with the new one, and the old one gets 401; a wrong current password is explained in words with `role="alert"`; the fields are labelled, with `autocomplete` and `minlength`.
+- **Did:**
+  - `index.html`: Account page and nav item.
+  - `i18n.js`: 8 keys, EN and PL.
+  - `api.js`: `changePassword`; API errors carry `status`.
+  - `app.js`: form handler, mapping 400, 422 and 429 to messages.
+  - `ui.js`: `showFormMessage`, and logout clears the form.
+  - `styles.css`: `.form-message`.
+  - User guides (EN/PL): how to change your password. READMEs: feature line, and the limitation removed.
+- **Verified:**
+  - `scripts/check.sh` exit code 0: ruff, pip-audit "No known vulnerabilities found", 136 backend tests, smoke, 25 e2e.
+  - Screenshots at 375 px, in EN/light and PL/dark, checked by eye: four nav items fit, and the message is readable in both themes.
+- **Commit:** d81dbb7 (pushed: yes)
+- **Discovered:** low contrast on the language button in the dark theme; added to P2-4.
+- **Next:** P1-6 (privacy). It is large, so split it first.
+- **Protocol notes:** refining iteration 27's note: during the baseline, new *test files* also get picked up if `check.sh` hasn't collected that stage yet. Write them in the scratchpad, or wait for the baseline.
+
 ### 28: 2026-10-15 09:10 UTC: P1-5e1 Change password (API)
 - **Baseline:** `check.sh` exit code 0: 130 backend tests, smoke, 20 e2e. No human commits. Per the iteration 27 note, I wrote only tests until the baseline finished.
 - **Split:** the web app has no account page to hold a form, so P1-5e became e1 (the API) and e2 (the account page and form).
