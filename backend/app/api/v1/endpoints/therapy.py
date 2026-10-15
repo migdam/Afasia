@@ -147,8 +147,8 @@ def check_and_award_badges(db: Session, user: User):
 def finish_session(db: Session, session: TherapySession):
     """Score a session whose exercises are all answered, and credit the user.
 
-    Runs once per session: the last answer calls it, and an answered exercise
-    can't be answered again.
+    Runs once per session: submit_answer calls it only after atomically
+    marking the session completed.
     """
     now = datetime.utcnow()
     correct_count = sum(1 for e in session.exercises if e.is_correct)
@@ -161,7 +161,8 @@ def finish_session(db: Session, session: TherapySession):
 
     # Update user stats
     user = session.user
-    user.total_points += points
+    # Added in SQL, so sessions finishing at the same moment don't lose points.
+    user.total_points = User.total_points + points
 
     # Update streak
     today = now.date()
@@ -334,26 +335,45 @@ def submit_answer(
             detail="Access denied"
         )
 
-    # One answer per exercise, so a repeated submission can't change the
-    # score or credit the session twice.
-    if exercise.is_correct is not None:
+    # Check answer
+    is_correct = answer_data.answer.lower().strip() == exercise.correct_answer.lower().strip()
+
+    # One answer per exercise, claimed atomically: of two answers sent at the
+    # same moment only one can change the exercise from unanswered, so
+    # nothing is scored or credited twice. The other gets 409.
+    claimed = db.query(Exercise).filter(
+        Exercise.id == exercise.id,
+        Exercise.is_correct.is_(None)
+    ).update({
+        Exercise.user_answer: answer_data.answer,
+        Exercise.is_correct: is_correct,
+        Exercise.time_taken_seconds: answer_data.time_taken_seconds,
+        Exercise.attempts: Exercise.attempts + 1,
+        Exercise.completed_at: datetime.utcnow(),
+    }, synchronize_session=False)
+    if not claimed:
+        db.rollback()
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="Exercise already answered"
         )
+    db.commit()
 
-    # Check answer
-    is_correct = answer_data.answer.lower().strip() == exercise.correct_answer.lower().strip()
-
-    exercise.user_answer = answer_data.answer
-    exercise.is_correct = is_correct
-    exercise.time_taken_seconds = answer_data.time_taken_seconds
-    exercise.attempts += 1
-    exercise.completed_at = datetime.utcnow()
-
-    # Count in memory: nothing is flushed yet, so a query wouldn't see this answer.
-    session.completed_exercises = sum(1 for e in session.exercises if e.is_correct is not None)
-    if session.completed_exercises == session.total_exercises:
+    # Count after committing: whichever of several simultaneous answers
+    # commits last sees all of them. Completing is claimed atomically too, so
+    # the session is completed and credited exactly once.
+    answered = db.query(Exercise).filter(
+        Exercise.session_id == session.id,
+        Exercise.is_correct.isnot(None)
+    ).count()
+    db.query(TherapySession).filter(
+        TherapySession.id == session.id,
+        TherapySession.completed_exercises < answered
+    ).update({TherapySession.completed_exercises: answered}, synchronize_session=False)
+    if answered == session.total_exercises and db.query(TherapySession).filter(
+        TherapySession.id == session.id,
+        TherapySession.is_completed.is_(False)
+    ).update({TherapySession.is_completed: True}, synchronize_session=False):
         finish_session(db, session)
 
     db.commit()
