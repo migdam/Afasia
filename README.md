@@ -114,6 +114,7 @@ FastAPI serves interactive documentation at `/docs` and `/redoc`. All endpoints 
 |---|---|
 | Accounts | `POST /auth/register`, `POST /auth/login`, `POST /auth/refresh` (renews a login), `POST /auth/logout` (ends this login on the server and removes the cookie; other devices stay logged in), `POST /users/password` (change your password: needs the current one; your other logins end, and this one gets a new token) |
 | Sessions | `POST /therapy/sessions` (`num_exercises` 1 to 50; the form offers 5 to 50), `GET /therapy/sessions`, `GET /therapy/sessions/{id}`, `GET /therapy/sessions/{id}/exercises` |
+| Word choice | `POST /therapy/exercises/{id}/choices`: four words to choose from instead of typing (naming); a right answer chosen this way keeps at most half its points (pending clinical review) |
 | Hints | `POST /therapy/exercises/{id}/hint`: the next naming hint (1 what it is for, 2 the first letter, 3 the word); fewer points for each hint used (shares pending clinical review) |
 | Answers | `POST /therapy/exercises/{id}/answer` (forgiving: case, spacing, punctuation and missing Polish letters don't count; `almost` marks a near miss): one answer per exercise. The response includes the right answer, and the last answer completes and scores the session. |
 | Results | `POST /therapy/sessions/{id}/complete`: a finished session's server-computed result |

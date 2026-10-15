@@ -76,6 +76,8 @@ Drobne różnice się nie liczą: wielkie litery, dodatkowe spacje, znaki interp
 
 **🔊 Przeczytaj**, pod pytaniem, pod każdą podpowiedzią i pod komunikatem, czyta tekst na głos. Taki sam przycisk mają komunikaty, pytania w okienkach i objaśnienia w innych miejscach aplikacji. Korzysta tylko z głosów na Twoim urządzeniu; jeśli nie ma żadnego w Twoim języku, przycisk się nie pojawia.
 
+**Jeśli pisanie jest trudne**, kliknij **Wybierz z listy**: pojawią się cztery słowa i wystarczy kliknąć właściwe. Poprawna odpowiedź wybrana z listy daje mniej punktów niż słowo przypomniane samodzielnie.
+
 **Jeśli słowo nie przychodzi**, kliknij **Podpowiedź**. Każde kliknięcie daje trochę więcej pomocy: najpierw do czego służy rzecz i gdzie się ją znajduje, potem pierwszą literę, a na końcu całe słowo. Poprawna odpowiedź po podpowiedziach daje mniej punktów, a komunikat mówi, ile podpowiedzi użyto.
 
 ### Uzupełnianie zdań

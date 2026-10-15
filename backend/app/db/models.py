@@ -114,6 +114,12 @@ class Exercise(Base):
     # Relationships
     session = relationship("TherapySession", back_populates="exercises")
     cue = relationship("ExerciseCue", uselist=False, cascade="all, delete-orphan")
+    choice = relationship("ExerciseChoice", uselist=False, cascade="all, delete-orphan")
+
+    @property
+    def choices_shown(self) -> bool:
+        """Whether the word was chosen from a list rather than recalled."""
+        return self.choice is not None
 
     @property
     def cue_level(self) -> int:
@@ -131,6 +137,16 @@ class ExerciseCue(Base):
 
     exercise_id = Column(Integer, ForeignKey("exercises.id"), primary_key=True)
     level = Column(Integer, nullable=False)
+
+
+class ExerciseChoice(Base):
+    """The words offered to choose from in a naming exercise (backlog P2-6a),
+    kept so asking again shows the same ones. Its own table, as there are no
+    migrations yet (backlog P3-1). Deleted with its exercise."""
+    __tablename__ = "exercise_choices"
+
+    exercise_id = Column(Integer, ForeignKey("exercises.id"), primary_key=True)
+    words = Column(JSON, nullable=False)
 
 
 class Progress(Base):

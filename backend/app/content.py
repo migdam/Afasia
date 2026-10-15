@@ -301,3 +301,16 @@ def naming_cue(language: str, word: str, level: int) -> str:
                 word=wording.word,
             )
     raise LookupError(f"no concept for {word!r} in {language}")
+
+
+def choice_words(language: str, answer: str, others: int = 3) -> list[str]:
+    """The answer and a few other words in the same language, shuffled, to
+    choose from (backlog P2-6a). Never another accepted answer."""
+    import random
+
+    language = known(language)
+    taken = {a.lower() for a in accepted_answers(language, answer)}
+    pool = [getattr(c, language).word for c in concepts() if getattr(c, language).word.lower() not in taken]
+    words = [answer, *random.sample(pool, min(others, len(pool)))]
+    random.shuffle(words)
+    return words

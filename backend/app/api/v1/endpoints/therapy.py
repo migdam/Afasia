@@ -7,15 +7,15 @@ from sqlalchemy import func
 from ....db.database import get_db
 from ....db.models import (
     User, TherapySession, Exercise, Progress, UserBadge,
-    DifficultyLevel, ExerciseType, BadgeType, ExerciseCue
+    DifficultyLevel, ExerciseType, BadgeType, ExerciseCue, ExerciseChoice
 )
 from ....answers import is_near_miss, matches
-from ....content import MAX_CUE_LEVEL, accepted_answers, content_items, naming_cue
+from ....content import MAX_CUE_LEVEL, accepted_answers, choice_words, content_items, naming_cue
 from ....core.clock import utcnow
 from ....core.security import get_current_user_id
 from ..schemas import (
     SessionCreate, SessionResponse,
-    ExerciseResponse, ExerciseAnswer, AnswerResult, BadgeResponse, Hint
+    ExerciseResponse, ExerciseAnswer, AnswerResult, BadgeResponse, Hint, Choices
 )
 import random
 
@@ -66,10 +66,16 @@ def generate_exercises(
 # finding a word on one's own counts most. Placeholder values, pending
 # clinical review (loop/PROMPT.md, C3, C7).
 HINT_POINT_SHARE = (1.0, 0.75, 0.5, 0.25)
+# The most an answer chosen from a list can keep: recognizing a word is
+# easier than recalling it. Placeholder, pending clinical review.
+CHOICE_POINT_SHARE = 0.5
 
 
-def calculate_points(difficulty: DifficultyLevel, is_correct: bool, cue_level: int = 0) -> int:
-    """Points for an answer: by difficulty, less for each hint used."""
+def calculate_points(
+    difficulty: DifficultyLevel, is_correct: bool, cue_level: int = 0, choices_shown: bool = False,
+) -> int:
+    """Points for an answer: by difficulty, less for each hint used or for
+    choosing from a list."""
     if not is_correct:
         return 0
 
@@ -78,7 +84,10 @@ def calculate_points(difficulty: DifficultyLevel, is_correct: bool, cue_level: i
         DifficultyLevel.MEDIUM: 20,
         DifficultyLevel.HARD: 30,
     }
-    return round(points_map.get(difficulty, 10) * HINT_POINT_SHARE[min(cue_level, MAX_CUE_LEVEL)])
+    share = HINT_POINT_SHARE[min(cue_level, MAX_CUE_LEVEL)]
+    if choices_shown:
+        share = min(share, CHOICE_POINT_SHARE)
+    return round(points_map.get(difficulty, 10) * share)
 
 
 def check_and_award_badges(db: Session, user: User):
@@ -126,7 +135,9 @@ def finish_session(db: Session, session: TherapySession):
     """
     now = utcnow()
     correct_count = sum(1 for e in session.exercises if e.is_correct)
-    points = sum(calculate_points(e.difficulty, e.is_correct, e.cue_level) for e in session.exercises)
+    points = sum(
+        calculate_points(e.difficulty, e.is_correct, e.cue_level, e.choices_shown) for e in session.exercises
+    )
 
     session.is_completed = True
     session.completed_at = now
@@ -316,6 +327,30 @@ def next_hint(
         cue=naming_cue(exercise.session.language, exercise.correct_answer, level),
         last=level == MAX_CUE_LEVEL,
     )
+
+
+@router.post("/exercises/{exercise_id}/choices", response_model=Choices)
+def word_choices(
+    exercise_id: int,
+    user_id: int = Depends(get_current_user_id),
+    db: Session = Depends(get_db),
+):
+    """Words to choose from instead of typing (U6): the answer and three
+    others, in the session's language. Recorded, as choosing is easier than
+    recalling (calculate_points); asking again gives the same words."""
+    exercise = db.query(Exercise).join(TherapySession).filter(
+        Exercise.id == exercise_id, TherapySession.user_id == user_id,
+    ).first()
+    if not exercise:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Exercise not found")
+    if exercise.exercise_type != ExerciseType.WORD_NAMING:
+        raise HTTPException(status_code=422, detail="Only naming exercises offer words to choose from")
+    if exercise.is_correct is not None:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="This exercise has been answered")
+    if not exercise.choice:
+        exercise.choice = ExerciseChoice(words=choice_words(exercise.session.language, exercise.correct_answer))
+        db.commit()
+    return Choices(choices=exercise.choice.words)
 
 
 @router.post("/exercises/{exercise_id}/answer", response_model=AnswerResult)

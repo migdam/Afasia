@@ -105,6 +105,7 @@ class AphasiaApp {
         });
 
         document.getElementById('try-again').addEventListener('click', () => this.tryAgain());
+        document.getElementById('choose-words').addEventListener('click', () => this.showWordChoices());
 
         document.getElementById('next-exercise').addEventListener('click', () => {
             this.goToNextExercise();
@@ -495,24 +496,11 @@ class AphasiaApp {
             document.getElementById('play-audio-btn').dataset.url = exercise.audio_url;
         }
 
+        document.getElementById('exercise-options').replaceChildren();
+        document.getElementById('choose-words').hidden = false;
         if (exercise.options && exercise.options.length > 0) {
             // Multiple choice
-            const optionsContainer = document.getElementById('exercise-options');
-            optionsContainer.style.display = 'grid';
-            optionsContainer.replaceChildren(...exercise.options.map(option => {
-                const button = el('button', 'option-btn', option);
-                button.dataset.answer = option;
-                return button;
-            }));
-
-            // Add click handlers
-            optionsContainer.querySelectorAll('.option-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    optionsContainer.querySelectorAll('.option-btn').forEach(b =>
-                        b.classList.remove('selected'));
-                    btn.classList.add('selected');
-                });
-            });
+            this.showOptions(exercise.options);
         } else if (exercise.exercise_type === 'pronunciation') {
             // Voice recording (Enhancement 1 & 12)
             document.getElementById('voice-recorder').style.display = 'block';
@@ -534,9 +522,11 @@ class AphasiaApp {
 
         // Read the answer from the input this exercise shows, never from a
         // hidden one that still holds an earlier value.
+        const selectedOption = document.querySelector('#exercise-options .option-btn.selected');
         if (exercise.options && exercise.options.length > 0) {
-            const selectedOption = document.querySelector('.option-btn.selected');
             answer = selectedOption ? selectedOption.dataset.answer : '';
+        } else if (selectedOption) {
+            answer = selectedOption.dataset.answer;  // a naming word chosen from the list
         } else if (exercise.exercise_type === 'pronunciation') {
             if (this.recordedAudio) {
                 // There is a recording only with consent to keep it (P1-6b).
@@ -689,6 +679,38 @@ class AphasiaApp {
     setLargeText(large) {
         document.documentElement.classList.toggle('large-text', large);
         document.getElementById('text-size').setAttribute('aria-pressed', String(large));
+    }
+
+    // Answer buttons: one can be selected at a time.
+    showOptions(options) {
+        const optionsContainer = document.getElementById('exercise-options');
+        optionsContainer.style.display = 'grid';
+        optionsContainer.replaceChildren(...options.map((option) => {
+            const button = el('button', 'option-btn', option);
+            button.type = 'button';
+            button.dataset.answer = option;
+            button.addEventListener('click', () => {
+                optionsContainer.querySelectorAll('.option-btn').forEach((b) => b.classList.remove('selected'));
+                button.classList.add('selected');
+            });
+            return button;
+        }));
+    }
+
+    // Naming without typing (U6): show words to choose from.
+    async showWordChoices() {
+        const exercise = this.currentExercises[this.currentExerciseIndex];
+        const button = document.getElementById('choose-words');
+        button.disabled = true;
+        try {
+            const { choices } = await api.getChoices(exercise.id);
+            this.showOptions(choices);
+            button.hidden = true;
+        } catch (error) {
+            console.error('Choices failed:', error);
+        } finally {
+            button.disabled = false;
+        }
     }
 
     showFeedback(kind, text, answer = null) {
