@@ -116,7 +116,7 @@ The app doesn't remind you of planned sessions yet, and starting one is up to yo
 - every patient, with their email and points;
 - a **Deactivate** button for each active patient: a deactivated patient can't log in until you click **Activate**.
 
-At the moment every therapist sees every patient. There is also no way to create a therapist or admin account in the app: whoever runs the server changes an account's role in the database.
+At the moment every therapist sees every patient. Signing up always makes a patient account; therapist and admin accounts are made by whoever runs the server (see the README).
 
 ## Your data
 

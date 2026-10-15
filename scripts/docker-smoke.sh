@@ -2,7 +2,8 @@
 # Build and start the Docker Compose stack under a throwaway project name,
 # with its own secrets and ports, and check it through the frontend's nginx
 # the way a browser would: the page loads, the API answers under /api, and
-# signing up and logging in work (which needs the database). Everything,
+# signing up and logging in work (which needs the database), and an admin
+# made with the CLI can use the admin API. Everything,
 # volumes included, is removed afterwards. Needs a running Docker daemon.
 #
 #   scripts/docker-smoke.sh
@@ -65,3 +66,20 @@ EOF
   "${compose[@]}" logs --tail 40 >&2 || true
   exit 1
 fi
+
+echo "== Creating an admin with the CLI (README: Staff accounts)"
+echo "a long smoke-test password" | "${compose[@]}" exec -T backend \
+  python -m app.cli create-user --username smokeadmin --email smokeadmin@example.com --role admin --password-stdin
+python3 -I - "$frontend_port" <<'EOF'
+import json, sys, urllib.request
+
+base = f"http://127.0.0.1:{sys.argv[1]}/api/v1"
+login = urllib.request.Request(
+    base + "/auth/login", method="POST", headers={"Content-Type": "application/json"},
+    data=json.dumps({"username": "smokeadmin", "password": "a long smoke-test password"}).encode(),
+)
+token = json.load(urllib.request.urlopen(login, timeout=10))["access_token"]
+stats = urllib.request.Request(base + "/admin/stats", headers={"Authorization": f"Bearer {token}"})
+assert urllib.request.urlopen(stats, timeout=10).status == 200
+print("the CLI-made admin can log in and use the admin API")
+EOF

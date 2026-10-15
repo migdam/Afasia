@@ -19,7 +19,7 @@ Konta, sesje ćwiczeń, informacja zwrotna, wyniki, wykres postępów i panel ad
   Po każdej odpowiedzi pojawia się „Poprawnie! Świetna robota!” albo prawidłowa odpowiedź. Serwer liczy wynik sesji, gdy przyjdzie ostatnia odpowiedź.
 - **Postępy.** Punkty za poprawne odpowiedzi, codzienne serie, trzy odznaki (pierwsza sesja, seria 7 i 30 dni), strona postępów z podsumowaniem i wykresem trafności oraz eksport do CSV i PDF.
 - **Planowanie.** Można zaplanować przyszłe sesje. Aplikacja jeszcze o nich nie przypomina.
-- **Panel terapeuty/administratora.** Lista wszystkich pacjentów, aktywowanie i dezaktywowanie kont. W aplikacji nie da się jeszcze utworzyć konta administratora ani terapeuty: trzeba zmienić `role` istniejącego użytkownika w bazie danych.
+- **Panel terapeuty/administratora.** Lista wszystkich pacjentów, aktywowanie i dezaktywowanie kont. Rejestracja w aplikacji zawsze tworzy konto pacjenta; konta personelu zakłada się na serwerze (zob. [Konta personelu](#konta-personelu)).
 - **Interfejs.** Polski i angielski, motyw jasny i ciemny, układ na telefon i komputer.
 
 ### Co jeszcze nie działa
@@ -70,6 +70,17 @@ docker compose up --build
 - Za proxy, które podgląda ruch TLS, ustaw `PIP_CA_FILE` na jego pakiet certyfikatów CA, żeby budowanie obrazu mogło pobrać pakiety z PyPI.
 
 `scripts/docker-smoke.sh` buduje i uruchamia osobną kopię całości, rejestruje się i loguje przez nginx, a potem wszystko usuwa.
+
+## Konta personelu
+
+Rejestracja w aplikacji zawsze tworzy konto pacjenta. Konta administratorów i terapeutów zakłada się na serwerze, w katalogu `backend/`, z tymi samymi ustawieniami co backend:
+
+```bash
+python -m app.cli create-user --username ada --email ada@example.com --role admin
+python -m app.cli set-role tess therapist      # zmiana roli istniejącego konta
+```
+
+`create-user` pyta o hasło, które musi mieć co najmniej 12 znaków, więc nie trafia ono do historii poleceń. W Dockerze uruchom te same polecenia jako `docker compose exec backend python -m app.cli …`.
 
 ## Konfiguracja
 
@@ -138,7 +149,7 @@ Zanim ktokolwiek zacznie polegać na tej aplikacji, trzeba naprawić co najmniej
   - Logowanie nie ma limitu prób, a tokeny są przechowywane w `localStorage` (P1-5).
   - Część zależności jest przestarzała (P1-4).
 - **Prywatność:** brak informacji o prywatności, zgody przed nagrywaniem oraz możliwości eksportu i usunięcia swoich danych (P1-6). Aplikacja przechowuje dane o zdrowiu.
-- **Role:** każdy terapeuta widzi wszystkich pacjentów i nie da się tworzyć kont personelu (P1-3).
+- **Role:** każdy terapeuta widzi i może dezaktywować wszystkich pacjentów. Terapeuci nie są jeszcze powiązani ze swoimi pacjentami (P1-3b).
 - **Treść kliniczna:** kilka tymczasowych ćwiczeń po angielsku, niesprawdzonych przez logopedę. Nie ma obrazków ani nagrań.
 - **Dostępność** nie została zbadana, a zasady projektowania przyjaznego osobom z afazją z [`loop/PROMPT.md`](loop/PROMPT.md) nie są jeszcze spełnione. Na przykład aplikacja nadal sama przechodzi dalej po 2 sekundach.
 - **Kwestie prawne:** nie oceniono, czy aplikacja jest wyrobem medycznym w rozumieniu przepisów UE.

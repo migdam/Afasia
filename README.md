@@ -19,7 +19,7 @@ Accounts, practice sessions, feedback, scores, the progress chart and the admin 
   After each answer you see "Correct! Well done!" or the right answer. The server scores the session when the last answer arrives.
 - **Progress.** Points per correct answer, daily streaks, three badges (first session, 7-day and 30-day streaks), a progress page with totals and an accuracy chart, and export as CSV or PDF.
 - **Planning.** Schedule future sessions. Nothing reminds you of them yet.
-- **Therapist/admin page.** See all patients and activate or deactivate accounts. There is no way to create an admin or therapist account in the app yet: an existing user's `role` has to be changed in the database.
+- **Therapist/admin page.** See all patients and activate or deactivate accounts. Signing up always makes a patient account; staff accounts are made on the server (see [Staff accounts](#staff-accounts)).
 - **Interface.** English and Polish, light and dark themes, and layouts for phones and computers.
 
 ### Not working yet
@@ -70,6 +70,17 @@ docker compose up --build
 - Behind a proxy that inspects TLS, set `PIP_CA_FILE` to its CA bundle so the image build can reach PyPI.
 
 `scripts/docker-smoke.sh` builds and starts a separate copy of the stack, signs up and logs in through nginx, and then removes everything.
+
+## Staff accounts
+
+Signing up in the app always makes a patient account. Admin and therapist accounts are made on the server, from the `backend/` directory, with the same settings as the backend:
+
+```bash
+python -m app.cli create-user --username ada --email ada@example.com --role admin
+python -m app.cli set-role tess therapist      # change an existing account's role
+```
+
+`create-user` asks for the password, which must have at least 12 characters, so it never ends up in shell history. With Docker, run the same commands as `docker compose exec backend python -m app.cli …`.
 
 ## Configuration
 
@@ -138,7 +149,7 @@ Before anyone relies on this app, at least these must be fixed. Each one is in [
   - Logins aren't rate-limited, and tokens are kept in `localStorage` (P1-5).
   - Some dependencies are outdated (P1-4).
 - **Privacy:** there is no privacy notice, no consent step before recording, and no way to export or delete your data (P1-6). The app stores health information.
-- **Roles:** any therapist can see every patient, and there is no way to create staff accounts (P1-3).
+- **Roles:** any therapist can see and deactivate every patient. Therapists aren't linked to their own patients yet (P1-3b).
 - **Clinical content:** a handful of English placeholder exercises, not reviewed by a speech-language therapist. There are no pictures or recordings.
 - **Accessibility** has not been audited, and the aphasia-friendly design rules in [`loop/PROMPT.md`](loop/PROMPT.md) are not met yet. For example, the app still moves on automatically after 2 seconds.
 - **Legal:** whether the app counts as a medical device under EU rules has not been assessed.

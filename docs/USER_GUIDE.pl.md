@@ -116,7 +116,7 @@ Aplikacja jeszcze nie przypomina o zaplanowanych sesjach. Sesję trzeba też roz
 - wszystkich pacjentów z adresem e-mail i punktami;
 - przycisk **Deactivate** przy każdym aktywnym pacjencie: dezaktywowany pacjent nie może się zalogować, dopóki nie klikniesz **Activate**.
 
-Na razie każdy terapeuta widzi wszystkich pacjentów. W aplikacji nie da się też utworzyć konta terapeuty ani administratora: rolę konta zmienia w bazie danych osoba, która uruchamia serwer.
+Na razie każdy terapeuta widzi wszystkich pacjentów. Rejestracja zawsze tworzy konto pacjenta; konta terapeutów i administratorów zakłada osoba, która uruchamia serwer (zob. README).
 
 ## Twoje dane
 
