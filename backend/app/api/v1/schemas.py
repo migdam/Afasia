@@ -40,6 +40,11 @@ class UserResponse(BaseModel):
         from_attributes = True
 
 
+class AdminUserResponse(UserResponse):
+    """A user as admins and therapists see them, including account status."""
+    is_active: bool
+
+
 class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"

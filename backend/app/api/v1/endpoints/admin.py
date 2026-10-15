@@ -6,7 +6,7 @@ from sqlalchemy import func
 from ....db.database import get_db
 from ....db.models import User, TherapySession, Exercise, UserRole
 from ....core.security import get_current_user_id
-from ..schemas import AdminUserStats, UserResponse, SessionResponse
+from ..schemas import AdminUserStats, AdminUserResponse, SessionResponse
 
 router = APIRouter()
 
@@ -62,7 +62,7 @@ def get_admin_stats(
     )
 
 
-@router.get("/users", response_model=List[UserResponse])
+@router.get("/users", response_model=List[AdminUserResponse])
 def get_all_users(
     skip: int = 0,
     limit: int = 50,
@@ -74,7 +74,7 @@ def get_all_users(
         User.role == UserRole.PATIENT
     ).offset(skip).limit(limit).all()
 
-    return [UserResponse.model_validate(u) for u in users]
+    return [AdminUserResponse.model_validate(u) for u in users]
 
 
 @router.get("/users/{user_id}/sessions", response_model=List[SessionResponse])

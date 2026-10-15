@@ -21,6 +21,20 @@ ROOT = Path(__file__).resolve().parents[1]
 PASSWORD = "correct horse battery staple"
 
 
+def call_api(servers, method, path, body=None, token=None):
+    """Call the test backend directly; returns (status, JSON body)."""
+    headers = {"Content-Type": "application/json"}
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+    data = json.dumps(body).encode() if body is not None else None
+    request = urllib.request.Request(servers["api"] + path, data=data, headers=headers, method=method)
+    try:
+        with urllib.request.urlopen(request) as response:
+            return response.status, json.load(response)
+    except urllib.error.HTTPError as error:
+        return error.code, json.load(error)
+
+
 def free_port():
     with socket.socket() as s:
         s.bind(("127.0.0.1", 0))
@@ -69,7 +83,7 @@ def servers(tmp_path_factory):
     try:
         wait_until_up(f"http://127.0.0.1:{api_port}/health", api, tmp / "api.log")
         wait_until_up(web_url, web, tmp / "web.log")
-        yield {"api": f"http://127.0.0.1:{api_port}/api/v1", "web": web_url}
+        yield {"api": f"http://127.0.0.1:{api_port}/api/v1", "web": web_url, "db": tmp / "e2e.db"}
     finally:
         for process in (api, web):
             process.terminate()

@@ -54,6 +54,7 @@ def test_a_session_gives_feedback_and_ends_with_the_server_score(page, account):
     expect(page.locator("#dashboard-page")).to_be_visible(timeout=10_000)
     assert dialogs == ["Session complete! Score: 80%"]
     expect(page.locator("#recent-sessions")).to_contain_text("80%")
+    expect(page.locator("#badge-count")).to_have_text("1")  # the first-session badge
 
 
 def test_double_clicking_submit_sends_the_answer_once(page, account):

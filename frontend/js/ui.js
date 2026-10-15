@@ -49,12 +49,22 @@ class UIManager {
         document.querySelector('.bottom-nav').style.display = 'flex';
         document.getElementById('logout-btn').style.display = 'block';
 
-        // Show admin nav if user is admin or therapist
-        if (user.role === 'admin' || user.role === 'therapist') {
-            document.getElementById('admin-nav').style.display = 'flex';
-        }
+        // Admin nav for admins and therapists only; hidden again for anyone
+        // else who logs in on the same page.
+        const isStaff = user.role === 'admin' || user.role === 'therapist';
+        document.getElementById('admin-nav').style.display = isStaff ? 'flex' : 'none';
 
         this.updateUserStats(user);
+        this.loadBadgeCount();
+    }
+
+    async loadBadgeCount() {
+        try {
+            const badges = await api.getBadges();
+            document.getElementById('badge-count').textContent = badges.length;
+        } catch (error) {
+            console.error('Failed to load badges:', error);
+        }
     }
 
     updateUserStats(user) {
@@ -222,23 +232,36 @@ class UIManager {
 
             // Load users
             const container = document.getElementById('admin-users-list');
-            container.innerHTML = users.map(user => `
-                <div class="user-item">
-                    <div class="user-info">
-                        <h4>${user.username}</h4>
-                        <p>${user.email} • Points: ${user.total_points}</p>
-                    </div>
-                    <div class="user-actions">
-                        <button class="btn btn-sm ${user.is_active ? 'btn-secondary' : 'btn-primary'}"
-                            onclick="ui.toggleUserStatus(${user.id}, ${user.is_active})">
-                            ${user.is_active ? 'Deactivate' : 'Activate'}
-                        </button>
-                    </div>
-                </div>
-            `).join('');
+            container.replaceChildren(...users.map(user => this.renderAdminUser(user)));
         } catch (error) {
             console.error('Failed to load admin dashboard:', error);
         }
+    }
+
+    renderAdminUser(user) {
+        // Built with DOM methods: usernames and emails are whatever people
+        // typed, so they must never be parsed as HTML.
+        const item = document.createElement('div');
+        item.className = 'user-item';
+
+        const info = document.createElement('div');
+        info.className = 'user-info';
+        const name = document.createElement('h4');
+        name.textContent = user.username;
+        const details = document.createElement('p');
+        details.textContent = `${user.email} • Points: ${user.total_points}`;
+        info.append(name, details);
+
+        const actions = document.createElement('div');
+        actions.className = 'user-actions';
+        const toggle = document.createElement('button');
+        toggle.className = `btn btn-sm ${user.is_active ? 'btn-secondary' : 'btn-primary'}`;
+        toggle.textContent = user.is_active ? 'Deactivate' : 'Activate';
+        toggle.addEventListener('click', () => this.toggleUserStatus(user.id, user.is_active));
+        actions.append(toggle);
+
+        item.append(info, actions);
+        return item;
     }
 
     async toggleUserStatus(userId, isActive) {
