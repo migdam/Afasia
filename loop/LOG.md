@@ -19,6 +19,23 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 40: 2026-10-15 11:51 UTC: P1-8b Docker gets all the settings
+- **Baseline:** `check.sh` exit code 0: 158 backend tests, smoke, 48 e2e. No human commits. Tests were written in the scratchpad until it finished.
+- **Approach:** a service-level `env_file: .env` would read the repository's `.env`, not the file given with `--env-file` (as `docker-smoke.sh` does). So, like `SECRET_KEY`, every setting goes through `environment` with interpolation.
+- **Test first:** `backend/tests/test_docker_settings.py`. It failed before, listing 9 settings Docker dropped. Then I added a third test: the Compose defaults must match the app's.
+- **Did:**
+  - `docker-compose.yml` lists all the settings; the CORS default is nested (`${BACKEND_CORS_ORIGINS:-http://localhost:${FRONTEND_PORT:-3000}}`, checked with `docker compose config`).
+  - `pyyaml==6.0.3` pinned in `requirements-dev.txt`.
+  - `docker-smoke.sh` sets and checks a 17-minute login.
+  - READMEs (EN/PL).
+- **Verified:**
+  - `scripts/check.sh` exit code 0 (venv rebuilt): ruff, pip-audit "No known vulnerabilities found", 161 backend tests, smoke, 48 e2e.
+  - `docker-smoke.sh` exit code 0, including the 17-minute check.
+  - The README lines came after those runs; `tests/test_docs.py` passes on them.
+- **Commit:** f93f6db (pushed: yes)
+- **Discovered:** nothing new.
+- **Next:** P1-8c (a tighter CSP).
+
 ### 39: 2026-10-15 11:38 UTC: P1-8a Debug off, no guessable keys
 - **Baseline:** `check.sh` exit code 0: 153 backend tests, smoke, 48 e2e. No human commits. Tests were written in the scratchpad until it finished.
 - **Split:** P1-8 became a (debug, keys, health), b (Docker settings), c (CSP) and d (aware datetimes).
