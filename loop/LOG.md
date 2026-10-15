@@ -17,6 +17,26 @@ Newest entry first. One entry per iteration.
 
 ---
 
+### 6: 2026-10-15 05:06 UTC: P0-6 Naming prompts contain the answer
+- **Baseline:** `check.sh` green (31 passed, smoke OK), same as entry 5. No human commits.
+- **Did:**
+  - Added `tests/test_content.py`: for every item except repetition (pronunciation), the prompt must not contain the answer as a whole word, case-insensitively.
+  - Rewrote the 10 naming prompts as short plain descriptions ("What is it? A small pet that purrs and says meow."). The pictures they were meant to sit under don't exist, so dropping "(cat)" alone would have left "What is this?" next to a broken image.
+  - Marked all content as placeholders pending clinical review (comment above `EXERCISE_DATA`).
+  - Both READMEs and both user guides now describe naming from a description, with pictures still to come.
+- **Design choices:**
+  - Naming from a description works without pictures. Once pictures exist, the description becomes the first hint (noted in P2-3).
+  - The image URLs stay as slots for the pictures. The broken-image icon belongs with P0-7's asset decision, which also covers the missing audio.
+  - No clinical references are cited: verified references are P2-1's job.
+- **Verified:**
+  ```
+  old content: 10 failed (every word_naming item), 6 passed (sentence completion)
+  now:         ruff "All checks passed!" · pytest "47 passed, 31 warnings" · "README quick start: the backend answered /health"
+  ```
+- **Commit:** aa67ddf (pushed: yes), plus this log/backlog commit.
+- **Discovered:** nothing new.
+- **Next:** P0-7. The frontend flow is broken against the real API. It needs Playwright e2e tests (G3), so it is big: split it before starting.
+
 ### 5: 2026-10-15 05:00 UTC: P0-5 Image-recognition sessions hang the server
 - **Baseline:** `check.sh` green (27 passed, smoke OK), same as entry 4. No human commits.
 - **Did:**

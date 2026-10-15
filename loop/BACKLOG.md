@@ -20,13 +20,13 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 | Gate | Status | Evidence |
 |------|--------|----------|
 | G1 Runs | 🟡 | `scripts/check.sh` passes, including `scripts/smoke.sh`: the README backend quick start in a copy of the tree answers `/health`. Not yet covered: a from-scratch install in the copy (it reuses `.venv`) and the frontend half of the quick start (P0-7) |
-| G2 Backend tests | 🔴 | 31 tests pass, including register → login → profile and a full scored session; coverage not measured |
+| G2 Backend tests | 🔴 | 47 tests pass, including register → login → profile and a full scored session; coverage not measured |
 | G3 End-to-end | 🔴 | No e2e tests |
 | G4 Authorization | 🔴 | P1-3 |
 | G5 Security | 🔴 | P1-1, P1-2, P1-4 |
 | G6 Accessibility | 🔴 | Not measured |
 | G7 Aphasia-friendly | 🔴 | Auto-advance, visible timer, typing required (P2-4..P2-6) |
-| G8 Clinical content | 🔴 | English-only, answers leak, assets missing |
+| G8 Clinical content | 🔴 | No answer leaks (C4, enforced by `test_content.py` since P0-6). Still English-only, assets missing, nothing clinically reviewed |
 | G9 i18n | 🔴 | Hard-coded English strings in JS (P2-10) |
 | G10 Privacy | 🔴 | P1-6 |
 | G11 Honest docs | 🔴 | P0-9 |
@@ -56,7 +56,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 
   **Acceptance:** tests for completion on the last answer, points summed over correct answers, idempotent re-submission (no double points or records), server-only scoring, and a recorded duration.
 - [x] **P0-5 Image-recognition sessions hang the server** ✅ (dff1068). A type or difficulty without content now gets 422 and creates no session. There's no more silent fallback to medium. Docs mark image recognition as not available yet. Original report: `EXERCISE_DATA` has no `image_recognition` content, and `generate_exercises` loops forever on an empty pool. Reproduced: still spinning after 3 s, pinning a worker thread at 100% CPU. Fail fast with a clear 4xx when there is no content, and add a test.
-- [ ] **P0-6 Naming prompts contain the answer** ✅. For example, `"What is this? (cat)"` has the answer `cat`. Fix the naming prompts, and add a test that no naming prompt contains its answer (C4). Repetition prompts like "Say: Hello" are fine. The full content model is P2-2.
+- [x] **P0-6 Naming prompts contain the answer** ✅ (aa67ddf). Naming items now describe the thing to name, since there are no pictures to show. `test_content.py` enforces C4 for every item. The items are placeholders, pending clinical review. Original report: for example, `"What is this? (cat)"` has the answer `cat`. Fix the naming prompts, and add a test that no naming prompt contains its answer (C4). Repetition prompts like "Say: Hello" are fine. The full content model is P2-2.
 - [ ] **P0-7 Frontend flow is broken against the real API** 🔎:
   - The final score is always 0%: `completeSession()` counts `is_correct` on the exercise list fetched at session start (all `null`) and shows that. Since P0-4 the server ignores the client's score, and `POST /complete` returns the server-computed session: show its `score`, and stop sending score and duration.
   - Wrong-answer feedback reads "Incorrect. Try again! Correct! Well done!: undefined". It concatenates both messages and reads `correct_answer`, a field the API never returns (✅ confirmed absent).
@@ -144,7 +144,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
   - Image and audio asset ids, with licenses in `frontend/assets/CREDITS.md`.
 
   Content tests check that both languages are present, no answer leaks, and every asset and license exists. Seed about 30 everyday, picturable concepts, authored natively in Polish and English. Exercises currently ignore the session's language and are English-only.
-- [ ] **P2-3 Naming with a cueing hierarchy** (U7, C1). A hint button steps through: meaning cue → first sound (audio) or first letter → whole word to repeat. Record the cue level for each answer, and score by independence.
+- [ ] **P2-3 Naming with a cueing hierarchy** (U7, C1). A hint button steps through: meaning cue → first sound (audio) or first letter → whole word to repeat. Record the cue level for each answer, and score by independence. Since P0-6, the naming prompt shows a description of the item, because there are no pictures. That is the meaning cue given up front. Once pictures exist (H2), show the picture alone and make the description the first hint.
 - [ ] **P2-4 Aphasia-friendly UI pass** (U1–U5, U8, U11, U12):
   - Larger type and touch targets.
   - Remove the 2 s auto-advance and the visible timer.
