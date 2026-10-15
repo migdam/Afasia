@@ -47,7 +47,8 @@ class AudioRecorder {
             }
 
             this.mediaRecorder.onstop = () => {
-                const audioBlob = new Blob(this.audioChunks, { type: 'audio/wav' });
+                // Keep the format the browser really recorded (WebM or MP4, not WAV).
+                const audioBlob = new Blob(this.audioChunks, { type: this.mediaRecorder.mimeType || 'audio/webm' });
                 this.isRecording = false;
                 resolve(audioBlob);
             };

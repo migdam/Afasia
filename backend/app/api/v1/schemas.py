@@ -180,7 +180,6 @@ class ScheduledSessionResponse(BaseModel):
 # Audio recording schemas
 class AudioRecordingResponse(BaseModel):
     id: int
-    file_path: str
     duration_seconds: Optional[float]
     transcription: Optional[str]
     accuracy_score: Optional[float]

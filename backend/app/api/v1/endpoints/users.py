@@ -10,6 +10,7 @@ from ....db.models import (
     User, TherapySession, Exercise, Progress, UserBadge,
     ScheduledSession, AudioRecording
 )
+from ....core.config import settings
 from ....core.security import get_current_user_id
 from ..schemas import (
     UserResponse, UserUpdate, ProgressResponse, ProgressStats,
@@ -19,11 +20,25 @@ from ..schemas import (
 import os
 import csv
 import io
+import uuid
+from pathlib import Path
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from reportlab.lib.utils import simpleSplit
 
 router = APIRouter()
+
+# Audio formats accepted for recordings, by content type. Browsers record
+# WebM (Chrome, Firefox) or MP4 (Safari).
+AUDIO_EXTENSIONS = {
+    "audio/webm": ".webm",
+    "audio/ogg": ".ogg",
+    "audio/mp4": ".m4a",
+    "audio/mpeg": ".mp3",
+    "audio/wav": ".wav",
+    "audio/x-wav": ".wav",
+}
+AUDIO_TYPES = {".webm": "audio/webm", ".ogg": "audio/ogg", ".m4a": "audio/mp4", ".mp3": "audio/mpeg", ".wav": "audio/wav"}
 
 
 @router.get("/profile", response_model=UserResponse)
@@ -313,22 +328,49 @@ async def upload_audio(
     user_id: int = Depends(get_current_user_id),
     db: Session = Depends(get_db)
 ):
-    """Upload audio recording for pronunciation practice."""
-    # Create upload directory if it doesn't exist
-    upload_dir = "uploads/audio"
-    os.makedirs(upload_dir, exist_ok=True)
+    """Upload a recording for one of your own pronunciation exercises."""
+    exercise = db.query(Exercise).join(TherapySession).filter(
+        Exercise.id == exercise_id,
+        TherapySession.user_id == user_id
+    ).first()
+    if not exercise:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Exercise not found"
+        )
 
-    # Save file
-    file_path = f"{upload_dir}/{user_id}_{exercise_id}_{datetime.now().timestamp()}.wav"
-    with open(file_path, "wb") as f:
-        content = await audio.read()
-        f.write(content)
+    content_type = (audio.content_type or "").split(";")[0].strip().lower()
+    extension = AUDIO_EXTENSIONS.get(content_type)
+    if not extension:
+        raise HTTPException(
+            status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+            detail="Upload an audio recording"
+        )
 
-    # Create record
+    # Read at most one byte past the limit, so a huge upload isn't held in memory.
+    content = await audio.read(settings.MAX_UPLOAD_SIZE + 1)
+    if len(content) > settings.MAX_UPLOAD_SIZE:
+        raise HTTPException(
+            status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+            detail="Recording is too large"
+        )
+    if not content:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Recording is empty"
+        )
+
+    # A random name, saying nothing about the user or exercise, in a
+    # directory that is never served directly.
+    directory = Path(settings.UPLOAD_DIR) / "audio"
+    directory.mkdir(parents=True, exist_ok=True)
+    file_path = directory / f"{uuid.uuid4().hex}{extension}"
+    file_path.write_bytes(content)
+
     recording = AudioRecording(
         user_id=user_id,
         exercise_id=exercise_id,
-        file_path=file_path,
+        file_path=str(file_path),
     )
 
     db.add(recording)
@@ -344,7 +386,7 @@ def get_audio_recording(
     user_id: int = Depends(get_current_user_id),
     db: Session = Depends(get_db)
 ):
-    """Get audio recording."""
+    """Play one of your own recordings."""
     recording = db.query(AudioRecording).filter(
         AudioRecording.id == recording_id,
         AudioRecording.user_id == user_id
@@ -362,4 +404,5 @@ def get_audio_recording(
             detail="Audio file not found"
         )
 
-    return FileResponse(recording.file_path, media_type="audio/wav")
+    media_type = AUDIO_TYPES.get(Path(recording.file_path).suffix, "application/octet-stream")
+    return FileResponse(recording.file_path, media_type=media_type)

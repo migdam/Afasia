@@ -1,7 +1,6 @@
 """Main FastAPI application."""
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 from .core.config import settings
 from .core.logging import configure_logging, logger
 from .db.database import init_db
@@ -28,12 +27,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Create upload directory
+# Create upload directory. It is never served directly: recordings are
+# health data, so they go out only through the owner-checked
+# GET /api/v1/users/audio/{id}.
 os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
-
-# Mount static files
-if os.path.exists(settings.UPLOAD_DIR):
-    app.mount("/uploads", StaticFiles(directory=settings.UPLOAD_DIR), name="uploads")
 
 
 # Health check endpoints

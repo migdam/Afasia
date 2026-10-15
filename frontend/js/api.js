@@ -128,8 +128,7 @@ class APIClient {
 
     async uploadAudio(exerciseId, audioBlob) {
         const formData = new FormData();
-        formData.append('audio', audioBlob, 'recording.wav');
-        formData.append('exercise_id', exerciseId);
+        formData.append('audio', audioBlob, 'recording');
 
         const response = await fetch(`${API_BASE_URL}/users/audio/upload?exercise_id=${exerciseId}`, {
             method: 'POST',
