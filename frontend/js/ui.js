@@ -346,9 +346,6 @@ class UIManager {
             first_session: '🎯',
             week_streak: '🔥',
             month_streak: '🏆',
-            perfectionist: '💎',
-            dedicated: '⭐',
-            master: '👑',
         };
 
         container.replaceChildren(...badges.map(badge => {

@@ -31,13 +31,12 @@ class UserRole(str, enum.Enum):
 
 
 class BadgeType(str, enum.Enum):
-    """Achievement badge types."""
+    """Achievement badge types, each earned by a rule in
+    check_and_award_badges. Types without one were removed (backlog P2-9d);
+    which achievements to add, if any, is a product decision (H7)."""
     FIRST_SESSION = "first_session"
     WEEK_STREAK = "week_streak"
     MONTH_STREAK = "month_streak"
-    PERFECTIONIST = "perfectionist"
-    DEDICATED = "dedicated"
-    MASTER = "master"
 
 
 class User(Base):
