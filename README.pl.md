@@ -107,7 +107,7 @@ FastAPI udostępnia interaktywną dokumentację pod `/docs` i `/redoc`. Wszystki
 
 | Obszar | Adresy |
 |---|---|
-| Konta | `POST /auth/register`, `POST /auth/login`, `POST /auth/refresh` (odnawia zalogowanie), `POST /auth/logout` (usuwa ciasteczko) |
+| Konta | `POST /auth/register`, `POST /auth/login`, `POST /auth/refresh` (odnawia zalogowanie), `POST /auth/logout` (kończy to zalogowanie na serwerze i usuwa ciasteczko; inne urządzenia pozostają zalogowane) |
 | Sesje | `POST /therapy/sessions`, `GET /therapy/sessions`, `GET /therapy/sessions/{id}`, `GET /therapy/sessions/{id}/exercises` |
 | Odpowiedzi | `POST /therapy/exercises/{id}/answer`: jedna odpowiedź na ćwiczenie. Odpowiedź serwera zawiera prawidłową odpowiedź, a ostatnia odpowiedź kończy sesję i ją ocenia. |
 | Wyniki | `POST /therapy/sessions/{id}/complete`: wynik ukończonej sesji, policzony przez serwer |
@@ -152,7 +152,7 @@ Aplikację ulepsza się małymi, przetestowanymi krokami według opisanej pętli
 Zanim ktokolwiek zacznie polegać na tej aplikacji, trzeba naprawić co najmniej poniższe. Każdy punkt jest w [`loop/BACKLOG.md`](loop/BACKLOG.md).
 
 - **Bezpieczeństwo**
-  - Wylogowanie usuwa ciasteczko logowania, ale serwer nie unieważnia tokenów: token skopiowany przed wylogowaniem działa, dopóki nie wygaśnie, i można go odnawiać do 12 godzin od zalogowania.
+  - Nie da się jeszcze zmienić hasła ani wylogować naraz na wszystkich urządzeniach.
   - Limity błędnych haseł są trzymane w pamięci: każdy proces serwera liczy osobno, a restart je kasuje. Za serwerem pośredniczącym klienci są rozróżniani tylko wtedy, gdy serwer ufa jego nagłówkowi `X-Forwarded-For` (konfiguracja Docker tak robi); w przeciwnym razie wszyscy dzielą jeden licznik na nazwę użytkownika. Czy wartości 5 i 50 pasują osobom z afazją, to otwarte pytanie (backlog H7).
 - **Prywatność:** brak informacji o prywatności, zgody przed nagrywaniem oraz możliwości eksportu i usunięcia swoich danych (P1-6). Aplikacja przechowuje dane o zdrowiu.
 - **Role:** każdy terapeuta widzi i może dezaktywować wszystkich pacjentów. Terapeuci nie są jeszcze powiązani ze swoimi pacjentami (P1-3b).

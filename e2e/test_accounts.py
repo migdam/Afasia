@@ -1,5 +1,5 @@
 """Signing up, staying signed in, and logging back in, in a real browser."""
-from conftest import PASSWORD, login_cookie
+from conftest import PASSWORD, browser_token, call_api, login_cookie
 from playwright.sync_api import expect
 
 
@@ -43,11 +43,15 @@ def test_a_token_left_by_an_older_version_is_removed(page, account):
     assert page.evaluate("localStorage.getItem('access_token')") is None
 
 
-def test_logging_out_ends_the_login_for_good(page, account):
+def test_logging_out_ends_the_login_for_good(page, servers, account):
+    token = browser_token(page)
+
     page.click("#logout-btn")
     expect(page.locator("#auth-page")).to_be_visible()
 
     assert login_cookie(page) is None
+    status, _ = call_api(servers, "GET", "/users/profile", token=token)
+    assert status == 401  # a copy of the token is no use either (P1-5d)
     page.reload()
     expect(page.locator("#auth-page")).to_be_visible()
     expect(page.locator("#dashboard-page")).to_be_hidden()

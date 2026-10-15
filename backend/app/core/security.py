@@ -1,4 +1,5 @@
 """Security utilities for authentication and authorization."""
+import secrets
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
@@ -9,7 +10,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
 from ..db.database import get_db
-from ..db.models import User
+from ..db.models import RevokedLogin, User
 from .config import settings
 
 # bcrypt only looks at the first 72 bytes of a password. Longer ones are
@@ -42,11 +43,13 @@ def create_access_token(
     user_id: int,
     expires_delta: Optional[timedelta] = None,
     auth_time: Optional[int] = None,
+    sid: Optional[str] = None,
 ) -> str:
     """Create a JWT access token for a user.
 
-    auth_time is when the user actually logged in (Unix time); renewed tokens
-    keep it, so a login can't be stretched past LOGIN_MAX_HOURS.
+    auth_time is when the user actually logged in (Unix time), and sid is a
+    random id for that login. Renewed tokens keep both, so a login can't be
+    stretched past LOGIN_MAX_HOURS, and logging out ends all of its tokens.
     """
     now = datetime.now(timezone.utc)
     issued = int(now.timestamp())
@@ -54,7 +57,10 @@ def create_access_token(
     expire = now + (expires_delta or timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES))
     latest = datetime.fromtimestamp(auth_time + settings.LOGIN_MAX_HOURS * 3600, timezone.utc)
     # A JWT subject must be a string (RFC 7519, section 4.1.2).
-    claims = {"sub": str(user_id), "iat": issued, "auth_time": auth_time, "exp": min(expire, latest)}
+    claims = {
+        "sub": str(user_id), "sid": sid or secrets.token_hex(16),
+        "iat": issued, "auth_time": auth_time, "exp": min(expire, latest),
+    }
     return jwt.encode(claims, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
 
@@ -74,7 +80,7 @@ def decode_token(token: str) -> dict:
             token,
             settings.SECRET_KEY,
             algorithms=[settings.ALGORITHM],
-            options={"require": ["exp", "sub"]},
+            options={"require": ["exp", "sub", "sid"]},
         )
     except jwt.InvalidTokenError:
         raise credentials_error() from None
@@ -123,13 +129,14 @@ def get_current_user_id(
     """Get the current user's ID from the token.
 
     The account is looked up on every request, so a token stops working as
-    soon as its user is deactivated or deleted.
+    soon as its user is deactivated or deleted, or its login is logged out.
     """
+    claims = decode_token(token)
     try:
-        user_id = int(decode_token(token)["sub"])
+        user_id = int(claims["sub"])
     except ValueError:
         raise credentials_error() from None
     active = db.query(User.is_active).filter(User.id == user_id).scalar()
-    if not active:
+    if not active or db.get(RevokedLogin, str(claims["sid"])):
         raise credentials_error()
     return user_id

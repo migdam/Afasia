@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from fastapi.security import HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from ....db.database import get_db
-from ....db.models import User
+from ....db.models import RevokedLogin, User
 from ....core import login_limit
 from ....core.config import settings
 from ....core.security import (
@@ -116,18 +116,38 @@ def refresh(
     after ACCESS_TOKEN_EXPIRE_MINUTES of not using the app, or
     LOGIN_MAX_HOURS after logging in, whichever comes first.
     """
-    auth_time = decode_token(token).get("auth_time")
+    claims = decode_token(token)
+    auth_time = claims.get("auth_time")
     if not isinstance(auth_time, int) or time.time() - auth_time >= settings.LOGIN_MAX_HOURS * 3600:
         raise credentials_error()
 
     user = db.get(User, user_id)
     # Through the cookie, the new token goes only into the cookie: a script
     # on the page could otherwise read it from the body.
-    new_token = create_access_token(user.id, auth_time=auth_time)
+    new_token = create_access_token(user.id, auth_time=auth_time, sid=claims["sid"])
     return login_response(response, user, new_token, show_token=bearer is not None)
 
 
 @router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
-def logout(response: Response):
-    """Remove the login cookie. (A Bearer token stays valid until it expires.)"""
+def logout(
+    request: Request,
+    response: Response,
+    bearer: Optional[HTTPAuthorizationCredentials] = Depends(security),
+    db: Session = Depends(get_db),
+):
+    """End this login: its tokens are refused from now on, and the cookie goes.
+
+    Works without a valid login too (then it only removes the cookie), so
+    the app can always log out.
+    """
     clear_login_cookie(response)
+    try:
+        claims = decode_token(get_token(request, bearer))
+    except HTTPException:
+        return
+    now = int(time.time())
+    db.query(RevokedLogin).filter(RevokedLogin.expires_at < now).delete()
+    if not db.get(RevokedLogin, str(claims["sid"])):
+        expires_at = max(claims["exp"], claims.get("auth_time", now) + settings.LOGIN_MAX_HOURS * 3600)
+        db.add(RevokedLogin(sid=str(claims["sid"]), expires_at=int(expires_at)))
+    db.commit()

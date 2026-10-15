@@ -38,7 +38,7 @@ fi
 
 echo "== Checking it through nginx on port $frontend_port"
 if ! python3 -I - "$frontend_port" <<'EOF'; then
-import json, sys, urllib.request, uuid
+import json, sys, urllib.error, urllib.request, uuid
 
 base = f"http://127.0.0.1:{sys.argv[1]}"
 
@@ -59,9 +59,17 @@ status, _ = call("POST", "/api/v1/auth/register", account)
 assert status == 201, f"register: {status}"
 status, body = call("POST", "/api/v1/auth/login", {"username": name, "password": account["password"]})
 assert status == 200, f"login: {status}"
-status, body = call("GET", "/api/v1/users/profile", token=json.loads(body)["access_token"])
+token = json.loads(body)["access_token"]
+status, body = call("GET", "/api/v1/users/profile", token=token)
 assert status == 200 and json.loads(body)["username"] == name, f"profile: {status}"
-print("page, /api, sign-up, login and profile all work through nginx")
+status, _ = call("POST", "/api/v1/auth/logout", token=token)
+assert status == 204, f"logout: {status}"
+try:
+    call("GET", "/api/v1/users/profile", token=token)
+    raise AssertionError("the token still works after logging out")
+except urllib.error.HTTPError as error:
+    assert error.code == 401, f"profile after logout: {error.code}"
+print("page, /api, sign-up, login, profile and logout all work through nginx")
 EOF
   "${compose[@]}" logs --tail 40 >&2 || true
   exit 1

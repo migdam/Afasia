@@ -22,7 +22,8 @@ def claims(token):
 def token_for(user_id, logged_in_seconds_ago):
     now = int(time.time())
     return jwt.encode(
-        {"sub": str(user_id), "iat": now - 60, "exp": now + 600, "auth_time": now - logged_in_seconds_ago},
+        {"sub": str(user_id), "sid": "test-login", "iat": now - 60, "exp": now + 600,
+         "auth_time": now - logged_in_seconds_ago},
         settings.SECRET_KEY, algorithm=settings.ALGORITHM,
     )
 
@@ -65,6 +66,6 @@ def test_a_login_cannot_be_renewed_past_the_maximum(client):
 def test_tokens_without_a_login_time_are_not_renewed(client):
     user = sign_up(client)["user"]
     now = int(time.time())
-    token = jwt.encode({"sub": str(user["id"]), "exp": now + 600}, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+    token = jwt.encode({"sub": str(user["id"]), "sid": "test-login", "exp": now + 600}, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
     assert refresh(client, token).status_code == 401

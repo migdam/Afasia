@@ -181,3 +181,17 @@ class AudioRecording(Base):
 
     # Relationships
     user = relationship("User", back_populates="audio_recordings")
+
+
+class RevokedLogin(Base):
+    """A login that was ended by logging out; its tokens are refused.
+
+    A new table rather than a column on users, because there are no
+    migrations yet (backlog P3-1) and create_all adds only new tables.
+    """
+    __tablename__ = "revoked_logins"
+
+    sid = Column(String(64), primary_key=True)  # the token's login id
+    # Unix time after which no token of this login can be valid anyway, so
+    # the row may be deleted.
+    expires_at = Column(Integer, nullable=False, index=True)

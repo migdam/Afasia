@@ -12,7 +12,8 @@ def test_an_active_user_gets_a_fresh_login_before_the_old_one_runs_out(page, ser
     now = int(time.time())
     # A login from 20 minutes ago, with 10 minutes left.
     aged = jwt.encode(
-        {"sub": str(body["user"]["id"]), "iat": now - 1200, "exp": now + 600, "auth_time": now - 1200},
+        {"sub": str(body["user"]["id"]), "sid": "e2e-aged-login", "iat": now - 1200, "exp": now + 600,
+         "auth_time": now - 1200},
         SECRET_KEY, algorithm="HS256",
     )
     page.context.add_cookies([{
