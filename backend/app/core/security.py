@@ -2,27 +2,32 @@
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
+import bcrypt
 import jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from passlib.context import CryptContext
 
 from .config import settings
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# bcrypt only looks at the first 72 bytes of a password. Longer ones are
+# refused at sign-up rather than silently cut short.
+MAX_PASSWORD_BYTES = 72
 # Without auto_error, a missing or non-Bearer Authorization header reaches
 # get_current_user_id, which answers 401 (FastAPI's own answer is 403).
 security = HTTPBearer(auto_error=False)
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Verify a password against its hash."""
-    return pwd_context.verify(plain_password, hashed_password)
+    """Verify a password against its bcrypt hash (passlib's hashes included)."""
+    try:
+        return bcrypt.checkpw(plain_password.encode(), hashed_password.encode())
+    except ValueError:  # over 72 bytes, or not a bcrypt hash
+        return False
 
 
 def get_password_hash(password: str) -> str:
-    """Generate password hash."""
-    return pwd_context.hash(password)
+    """Hash a password with bcrypt."""
+    return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
 
 def create_access_token(user_id: int, expires_delta: Optional[timedelta] = None) -> str:

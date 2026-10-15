@@ -45,6 +45,8 @@ fi
 cd "$backend"
 echo "== Lint: ruff"
 "$venv/bin/ruff" check . "$root/e2e"
+echo "== Known vulnerabilities: pip-audit"
+"$venv/bin/pip-audit" --requirement requirements.txt --progress-spinner off
 echo "== Tests: pytest"
 "$venv/bin/python" -m pytest
 echo "== Smoke: README quick start"

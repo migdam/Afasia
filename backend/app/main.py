@@ -1,4 +1,6 @@
 """Main FastAPI application."""
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .core.config import settings
@@ -10,8 +12,20 @@ import os
 # Configure logging
 configure_logging()
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Set up the database on startup; log the shutdown."""
+    logger.info("Starting Aphasia Speech Therapy API")
+    init_db()
+    logger.info("Database initialized")
+    yield
+    logger.info("Shutting down Aphasia Speech Therapy API")
+
+
 # Create FastAPI app
 app = FastAPI(
+    lifespan=lifespan,
     title="Aphasia Speech Therapy API",
     description="API for speech therapy application for aphasia patients",
     version="1.0.0",
@@ -57,20 +71,6 @@ app.include_router(auth.router, prefix="/api/v1/auth", tags=["Authentication"])
 app.include_router(therapy.router, prefix="/api/v1/therapy", tags=["Therapy"])
 app.include_router(users.router, prefix="/api/v1/users", tags=["Users"])
 app.include_router(admin.router, prefix="/api/v1/admin", tags=["Admin"])
-
-
-@app.on_event("startup")
-async def startup_event():
-    """Initialize application on startup."""
-    logger.info("Starting Aphasia Speech Therapy API")
-    init_db()
-    logger.info("Database initialized")
-
-
-@app.on_event("shutdown")
-async def shutdown_event():
-    """Cleanup on shutdown."""
-    logger.info("Shutting down Aphasia Speech Therapy API")
 
 
 if __name__ == "__main__":

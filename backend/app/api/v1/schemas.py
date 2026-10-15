@@ -1,7 +1,7 @@
 """Pydantic schemas for request/response validation."""
 from datetime import datetime
 from typing import Optional, List
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, field_validator
 from ...db.models import DifficultyLevel, ExerciseType, UserRole, BadgeType
 
 
@@ -12,6 +12,14 @@ class UserCreate(BaseModel):
     password: str
     full_name: Optional[str] = None
     language: str = "en"
+
+    @field_validator("password")
+    @classmethod
+    def fits_bcrypt(cls, password: str) -> str:
+        # bcrypt would silently ignore everything past 72 bytes.
+        if len(password.encode()) > 72:
+            raise ValueError("Password must be at most 72 bytes (UTF-8)")
+        return password
 
 
 class UserLogin(BaseModel):

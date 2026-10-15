@@ -15,7 +15,7 @@ import argparse
 import getpass
 import sys
 
-from .core.security import get_password_hash
+from .core.security import MAX_PASSWORD_BYTES, get_password_hash
 from .db.database import SessionLocal, init_db
 from .db.models import User, UserRole
 
@@ -44,6 +44,8 @@ def create_user(args):
         return fail(str(error))
     if len(password) < MIN_PASSWORD_LENGTH:
         return fail(f"The password must be at least {MIN_PASSWORD_LENGTH} characters.")
+    if len(password.encode()) > MAX_PASSWORD_BYTES:
+        return fail(f"The password must be at most {MAX_PASSWORD_BYTES} bytes.")
 
     with SessionLocal() as db:
         taken = db.query(User).filter(

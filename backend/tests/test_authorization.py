@@ -6,13 +6,20 @@ import pytest
 from app.main import app
 
 PUBLIC = {("POST", "/api/v1/auth/register"), ("POST", "/api/v1/auth/login")}
+# Listed from the OpenAPI schema: app.routes doesn't show the routes of
+# included routers in every FastAPI version, and an empty list would turn
+# these tests into silent skips.
 ROUTES = sorted(
-    (method, route.path)
-    for route in app.routes
-    if getattr(route, "path", "").startswith("/api/")
-    for method in getattr(route, "methods", ())
-    if (method, route.path) not in PUBLIC
+    (method.upper(), path)
+    for path, operations in app.openapi()["paths"].items()
+    if path.startswith("/api/")
+    for method in operations
+    if (method.upper(), path) not in PUBLIC
 )
+
+
+def test_the_route_list_is_complete():
+    assert len(ROUTES) >= 20, ROUTES
 
 
 def register(client, username):
