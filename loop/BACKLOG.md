@@ -188,7 +188,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
   - [ ] **P2-6c Picture choice.** Waiting on pictures (H2): choose the picture that matches a word.
 - **P2-7 Speech practice that works** (C5). Split on 2026-10-15.
   - [x] **P2-7a Listen, record, play back, rate yourself** (f69b56f). The self-rating decides (`self_rating`). Recognition, with consent, listens during the recording and only suggests; its transcript is kept with the recording. Rating works without a recording.
-  - [ ] **P2-7b Recognition confidence and therapist review.** Store the recognizer's confidence (needs a column, so after P3-1 migrations), and let a linked therapist listen to recordings and rate them (needs P1-3b, which waits on H7).
+  - [ ] **P2-7b Recognition confidence and therapist review.** Store the recognizer's confidence (a new column, possible since P3-1), and let a linked therapist listen to recordings and rate them (needs P1-3b, which waits on H7).
 - **P2-8 Adaptive difficulty and spaced repetition** (C3), split in iteration 61:
   - [x] **P2-8a** Missed items come back: an item whose last answer was wrong returns in the next session of the same type, difficulty and language, at most half of it (`REVIEW_SHARE`, a placeholder for H1). (69790a3)
   - [x] **P2-8b** Spaced intervals: items answered right come back after growing gaps (`REVIEW_GAP_DAYS` 1/2/4/8/16, placeholders for H1), worked out from the answer history rather than a stored due date. Answers found with a hint, from the list or from tiles get the shortest gap. (b5ab10d)
@@ -209,7 +209,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 
 ## P3: Engineering quality
 
-- [ ] **P3-1** Alembic migrations instead of `create_all`.
+- [x] **P3-1** Alembic migrations instead of `create_all` (57964ee). `backend/migrations/`, applied at start-up (`database.migrate`). The first migration is the create_all schema and creates only missing tables, so databases made before migrations are brought up to date with their data kept. Tested on SQLite (`test_migrations.py`, including no difference from the models) and on PostgreSQL 15; the READMEs say how to add one.
 - [ ] **P3-2** CI: a GitHub Actions workflow running `scripts/check.sh` and the e2e tests on every push and PR.
 - [ ] **P3-3** Lint, format and types: `ruff format`, mypy on `app/core` and services, and a JS lint (ESLint, or at least `node --check`).
 - [ ] **P3-4** Frontend as ES modules: no globals, no inline handlers. Stay with vanilla JS.
