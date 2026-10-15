@@ -104,7 +104,10 @@ def servers(tmp_path_factory):
 @pytest.fixture(scope="session")
 def browser():
     with sync_playwright() as playwright:
-        browser = playwright.chromium.launch()
+        # A fake microphone that needs no permission prompt, for recordings.
+        browser = playwright.chromium.launch(
+            args=["--use-fake-ui-for-media-stream", "--use-fake-device-for-media-stream"],
+        )
         yield browser
         browser.close()
 

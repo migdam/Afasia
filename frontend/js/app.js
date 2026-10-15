@@ -225,6 +225,7 @@ class AphasiaApp {
     }
 
     async logout() {
+        this.leaveExercise();
         // Wait until the cookie is gone, or it could outlive a new login.
         await api.logout();
         ui.showAuthPage();
@@ -289,6 +290,7 @@ class AphasiaApp {
         // Start clean: nothing typed or recorded for an earlier exercise is
         // kept, and Submit works again.
         this.recordedAudio = null;
+        this.stopListening();
         document.getElementById('answer-input').value = '';
         document.getElementById('submit-answer').disabled = false;
 
@@ -437,23 +439,37 @@ class AphasiaApp {
         const statusEl = document.getElementById('recording-status');
 
         if (!audioRecorder.isRecording) {
-            // Start recording
-            const initialized = audioRecorder.stream || await audioRecorder.init();
-            if (!initialized) return;
+            // Start recording (ignoring clicks while the microphone opens)
+            if (this.openingMicrophone) return;
+            this.openingMicrophone = true;
+            const started = await audioRecorder.startRecording();
+            this.openingMicrophone = false;
+            if (!started) return;
 
-            audioRecorder.startRecording();
             recordBtn.classList.add('recording');
             recordBtn.replaceChildren(el('span', 'record-icon', '⏹️'), el('span', '', 'Stop'));
             statusEl.textContent = 'Recording...';
         } else {
             // Stop recording
             this.recordedAudio = await audioRecorder.stopRecording();
-            recordBtn.classList.remove('recording');
-            const label = el('span', '', i18n.translate('record'));
-            label.dataset.i18n = 'record';
-            recordBtn.replaceChildren(el('span', 'record-icon', '🎤'), label);
+            this.resetRecordButton();
             statusEl.textContent = 'Recording saved. Click submit when ready.';
         }
+    }
+
+    resetRecordButton() {
+        const recordBtn = document.getElementById('record-btn');
+        recordBtn.classList.remove('recording');
+        const label = el('span', '', i18n.translate('record'));
+        label.dataset.i18n = 'record';
+        recordBtn.replaceChildren(el('span', 'record-icon', '🎤'), label);
+    }
+
+    // Turn the microphone off and forget any unfinished recording.
+    stopListening() {
+        audioRecorder.cleanup();
+        speechRecognizer.stop();
+        this.resetRecordButton();
     }
 
     async completeSession() {
@@ -462,6 +478,7 @@ class AphasiaApp {
             const session = await api.completeSession(this.currentSession.id);
 
             this.stopTimer();
+            this.stopListening();
             alert(`Session complete! Score: ${Math.round(session.score)}%`);
 
             // Return to dashboard
@@ -474,12 +491,17 @@ class AphasiaApp {
     }
 
     exitExercise() {
+        this.leaveExercise();
+        ui.showPage('dashboard');
+    }
+
+    leaveExercise() {
         // A pending move to the next exercise would otherwise run in the
         // next session.
         clearTimeout(this.advanceTimeout);
         this.advanceTimeout = null;
         this.stopTimer();
-        ui.showPage('dashboard');
+        this.stopListening();
     }
 
     startTimer() {

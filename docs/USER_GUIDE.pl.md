@@ -79,7 +79,7 @@ Czytasz zdanie z luką, np. „The sky is ___”. Kliknij pasujące słowo, a po
 
 ### Wymowa
 
-Widzisz słowo lub zwrot do powiedzenia, np. „Say: Hello”. Kliknij **Nagraj**, powiedz je, kliknij przycisk jeszcze raz, żeby zakończyć nagrywanie, a potem **Zatwierdź**. Za pierwszym razem przeglądarka zapyta o zgodę na użycie mikrofonu.
+Widzisz słowo lub zwrot do powiedzenia, np. „Say: Hello”. Kliknij **Nagraj**, powiedz je, kliknij przycisk jeszcze raz, żeby zakończyć nagrywanie, a potem **Zatwierdź**. Za pierwszym razem przeglądarka zapyta o zgodę na użycie mikrofonu. Mikrofon jest włączony tylko podczas nagrywania: wyłącza się, gdy zakończysz nagrywanie, wyjdziesz z sesji albo się wylogujesz, a przeglądarka przestaje pokazywać, że jest używany.
 
 **To jeszcze nie działa niezawodnie.** Odpowiedź ocenia wbudowane rozpoznawanie mowy przeglądarki. W większości przeglądarek jest ono niedostępne, a tam, gdzie działa, nie radzi sobie z mową osób z afazją. Często poprawna odpowiedź zostaje uznana za błędną. Ten typ ćwiczeń jest projektowany od nowa.
 

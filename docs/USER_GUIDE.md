@@ -79,7 +79,7 @@ You read a sentence with a gap, such as "The sky is ___". Click the word that fi
 
 ### Pronunciation
 
-You see a word or phrase to say, such as "Say: Hello". Click **Record**, say it, click the button again to stop, then click **Submit**. Your browser asks for permission to use the microphone the first time.
+You see a word or phrase to say, such as "Say: Hello". Click **Record**, say it, click the button again to stop, then click **Submit**. Your browser asks for permission to use the microphone the first time. The microphone is on only while you record: it turns off when you stop, leave the session or log out, and your browser stops showing it as in use.
 
 **This doesn't work reliably yet.** Your answer is judged by the browser's own speech recognition. In most browsers that isn't available, and where it is, it's unreliable for speech affected by aphasia. Answers are often marked wrong when they were right. This exercise type is being redesigned.
 

@@ -11,19 +11,14 @@ class AudioRecorder {
         this.isRecording = false;
     }
 
-    async init() {
+    // The microphone is opened for each recording and released as soon as it
+    // ends, so the browser shows it in use only while someone is recording.
+    async startRecording() {
         try {
             this.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            return true;
         } catch (error) {
             console.error('Microphone access denied:', error);
             alert('Microphone access is required for pronunciation exercises.');
-            return false;
-        }
-    }
-
-    startRecording() {
-        if (!this.stream) {
             return false;
         }
 
@@ -50,6 +45,7 @@ class AudioRecorder {
                 // Keep the format the browser really recorded (WebM or MP4, not WAV).
                 const audioBlob = new Blob(this.audioChunks, { type: this.mediaRecorder.mimeType || 'audio/webm' });
                 this.isRecording = false;
+                this.releaseMicrophone();
                 resolve(audioBlob);
             };
 
@@ -63,10 +59,23 @@ class AudioRecorder {
         await audio.play();
     }
 
-    cleanup() {
+    releaseMicrophone() {
         if (this.stream) {
             this.stream.getTracks().forEach(track => track.stop());
+            this.stream = null;
         }
+    }
+
+    // Drop any recording in progress and turn the microphone off: when
+    // leaving an exercise, a session, or the app.
+    cleanup() {
+        if (this.mediaRecorder && this.isRecording) {
+            this.mediaRecorder.onstop = null;
+            this.mediaRecorder.stop();
+        }
+        this.isRecording = false;
+        this.audioChunks = [];
+        this.releaseMicrophone();
     }
 }
 
