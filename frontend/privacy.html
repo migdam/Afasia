@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- No scripts at all on this page. -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'none'; style-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'none'">
+    <title>Privacy notice / Informacja o prywatności</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!--
+        Describes what the code in this repository does (checked 2026-10-15).
+        Keep it true: when what the app stores or shows changes, change this
+        page in both languages. Parts marked .to-complete are facts only the
+        people running the app know (backlog H4, H5).
+    -->
+    <main class="container privacy">
+        <p><a href="#en">English</a> · <a href="#pl">Polski</a></p>
+
+        <section id="en" lang="en">
+            <h1>Privacy notice</h1>
+            <p>This page says what this app keeps about you, why, who can see it, and what you can do about it. It describes what the app's code does. Some facts can only be given by whoever runs the app; they are marked <span class="to-complete">[to be completed]</span>.</p>
+
+            <h2>Who is responsible</h2>
+            <p><span class="to-complete">[To be completed: the name of whoever runs this app, and how to contact them.]</span></p>
+
+            <h2>What the app keeps</h2>
+            <ul>
+                <li><strong>Your account:</strong> email address, username, full name (if you give it), language, and role. Your password is kept only in a form that can't be turned back into the password (a bcrypt hash), with the time you last changed it.</li>
+                <li><strong>Your practice:</strong> each session and exercise, your answers, how long they took, your scores, points, streaks, badges, and the sessions you plan.</li>
+                <li><strong>Your recordings:</strong> only if you agree. They are kept as audio files on the server.</li>
+                <li><strong>Your consent answers</strong> about recordings and speech recognition, and when you gave them.</li>
+                <li><strong>To keep you logged in:</strong> a cookie called <code>access_token</code>, which your browser sends only to this app. A login ends after 30 minutes of not using the app, and at most 12 hours after you logged in. When you log out, the server keeps a note that this login has ended.</li>
+                <li><strong>To slow down password guessing:</strong> wrong passwords for each username, and from which network address, for 15 minutes, in the server's memory only.</li>
+                <li><strong>In your browser only:</strong> your language and your theme (light or dark).</li>
+            </ul>
+            <p>Your answers and scores can show how your speech is doing. That is health information, which the law protects in a special way.</p>
+
+            <h2>Why</h2>
+            <p>To run your exercises, keep your results, and show your progress. <span class="to-complete">[To be completed: the legal basis for using this information.]</span></p>
+
+            <h2>Where it is kept</h2>
+            <p>On the server that runs this app. <span class="to-complete">[To be completed: who hosts the server, and in which country.]</span> The app's pages load their code, styles and images only from the app itself.</p>
+            <p><strong>Speech recognition</strong> is used only if you agree. Your browser may then send your voice to the company that made the browser, and that company's rules apply.</p>
+
+            <h2>Who can see it</h2>
+            <ul>
+                <li>You.</li>
+                <li>Therapists and administrators who use this app can see every patient's email address, username, name, language, points and streaks, whether the account is active, and every patient's sessions and scores. They can turn accounts off and on. They cannot play your recordings. (Today any therapist can see every patient; linking therapists to their own patients is planned.)</li>
+                <li>Whoever runs the server has technical access to everything kept on it.</li>
+            </ul>
+
+            <h2>How long</h2>
+            <p>Until you delete your account. Recordings are not yet deleted automatically after a set time. Wrong-password records last 15 minutes. The note that a login has ended holds a random number, not your name, and is only needed for 12 hours.</p>
+
+            <h2>What you can do</h2>
+            <ul>
+                <li>Change your answers about recordings and speech recognition at any time: <strong>Account → Your choices</strong>.</li>
+                <li>Download everything the app keeps about you: <strong>Account → Your data → Download my data</strong>.</li>
+                <li>Delete your account and everything kept about you, recordings included: <strong>Account → Your data → Delete my account</strong>.</li>
+                <li>For anything else: <span class="to-complete">[To be completed: contact.]</span></li>
+                <li>You can also complain to a data protection authority. <span class="to-complete">[To be completed: which one.]</span></li>
+            </ul>
+
+            <p>Last changed: 15 October 2026.</p>
+            <p><a class="back-to-app" href="index.html">Back to the app</a></p>
+        </section>
+
+        <section id="pl" lang="pl">
+            <h1>Informacja o prywatności</h1>
+            <p>Ta strona wyjaśnia, co ta aplikacja o Tobie przechowuje, w jakim celu, kto to widzi i co możesz z tym zrobić. Opisuje to, co robi kod aplikacji. Niektóre informacje może podać tylko osoba lub firma, która prowadzi aplikację; są oznaczone jako <span class="to-complete">[do uzupełnienia]</span>.</p>
+
+            <h2>Kto odpowiada za Twoje dane</h2>
+            <p><span class="to-complete">[Do uzupełnienia: nazwa osoby lub firmy, która prowadzi aplikację, i dane kontaktowe.]</span></p>
+
+            <h2>Co aplikacja przechowuje</h2>
+            <ul>
+                <li><strong>Twoje konto:</strong> adres e-mail, nazwę użytkownika, imię i nazwisko (jeśli je podasz), język i rolę. Hasło jest przechowywane tylko w postaci, z której nie da się go odtworzyć (skrót bcrypt), razem z datą ostatniej zmiany.</li>
+                <li><strong>Twoje ćwiczenia:</strong> każdą sesję i ćwiczenie, Twoje odpowiedzi, czas odpowiedzi, wyniki, punkty, serie, odznaki i zaplanowane sesje.</li>
+                <li><strong>Twoje nagrania:</strong> tylko jeśli się zgodzisz. Są przechowywane jako pliki dźwiękowe na serwerze.</li>
+                <li><strong>Twoje odpowiedzi na pytania o zgodę</strong> (nagrania i rozpoznawanie mowy) oraz kiedy ich udzielono.</li>
+                <li><strong>Aby utrzymać zalogowanie:</strong> ciasteczko <code>access_token</code>, które przeglądarka wysyła tylko do tej aplikacji. Zalogowanie kończy się po 30 minutach bez korzystania z aplikacji, a najpóźniej 12 godzin po zalogowaniu. Po wylogowaniu serwer zapisuje informację, że to zalogowanie się zakończyło.</li>
+                <li><strong>Aby utrudnić zgadywanie haseł:</strong> błędne hasła dla każdej nazwy użytkownika wraz z adresem sieciowym, z którego je podano, przez 15 minut, tylko w pamięci serwera.</li>
+                <li><strong>Tylko w Twojej przeglądarce:</strong> wybrany język i motyw (jasny lub ciemny).</li>
+            </ul>
+            <p>Twoje odpowiedzi i wyniki mogą pokazywać stan Twojej mowy. To dane o zdrowiu, które prawo szczególnie chroni.</p>
+
+            <h2>W jakim celu</h2>
+            <p>Aby prowadzić ćwiczenia, zapisywać wyniki i pokazywać postępy. <span class="to-complete">[Do uzupełnienia: podstawa prawna przetwarzania tych danych.]</span></p>
+
+            <h2>Gdzie są przechowywane</h2>
+            <p>Na serwerze, na którym działa aplikacja. <span class="to-complete">[Do uzupełnienia: kto udostępnia serwer i w jakim kraju.]</span> Strony aplikacji pobierają kod, style i obrazy wyłącznie z samej aplikacji.</p>
+            <p><strong>Rozpoznawanie mowy</strong> jest używane tylko za Twoją zgodą. Przeglądarka może wtedy wysłać Twój głos do firmy, która ją stworzyła, i obowiązują zasady tej firmy.</p>
+
+            <h2>Kto ma do nich dostęp</h2>
+            <ul>
+                <li>Ty.</li>
+                <li>Terapeuci i administratorzy korzystający z aplikacji widzą adres e-mail, nazwę użytkownika, imię i nazwisko, język, punkty i serie każdego pacjenta, informację, czy konto jest aktywne, oraz sesje i wyniki każdego pacjenta. Mogą wyłączać i włączać konta. Nie mogą odtwarzać Twoich nagrań. (Obecnie każdy terapeuta widzi wszystkich pacjentów; przypisanie terapeutów do ich pacjentów jest planowane).</li>
+                <li>Osoba lub firma prowadząca serwer ma techniczny dostęp do wszystkiego, co jest na nim zapisane.</li>
+            </ul>
+
+            <h2>Jak długo</h2>
+            <p>Do czasu usunięcia konta. Nagrania nie są jeszcze automatycznie usuwane po określonym czasie. Informacje o błędnych hasłach są przechowywane przez 15 minut. Informacja o zakończonym zalogowaniu zawiera losową liczbę, a nie Twoje dane, i jest potrzebna tylko przez 12 godzin.</p>
+
+            <h2>Co możesz zrobić</h2>
+            <ul>
+                <li>W każdej chwili zmienić odpowiedzi dotyczące nagrań i rozpoznawania mowy: <strong>Konto → Twoje zgody</strong>.</li>
+                <li>Pobrać wszystko, co aplikacja o Tobie przechowuje: <strong>Konto → Twoje dane → Pobierz moje dane</strong>.</li>
+                <li>Usunąć konto i wszystkie swoje dane, łącznie z nagraniami: <strong>Konto → Twoje dane → Usuń moje konto</strong>.</li>
+                <li>W innych sprawach: <span class="to-complete">[Do uzupełnienia: kontakt.]</span></li>
+                <li>Możesz też złożyć skargę do organu ochrony danych osobowych. <span class="to-complete">[Do uzupełnienia: do którego.]</span></li>
+            </ul>
+
+            <p>Ostatnia zmiana: 15 października 2026 r.</p>
+            <p><a class="back-to-app" href="index.html">Wróć do aplikacji</a></p>
+        </section>
+    </main>
+</body>
+</html>

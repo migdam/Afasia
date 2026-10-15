@@ -888,3 +888,26 @@ body {
     flex-wrap: wrap;
     gap: 0.75rem;
 }
+
+/* The privacy notice (privacy.html) */
+.privacy {
+    max-width: 48rem;
+    line-height: 1.6;
+}
+
+.privacy section {
+    margin-bottom: 3rem;
+}
+
+.privacy h2 {
+    margin-top: 1.5rem;
+}
+
+.privacy ul {
+    padding-left: 1.25rem;
+}
+
+.to-complete {
+    background-color: #FEF3C7;  /* marks what only whoever runs the app can fill in */
+    color: #111827;
+}

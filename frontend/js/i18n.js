@@ -106,6 +106,7 @@ const translations = {
         recordingOff: "Recording is off. You can turn it on on the Account page.",
 
         // Your data
+        privacyNotice: "Privacy notice",
         yourData: "Your data",
         yourDataText: "Download everything the app keeps about you, or delete your account.",
         downloadData: "Download my data",
@@ -227,6 +228,7 @@ const translations = {
         recordingOff: "Nagrywanie jest wyłączone. Możesz je włączyć na stronie Konto.",
 
         // Your data
+        privacyNotice: "Informacja o prywatności",
         yourData: "Twoje dane",
         yourDataText: "Pobierz wszystko, co aplikacja o Tobie przechowuje, albo usuń swoje konto.",
         downloadData: "Pobierz moje dane",
@@ -278,6 +280,11 @@ class I18n {
             } else {
                 element.textContent = translation;
             }
+        });
+
+        // The privacy notice opens at the current language's section.
+        document.querySelectorAll('.privacy-link').forEach((link) => {
+            link.href = `privacy.html#${this.currentLang}`;
         });
 
         // Update language toggle button

@@ -127,7 +127,7 @@ Everything you do is stored on the server that runs the app: your account, your 
 - **Download my data:** saves everything the app keeps about you as one file (JSON).
 - **Delete my account:** after you type your password, deletes your account, answers, scores and recordings. This can't be undone.
 
-A privacy notice is planned but not available yet.
+The **Privacy notice** link, on the login page and the Account page, explains what the app keeps, why, and who can see it.
 
 ## When something goes wrong
 

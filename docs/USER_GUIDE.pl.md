@@ -127,7 +127,7 @@ Wszystko, co robisz, jest zapisywane na serwerze, na którym działa aplikacja: 
 - **Pobierz moje dane:** zapisuje wszystko, co aplikacja o Tobie przechowuje, w jednym pliku (JSON).
 - **Usuń moje konto:** po wpisaniu hasła usuwa konto, odpowiedzi, wyniki i nagrania. Nie da się tego cofnąć.
 
-Informacja o prywatności jest planowana, ale jeszcze jej nie ma.
+Odnośnik **Informacja o prywatności**, na stronie logowania i na stronie Konto, wyjaśnia, co aplikacja przechowuje, w jakim celu i kto to widzi.
 
 ## Gdy coś nie działa
 
