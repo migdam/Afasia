@@ -17,6 +17,30 @@ Newest entry first. One entry per iteration.
 
 ---
 
+### 19: 2026-10-15 08:20 UTC: P1-2 Private voice recordings
+- **Baseline:** `check.sh` green (67 backend, smoke, 15 e2e). No human commits.
+- **Did:**
+  - Removed the public `/uploads` mount.
+  - The upload now:
+    - checks the exercise belongs to the uploader (404);
+    - accepts audio content types only (415);
+    - reads at most `MAX_UPLOAD_SIZE + 1` bytes (413) and refuses empty files (400);
+    - stores files under `UPLOAD_DIR/audio` with a random name and the real extension.
+  - `GET /users/audio/{id}` sends the real content type.
+  - The upload response no longer includes `file_path`.
+  - Frontend: recordings keep the browser's real format, and the unused form field is gone.
+  - Added `test_recordings.py` (4 tests).
+- **Worse than reported:** uploads ignored `UPLOAD_DIR`, writing under the working directory. Running the new tests on the old code left 4 `.wav` files in `backend/uploads/audio` (gitignored, since deleted).
+- **Verified:**
+  ```
+  old code: 4 failed ('file_path' in the response · file not under UPLOAD_DIR · "assert 200 == 413" · "assert 200 == 404" for someone else's exercise)
+  now:      test_recordings 2 runs "4 passed" · check.sh backend "71 passed" · smoke OK · e2e "15 passed" (exit code checked directly)
+  ```
+- **Docs:** removed P1-2 from Known limitations in both READMEs.
+- **Commit:** 99716d3 (pushed: yes), plus this log/docs commit.
+- **Discovered:** nothing new. Recordings are still kept forever and uploaded without a consent step; both are already in P1-6.
+- **Next:** P1-3, the therapist/admin model.
+
 ### 18: 2026-10-15 08:05 UTC: P1-1 No user input as HTML; CSP
 - **Baseline:** `check.sh` green (65 backend, smoke, 13 e2e). No human commits.
 - **Did:**

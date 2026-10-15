@@ -23,7 +23,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 | G2 Backend tests | 🔴 | 51 tests pass, including register → login → profile and a full scored session; coverage not measured |
 | G3 End-to-end | 🟡 | 13 tests in Chromium, including the whole flow (sign-up → word naming and sentence completion → feedback → dashboard and progress scores) in EN and PL, the admin list, the chart, and the session edge cases. Not covered yet: pronunciation (P2-7) and export (CSV/PDF) |
 | G4 Authorization | 🔴 | P1-3 |
-| G5 Security | 🔴 | Done: no untrusted data reaches `innerHTML`, and the CSP forbids inline scripts (P1-1). Still open: recordings served without authentication (P1-2), pip-audit (P1-4), login rate limit (P1-5), secrets from the environment only (P1-8) |
+| G5 Security | 🔴 | Done: no untrusted data reaches `innerHTML`, and the CSP forbids inline scripts (P1-1). Recordings only through the owner-checked endpoint (P1-2). Still open: pip-audit (P1-4), login rate limit (P1-5), secrets from the environment only (P1-8) |
 | G6 Accessibility | 🔴 | Not measured |
 | G7 Aphasia-friendly | 🔴 | Auto-advance, visible timer, typing required (P2-4..P2-6) |
 | G8 Clinical content | 🔴 | No answer leaks (C4, enforced by `test_content.py` since P0-6). Still English-only, assets missing, nothing clinically reviewed |
@@ -119,7 +119,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
   Progress: the admin list, the worst case, has been built with DOM methods since P0-7d, and `e2e/test_admin.py` shows a `<b>…</b>` username there as text. Still to do (`grep -n "innerHTML\|onclick=" frontend/js`):
   - `ui.js`: recent sessions, scheduled sessions (titles, plus an inline `onclick`), badges, and the empty-state messages.
   - `app.js`: exercise options and the record button.
-- [ ] **P1-2 Voice recordings are served without authentication** 🔎. `main.py` mounts the upload directory at `/uploads` with `StaticFiles`, so recordings of patients' speech can be fetched by anyone with the URL. Fixes:
+- [x] **P1-2 Voice recordings are served without authentication** 🔎 (99716d3). The public mount is gone. Files are stored in `UPLOAD_DIR/audio` under random names with their real format. Uploads check the owner, type and size. Tested. Original report: `main.py` mounts the upload directory at `/uploads` with `StaticFiles`, so recordings of patients' speech can be fetched by anyone with the URL. Fixes:
   - Remove the mount, and serve recordings only through the authenticated, ownership-checked endpoint.
   - Use random (uuid) file names, stored outside any web root.
   - In the upload endpoint, enforce `MAX_UPLOAD_SIZE` (defined but unused; the whole file is read into memory) and check the content type.

@@ -135,7 +135,6 @@ The app is improved in small, tested steps by a documented loop. See [`loop/READ
 Before anyone relies on this app, at least these must be fixed. Each one is in [`loop/BACKLOG.md`](loop/BACKLOG.md).
 
 - **Security**
-  - Voice recordings can be downloaded by anyone who knows their address (P1-2).
   - Logins aren't rate-limited, and tokens are kept in `localStorage` (P1-5).
   - Some dependencies are outdated (P1-4).
 - **Privacy:** there is no privacy notice, no consent step before recording, and no way to export or delete your data (P1-6). The app stores health information.
