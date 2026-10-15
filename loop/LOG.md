@@ -19,6 +19,22 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 41: 2026-10-15 12:04 UTC: P1-8c A tighter CSP (and a flaky test)
+- **Baseline:** red. 161 backend tests and smoke passed, but 1 e2e failed: `test_on_a_phone_the_last_button_is_not_hidden_behind_the_menu` (684.6 > 654). The page hadn't changed since it last passed. Cause: `mouse.wheel` scrolls asynchronously, so the test measured mid-scroll. Per the protocol, I fixed that first (e857fb0): the test now scrolls instantly and waits a frame. It passed 6 runs in a row, and still fails with the old padding put back (658.4 > 654).
+- **Test first (CSP):** `e2e/test_csp.py`: a fetch to another site must raise a `connect-src` violation. It failed before, with none. A unit check in `test_frontend_safety.py` that `connect-src` has no `http:`, `https:` or `*` also failed before.
+- **Did:**
+  - `index.html`: `connect-src 'self' http://localhost:* http://127.0.0.1:*`, with a comment.
+  - `security-headers.inc`: a CSP header with `connect-src 'self'` and `frame-ancestors 'none'`.
+  - `docker-smoke.sh` checks the header.
+  - READMEs (EN/PL): an API on another site needs adding to `connect-src`.
+- **Verified:**
+  - `scripts/check.sh` exit code 0: ruff, pip-audit "No known vulnerabilities found", 162 backend tests, smoke, 50 e2e.
+  - `docker-smoke.sh` exit code 0 with the header checks.
+- **Commits:** e857fb0 (test fix) and 8feaeaf (pushed: yes)
+- **Discovered:** nothing new.
+- **Next:** P1-8d (timezone-aware datetimes).
+- **Protocol notes:** measure layout only after the page has settled. A wheel scroll animates; `scrollTo(..., 'instant')` plus a frame doesn't.
+
 ### 40: 2026-10-15 11:51 UTC: P1-8b Docker gets all the settings
 - **Baseline:** `check.sh` exit code 0: 158 backend tests, smoke, 48 e2e. No human commits. Tests were written in the scratchpad until it finished.
 - **Approach:** a service-level `env_file: .env` would read the repository's `.env`, not the file given with `--env-file` (as `docker-smoke.sh` does). So, like `SECRET_KEY`, every setting goes through `environment` with interpolation.

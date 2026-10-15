@@ -155,7 +155,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 - **P1-8 Safe defaults** 🔎. Split into a–d on 2026-10-15.
   - [x] **P1-8a Debug off, no guessable keys, no settings on show** (fc2e1a0). `DEBUG` defaults to false (Compose uses `${DEBUG:-false}`). The app refuses the template's `SECRET_KEY` and keys under 32 bytes. `/health/detailed` shows no settings and really checks the database (503 when it's down).
   - [x] **P1-8b Docker gets all the settings** 🔎 (f93f6db). Compose lists every setting as `${NAME:-default}` (the app's defaults); `DATABASE_URL`, `UPLOAD_DIR`, `HOST` and `PORT` are fixed by the setup. `tests/test_docker_settings.py` keeps the list complete and the defaults in step, and `docker-smoke.sh` checks that a value from `.env` (a 17-minute login) reaches the backend.
-  - [ ] **P1-8c A tighter CSP.** The CSP's `connect-src` allows any `http:`/`https:` origin, because the API's address is configurable (`js/config.js`). The e2e test shows the app uses only its own origins, but the CSP could say so: generate it from the configured API origin, or drop the wildcard when the API is same-origin (Docker).
+  - [x] **P1-8c A tighter CSP** (8feaeaf). The page's `connect-src` allows only itself and local development ports. Docker's nginx adds a header policy with `connect-src 'self'` and `frame-ancestors 'none'`. An API on another site must be added to `index.html` (README).
   - [ ] **P1-8d Timezone-aware datetimes.** Datetimes are naive (`datetime.utcnow()`, deprecated in Python 3.12). Store and compare aware UTC datetimes, and send them with an offset, so the browser shows local times correctly.
 
 - [ ] **P1-9 Unbounded session size** ✅. `num_exercises` has no limits. Measured on 2026-10-15:
