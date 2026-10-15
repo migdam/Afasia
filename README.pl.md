@@ -309,16 +309,15 @@ Aplikacja będzie dostępna pod adresem: **http://localhost:3000**
 ### Metoda 1: Docker (Zalecana dla Produkcji)
 
 ```bash
-# Upewnij się, że Docker i Docker Compose są zainstalowane
+# Wymaga Dockera z Compose v2
+cp .env.template .env   # następnie ustaw SECRET_KEY i POSTGRES_PASSWORD
+docker compose up --build
 
-# Uruchom wszystkie usługi
-docker-compose up --build
-
-# Aplikacja będzie dostępna pod adresem:
-# Frontend: http://localhost:3000
-# Backend API: http://localhost:8000
-# Dokumentacja API: http://localhost:8000/docs
+# Aplikacja (nginx, z API pod /api): http://localhost:3000
+# API bezpośrednio: http://localhost:8000 (dokumentacja: http://localhost:8000/docs)
 ```
+
+Aby sprawdzić cały stos od początku do końca, uruchom `scripts/docker-smoke.sh`. Skrypt buduje i uruchamia osobną kopię z własnymi hasłami i portami, rejestruje się i loguje przez nginx, a na koniec wszystko usuwa.
 
 ### Metoda 2: Instalacja Ręczna
 
@@ -608,17 +607,16 @@ SMTP_FROM=noreply@terapia-afazji.app
 2. **Skonfiguruj środowisko**
    ```bash
    cp .env.template .env
-   # Edytuj .env wartościami produkcyjnymi
+   # Ustaw SECRET_KEY (openssl rand -hex 32) i POSTGRES_PASSWORD
    ```
 
 3. **Uruchom usługi**
    ```bash
-   docker-compose up -d
+   docker compose up -d --build
    ```
 
 4. **Uzyskaj dostęp do aplikacji**
-   - Frontend: http://twoja-domena.com
-   - Backend: http://twoja-domena.com:8000
+   - Aplikacja, z API pod /api: http://twoja-domena.com (przed portem 3000 ustaw TLS)
 
 ---
 

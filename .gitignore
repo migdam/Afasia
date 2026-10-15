@@ -66,5 +66,3 @@ loop/STOP
 node_modules/
 package-lock.json
 
-# Docker
-.dockerignore

@@ -307,16 +307,15 @@ The app will be available at: **http://localhost:3000**
 ### Method 1: Docker (Recommended for Production)
 
 ```bash
-# Make sure Docker and Docker Compose are installed
+# Needs Docker with Compose v2
+cp .env.template .env   # then set SECRET_KEY and POSTGRES_PASSWORD
+docker compose up --build
 
-# Start all services
-docker-compose up --build
-
-# The application will be available at:
-# Frontend: http://localhost:3000
-# Backend API: http://localhost:8000
-# API Documentation: http://localhost:8000/docs
+# The app (nginx, with the API under /api): http://localhost:3000
+# The API directly: http://localhost:8000 (docs: http://localhost:8000/docs)
 ```
+
+To check the whole stack end to end, run `scripts/docker-smoke.sh`. It builds and starts a separate copy with its own secrets and ports, signs up and logs in through nginx, and removes everything afterwards.
 
 ### Method 2: Manual Installation
 
@@ -720,17 +719,16 @@ BACKEND_CORS_ORIGINS=http://localhost:3000,https://yourapp.com
 2. **Configure environment**
    ```bash
    cp .env.template .env
-   # Edit .env with production values
+   # Set SECRET_KEY (openssl rand -hex 32) and POSTGRES_PASSWORD
    ```
 
 3. **Start services**
    ```bash
-   docker-compose up -d
+   docker compose up -d --build
    ```
 
 4. **Access the application**
-   - Frontend: http://your-domain.com
-   - Backend: http://your-domain.com:8000
+   - The app, with the API under /api: http://your-domain.com (put TLS in front of port 3000)
 
 ### Manual Deployment
 
