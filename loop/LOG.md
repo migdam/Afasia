@@ -19,6 +19,24 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 76: 2026-10-15 22:58 UTC: P3-2 Continuous integration
+- **Baseline:** `check.sh` exit code 0: 321 backend tests, smoke, 128 e2e. No human commits.
+- **Test first:** `backend/tests/test_ci.py`. All 4 tests failed before, as there was no workflow. They check that it runs on every push and PR, runs check.sh and docker-smoke.sh, uses the Docker image's Python 3.11, pins every action to a 40-character commit, and has read-only permissions.
+- **Did:** `.github/workflows/checks.yml` on ubuntu-24.04.
+  - Job "scripts/check.sh": setup-python 3.11, Playwright `install-deps chromium` at the pinned version, then `scripts/check.sh` with `PYTHON=python`.
+  - Job "Docker Compose smoke test": `scripts/docker-smoke.sh`.
+  - Actions are pinned to the commits of actions/checkout v7.0.1 and actions/setup-python v7.0.0, read with `git ls-remote`; both are lightweight tags.
+  - README EN/PL: the workflow is mentioned, and the "no CI" limitation is removed.
+  - actionlint 1.7.12, run from a scratch environment, finds nothing.
+- **First run on GitHub** (38817924120, read through the public API: the repository is public): the Docker job passed, and check.sh failed with exit code 1 after about 7 minutes. Its log can't be read from here, because the proxy refuses blob.core.windows.net (`/__agentproxy/status` shows `connect_rejected`). So in 11e0640, on failure the step writes the output's last 80 lines as an `::error::` annotation, which the API serves. The log goes to `$RUNNER_TEMP`.
+- **Second run** (38819637034): both jobs passed. The first failure stays unexplained, and P3-11 tracks it.
+- **Verified:** `scripts/check.sh` exit code 0 before each commit (325 backend tests, smoke, 128 e2e). The CI run passed on GitHub.
+- **Commits:** 21dde49, 11e0640 (pushed: yes)
+- **Gate:** G13 is now 🟢.
+- **Discovered:** P3-11. Pushing a workflow file worked; the token wasn't missing the `workflow` scope.
+- **Next:** P3-3 (lint, format and types). P3-11 waits for a failure to read.
+- **Protocol note:** the loop can now read CI results through the public API, so later iterations can check that their push passed on GitHub.
+
 ### 75: 2026-10-15 22:17 UTC: P3-1 Alembic migrations
 - **Baseline:** `check.sh` exit code 0: 317 backend tests, smoke, 128 e2e. No human commits.
 - **Not split:** setup, the first migration, start-up, tests and docs fit in one iteration.

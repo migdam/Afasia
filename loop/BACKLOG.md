@@ -31,7 +31,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 | G10 Privacy | 🟢 | Every criterion met (P1-6a–f): export and deletion, consent before recording and before speech recognition, configurable retention, no third-party requests (tested), and a privacy notice in PL and EN. Its legal blanks (who runs the app, legal basis, hosting, contact, retention periods) wait for H4/H5 |
 | G11 Honest docs | 🟢 | The READMEs and user guides (EN/PL) describe only what exists, Known limitations are listed, and `test_docs.py` checks that every relative link resolves and that no known-false claim returns (P0-9) |
 | G12 Lighthouse | 🔴 | Not measured |
-| G13 Delivery | 🟡 | The Docker Compose stack starts and passes `scripts/docker-smoke.sh` (P0-8). No CI yet (P3-2) |
+| G13 Delivery | 🟢 | GitHub Actions runs `scripts/check.sh` and `scripts/docker-smoke.sh` on every push and PR (P3-2). Run 38819637034 passed both jobs. One earlier run failed check.sh for a reason that couldn't be read (P3-11) |
 
 ## P0: Make it run
 
@@ -210,7 +210,8 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 ## P3: Engineering quality
 
 - [x] **P3-1** Alembic migrations instead of `create_all` (57964ee). `backend/migrations/`, applied at start-up (`database.migrate`). The first migration is the create_all schema and creates only missing tables, so databases made before migrations are brought up to date with their data kept. Tested on SQLite (`test_migrations.py`, including no difference from the models) and on PostgreSQL 15; the READMEs say how to add one.
-- [ ] **P3-2** CI: a GitHub Actions workflow running `scripts/check.sh` and the e2e tests on every push and PR.
+- [x] **P3-2** CI: `.github/workflows/checks.yml` runs `scripts/check.sh` (lint, pip-audit, backend tests, quick start, e2e) and `scripts/docker-smoke.sh` on every push and PR, with actions pinned to commits and read-only permissions (21dde49, 11e0640). On failure, the last 80 lines of output become an annotation that can be read through the API. Run 38819637034 passed both jobs.
+- [ ] **P3-11 An unexplained CI failure** 🔎 (found in iteration 76). The first run (38817924120) failed `scripts/check.sh` with exit code 1 after about 7 minutes; the Docker job passed. The next run passed unchanged code apart from the workflow's failure reporting. Its log can't be read from the loop's environment (logs live on blob.core.windows.net, which the network policy refuses). When a run fails again, read its annotation (`GET /repos/migdam/Afasia/check-runs/{job id}/annotations`), find the flaky test or step and fix it.
 - [ ] **P3-3** Lint, format and types: `ruff format`, mypy on `app/core` and services, and a JS lint (ESLint, or at least `node --check`).
 - [ ] **P3-4** Frontend as ES modules: no globals, no inline handlers. Stay with vanilla JS.
 - [ ] **P3-5** Move business logic (scoring, streaks, badges, content selection) out of route handlers into testable services.
