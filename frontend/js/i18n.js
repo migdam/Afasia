@@ -52,6 +52,8 @@ const translations = {
         correct: "Correct! Well done!",
         incorrect: "Not quite.",
         correctAnswer: "Correct answer",
+        hint: "Hint",
+        hintsUsed: "Hints used",
 
         // Progress
         myProgress: "My Progress",
@@ -174,6 +176,8 @@ const translations = {
         correct: "Poprawnie! Świetna robota!",
         incorrect: "Nie tym razem.",
         correctAnswer: "Prawidłowa odpowiedź",
+        hint: "Podpowiedź",
+        hintsUsed: "Użyte podpowiedzi",
 
         // Progress
         myProgress: "Mój postęp",

@@ -911,3 +911,22 @@ body {
     background-color: #FEF3C7;  /* marks what only whoever runs the app can fill in */
     color: #111827;
 }
+
+/* Naming hints (cueing hierarchy) */
+.hint-area {
+    margin: 1rem 0;
+    text-align: center;
+}
+
+.hint-list {
+    margin: 1rem auto 0;
+    max-width: 32rem;
+    padding-left: 1.5rem;
+    text-align: left;
+    font-size: 1.15rem;
+    line-height: 1.6;
+}
+
+.hint-list li {
+    margin-bottom: 0.5rem;
+}

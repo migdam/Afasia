@@ -27,7 +27,8 @@ Każdy rodzaj ćwiczeń, który zna aplikacja: co robi dziś i na czym powinien 
   - **Hierarchia podpowiedzi:** gdy słowo nie przychodzi, podaje się podpowiedzi po kolei, od najmniejszej do największej pomocy (Linebaugh, Shisler i Lehner, 2005). Zaplanowane jako backlog P2-3: podpowiedź znaczeniowa, potem pierwsza głoska lub litera, potem całe słowo do powtórzenia.
   - **Analiza cech semantycznych (SFA):** omawianie cech przedmiotu, takich jak kategoria, zastosowanie, miejsce i właściwości, by pomóc przywołać jego nazwę (Boyle i Coelho, 1995: opis jednego przypadku).
   - **Analiza komponentów fonologicznych (PCA):** to samo podejście, ale z dźwiękami słowa, np. jego pierwszą głoską i liczbą sylab (Leonard, Rochon i Laird, 2008).
-- **Braki:** nie ma jeszcze podpowiedzi ani obrazków. Ćwiczenia są tymczasowe.
+- **Od P2-3:** przycisk Podpowiedź podaje podpowiedzi po jednej: cechy (grupa, zastosowanie, miejsce), potem pierwszą literę, potem całe słowo. Poziom podpowiedzi jest zapisywany, a poprawna odpowiedź zachowuje 100/75/50/25% punktów po 0–3 podpowiedziach (tymczasowe proporcje, oczekują na ocenę).
+- **Braki:** nie ma jeszcze pierwszej głoski w formie nagrania (H3) ani obrazków. Ćwiczenia są tymczasowe.
 
 ### Uzupełnianie zdań (`sentence_completion`)
 

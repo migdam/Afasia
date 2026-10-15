@@ -95,6 +95,10 @@ class AphasiaApp {
             await this.handleDeleteAccount();
         });
 
+        document.getElementById('hint-btn').addEventListener('click', async () => {
+            await this.showNextHint();
+        });
+
         document.getElementById('password-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             await this.handleChangePassword();
@@ -301,6 +305,20 @@ class AphasiaApp {
         ui.showAuthPage();
     }
 
+    async showNextHint() {
+        const button = document.getElementById('hint-btn');
+        const exercise = this.currentExercises[this.currentExerciseIndex];
+        button.disabled = true;  // one request at a time
+        try {
+            const hint = await api.getHint(exercise.id);
+            document.getElementById('hint-list').append(el('li', '', hint.cue));
+            button.disabled = hint.last;
+        } catch (error) {
+            // No more hints, or the exercise was answered meanwhile.
+            console.error('Hint failed:', error);
+        }
+    }
+
     async handleChangePassword() {
         const form = document.getElementById('password-form');
         const current = document.getElementById('current-password').value;
@@ -406,6 +424,12 @@ class AphasiaApp {
         document.getElementById('voice-recorder').style.display = 'none';
         document.getElementById('feedback').style.display = 'none';
 
+        // Hints: for naming only, starting afresh for every exercise.
+        document.getElementById('hint-list').replaceChildren();
+        document.getElementById('hint-btn').disabled = false;
+        document.getElementById('hint-area').style.display =
+            exercise.exercise_type === 'word_naming' ? 'block' : 'none';
+
         // Show appropriate input based on exercise type
         if (exercise.image_url) {
             // Image-based exercise (Enhancement 2)
@@ -505,6 +529,9 @@ class AphasiaApp {
             if (result.is_correct) {
                 feedback.className = 'feedback correct';
                 feedback.textContent = i18n.translate('correct');
+                if (result.cue_level > 0) {
+                    feedback.append(` ${i18n.translate('hintsUsed')}: ${result.cue_level}`);
+                }
             } else {
                 // One calm message, with the right answer emphasized.
                 feedback.className = 'feedback incorrect';

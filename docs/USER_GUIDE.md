@@ -71,7 +71,9 @@ After the last exercise, a message shows your score, for example "Session comple
 
 You read a short description of an everyday thing, such as "A pet that barks and wags its tail". Type its name (**dog**) in the box and click **Submit**.
 
-The answer must match exactly, apart from capital letters and spaces at the ends. There are no pictures yet.
+The answer must match exactly, apart from capital letters and spaces at the ends; some words have accepted alternatives, such as **bike** for **bicycle**. There are no pictures yet.
+
+**If the word doesn't come**, click **Hint**. Each click gives a little more help: first what the thing is for and where you find it, then its first letter, then the word itself. A right answer after hints earns fewer points, and the message says how many hints you used.
 
 ### Sentence Completion
 

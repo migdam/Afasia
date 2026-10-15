@@ -69,9 +69,11 @@ Po ostatnim ćwiczeniu pojawia się wynik, np. „Session complete! Score: 80%�
 
 ### Nazywanie słów
 
-Czytasz krótki opis codziennej rzeczy, np. „A pet that barks and wags its tail” (zwierzę domowe, które szczeka i macha ogonem). Wpisz jej nazwę (**dog**) w polu i kliknij **Zatwierdź**.
+Czytasz krótki opis codziennej rzeczy, np. „Zwierzę, które szczeka i merda ogonem”. Wpisz jej nazwę (**pies**) w polu i kliknij **Zatwierdź**.
 
-Odpowiedź musi się dokładnie zgadzać. Nie liczą się tylko wielkość liter i spacje na początku i końcu. Obrazków jeszcze nie ma.
+Odpowiedź musi się dokładnie zgadzać. Nie liczą się tylko wielkość liter i spacje na początku i końcu; niektóre słowa mają też inne przyjmowane odpowiedzi, np. **auto** zamiast **samochód**. Obrazków jeszcze nie ma.
+
+**Jeśli słowo nie przychodzi**, kliknij **Podpowiedź**. Każde kliknięcie daje trochę więcej pomocy: najpierw do czego służy rzecz i gdzie się ją znajduje, potem pierwszą literę, a na końcu całe słowo. Poprawna odpowiedź po podpowiedziach daje mniej punktów, a komunikat mówi, ile podpowiedzi użyto.
 
 ### Uzupełnianie zdań
 

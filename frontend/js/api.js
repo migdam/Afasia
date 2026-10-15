@@ -230,6 +230,10 @@ class APIClient {
         });
     }
 
+    async getHint(exerciseId) {
+        return this.request(`/therapy/exercises/${exerciseId}/hint`, { method: 'POST' });
+    }
+
     async completeSession(sessionId) {
         return this.request(`/therapy/sessions/${sessionId}/complete`, {
             method: 'POST',

@@ -27,7 +27,8 @@ Each type the app knows, what it does today, and what it should be based on.
   - **Cueing hierarchy:** when a word doesn't come, give cues one at a time, from least to most help (Linebaugh, Shisler & Lehner, 2005). Planned as backlog P2-3: meaning cue, then first sound or letter, then the whole word to repeat.
   - **Semantic Feature Analysis (SFA):** talking through the features of the item, such as its group, use, place and properties, to help retrieve its name (Boyle & Coelho, 1995: a single-case study).
   - **Phonological Components Analysis (PCA):** the same idea with the word's sounds, for example its first sound and how many syllables it has (Leonard, Rochon & Laird, 2008).
-- **Gaps:** there are no cues yet, and no pictures. The items are placeholders.
+- **Since P2-3:** a Hint button gives cues one at a time: the features (group, use, place), then the first letter, then the word. The level used is recorded, and a right answer keeps 100/75/50/25% of its points after 0–3 hints (placeholder shares, pending review).
+- **Gaps:** no first sound as audio (H3), and no pictures. The items are placeholders.
 
 ### Sentence completion (`sentence_completion`)
 
