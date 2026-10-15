@@ -17,6 +17,28 @@ Newest entry first. One entry per iteration.
 
 ---
 
+### 17: 2026-10-15 07:50 UTC: P1-10 Simultaneous answers
+- **Baseline:** `check.sh` green (63 backend, smoke, 13 e2e). No human commits.
+- **Did:**
+  - The answer is claimed with `UPDATE … WHERE is_correct IS NULL` (no row changed: 409) and committed.
+  - The answered exercises are then counted from the database.
+  - Completion is claimed with `UPDATE … WHERE is_completed = false`, and only the winner runs `finish_session`.
+  - `completed_exercises` is only ever raised.
+  - Points are added as `total_points + n` in SQL.
+  - Added `test_concurrency.py`: 2 tests, 10 trials each, using a thread barrier.
+- **New finding, fixed by the same change:** two different last answers sent at once left the session unfinished for good. Each request counted only its own answer in memory.
+- **Verified:**
+  ```
+  old code: "assert [200, 200] == [200, 409]" · "assert (False, 1, 0.0) == (True, 2, 100)"
+  now:      SQLite, 5 repeated runs: "2 passed" each
+            PostgreSQL 15 (throwaway container, scratch copy of the tests pointed at it), 3 runs: "10 passed" each
+            check.sh: backend "65 passed" · smoke OK · e2e "13 passed" (exit code checked directly)
+  ```
+- **Docs:** removed the P1-10 line from Known limitations in both READMEs.
+- **Commit:** 945b598 (pushed: yes), plus this log/docs commit.
+- **Discovered:** the streak update in `finish_session` is still read-modify-write. Two sessions of the same user finishing in the same instant could miscount the streak by one. That's low impact; noted for P2-9, which redesigns streaks.
+- **Next:** P1-1, rendering user data without `innerHTML`.
+
 ### 16: 2026-10-15 07:35 UTC: P0-9b User guides (all P0 items done)
 - **Baseline:** `check.sh` green (61 backend, smoke, 13 e2e). No human commits.
 - **Did:**

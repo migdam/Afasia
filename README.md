@@ -138,7 +138,6 @@ Before anyone relies on this app, at least these must be fixed. Each one is in [
   - Some lists still put user input into the page as HTML (P1-1).
   - Voice recordings can be downloaded by anyone who knows their address (P1-2).
   - Logins aren't rate-limited, and tokens are kept in `localStorage` (P1-5).
-  - Two answers sent at the same moment can both be counted (P1-10).
   - Some dependencies are outdated (P1-4).
 - **Privacy:** there is no privacy notice, no consent step before recording, and no way to export or delete your data (P1-6). The app stores health information.
 - **Roles:** any therapist can see every patient, and there is no way to create staff accounts (P1-3).

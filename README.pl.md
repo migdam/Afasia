@@ -138,7 +138,6 @@ Zanim ktokolwiek zacznie polegać na tej aplikacji, trzeba naprawić co najmniej
   - Niektóre listy nadal wstawiają dane użytkowników do strony jako HTML (P1-1).
   - Nagrania głosu może pobrać każdy, kto zna ich adres (P1-2).
   - Logowanie nie ma limitu prób, a tokeny są przechowywane w `localStorage` (P1-5).
-  - Dwie odpowiedzi wysłane w tej samej chwili mogą obie zostać policzone (P1-10).
   - Część zależności jest przestarzała (P1-4).
 - **Prywatność:** brak informacji o prywatności, zgody przed nagrywaniem oraz możliwości eksportu i usunięcia swoich danych (P1-6). Aplikacja przechowuje dane o zdrowiu.
 - **Role:** każdy terapeuta widzi wszystkich pacjentów i nie da się tworzyć kont personelu (P1-3).
