@@ -10,7 +10,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
 from ..db.database import get_db
-from ..db.models import RevokedLogin, User
+from ..db.models import LoginCutoff, RevokedLogin, User
 from .config import settings
 
 # bcrypt only looks at the first 72 bytes of a password. Longer ones are
@@ -129,7 +129,8 @@ def get_current_user_id(
     """Get the current user's ID from the token.
 
     The account is looked up on every request, so a token stops working as
-    soon as its user is deactivated or deleted, or its login is logged out.
+    soon as its user is deactivated or deleted, its login is logged out, or
+    the password changes.
     """
     claims = decode_token(token)
     try:
@@ -139,4 +140,7 @@ def get_current_user_id(
     active = db.query(User.is_active).filter(User.id == user_id).scalar()
     if not active or db.get(RevokedLogin, str(claims["sid"])):
         raise credentials_error()
+    cutoff = db.get(LoginCutoff, user_id)
+    if cutoff and claims.get("auth_time", 0) < cutoff.not_before:
+        raise credentials_error()  # the password changed after this login began
     return user_id

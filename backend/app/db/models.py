@@ -195,3 +195,12 @@ class RevokedLogin(Base):
     # Unix time after which no token of this login can be valid anyway, so
     # the row may be deleted.
     expires_at = Column(Integer, nullable=False, index=True)
+
+
+class LoginCutoff(Base):
+    """Logins of a user that began before not_before are refused (set when the
+    password changes). No foreign key, so it never blocks deleting a user."""
+    __tablename__ = "login_cutoffs"
+
+    user_id = Column(Integer, primary_key=True)
+    not_before = Column(Integer, nullable=False)  # Unix time

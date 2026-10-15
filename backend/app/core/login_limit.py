@@ -16,6 +16,8 @@ workers each one counts on its own, and a restart forgets them.
 import time
 from threading import Lock
 
+from fastapi import HTTPException, status
+
 from .config import settings
 
 _failures: dict[tuple, list[float]] = {}
@@ -69,3 +71,12 @@ def reset() -> None:
     """Forget every record (for tests)."""
     with _lock:
         _failures.clear()
+
+
+def too_many_attempts(wait: int) -> HTTPException:
+    """The 429 for a client that must wait before trying a password again."""
+    return HTTPException(
+        status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+        detail="Too many failed attempts. Please wait and try again.",
+        headers={"Retry-After": str(wait)},
+    )

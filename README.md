@@ -107,7 +107,7 @@ FastAPI serves interactive documentation at `/docs` and `/redoc`. All endpoints 
 
 | Area | Endpoints |
 |---|---|
-| Accounts | `POST /auth/register`, `POST /auth/login`, `POST /auth/refresh` (renews a login), `POST /auth/logout` (ends this login on the server and removes the cookie; other devices stay logged in) |
+| Accounts | `POST /auth/register`, `POST /auth/login`, `POST /auth/refresh` (renews a login), `POST /auth/logout` (ends this login on the server and removes the cookie; other devices stay logged in), `POST /users/password` (change your password: needs the current one; your other logins end, and this one gets a new token) |
 | Sessions | `POST /therapy/sessions`, `GET /therapy/sessions`, `GET /therapy/sessions/{id}`, `GET /therapy/sessions/{id}/exercises` |
 | Answers | `POST /therapy/exercises/{id}/answer`: one answer per exercise. The response includes the right answer, and the last answer completes and scores the session. |
 | Results | `POST /therapy/sessions/{id}/complete`: a finished session's server-computed result |
@@ -152,7 +152,7 @@ The app is improved in small, tested steps by a documented loop. See [`loop/READ
 Before anyone relies on this app, at least these must be fixed. Each one is in [`loop/BACKLOG.md`](loop/BACKLOG.md).
 
 - **Security**
-  - There is no way yet to change a password, or to log out on all devices at once.
+  - A password can be changed only through the API (`POST /users/password`); the web app has no form for it yet (P1-5e2). There is no "forgot password" reset, and no way to log out on all devices at once without changing the password.
   - The limits on wrong passwords are kept in memory: each server process counts on its own, and a restart forgets them. Behind a proxy, clients are told apart only if the server trusts the proxy's `X-Forwarded-For` (the Docker setup does); otherwise everyone shares one count per username. Whether 5 and 50 suit people with aphasia is an open question (backlog H7).
 - **Privacy:** there is no privacy notice, no consent step before recording, and no way to export or delete your data (P1-6). The app stores health information.
 - **Roles:** any therapist can see and deactivate every patient. Therapists aren't linked to their own patients yet (P1-3b).

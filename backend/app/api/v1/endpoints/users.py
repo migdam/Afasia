@@ -1,19 +1,25 @@
 """User profile and progress endpoints."""
-from typing import List
+import time
+from typing import List, Optional
 from datetime import datetime, timedelta
-from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status, UploadFile, File
+from fastapi.security import HTTPAuthorizationCredentials
 from fastapi.responses import FileResponse, StreamingResponse
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from ....db.database import get_db
 from ....db.models import (
     User, TherapySession, Exercise, Progress, UserBadge,
-    ScheduledSession, AudioRecording
+    ScheduledSession, AudioRecording, LoginCutoff
 )
 from ....core.config import settings
-from ....core.security import get_current_user_id
+from ....core import login_limit
+from ....core.security import (
+    create_access_token, get_current_user_id, get_password_hash, security, verify_password,
+)
+from .auth import login_response
 from ..schemas import (
-    UserResponse, UserUpdate, ProgressResponse, ProgressStats,
+    PasswordChange, TokenResponse, UserResponse, UserUpdate, ProgressResponse, ProgressStats,
     BadgeResponse, ScheduledSessionCreate, ScheduledSessionResponse,
     AudioRecordingResponse
 )
@@ -27,6 +33,40 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.utils import simpleSplit
 
 router = APIRouter()
+
+@router.post("/password", response_model=TokenResponse)
+def change_password(
+    data: PasswordChange,
+    request: Request,
+    response: Response,
+    user_id: int = Depends(get_current_user_id),
+    bearer: Optional[HTTPAuthorizationCredentials] = Depends(security),
+    db: Session = Depends(get_db),
+):
+    """Change your password. Your other logins end; this one gets a new token.
+
+    Wrong current passwords count towards the same limit as logging in, so a
+    borrowed login can't be used to guess the password.
+    """
+    user = db.get(User, user_id)
+    client = request.client.host if request.client else "unknown"
+    wait = login_limit.retry_after(user.username, client)
+    if wait:
+        raise login_limit.too_many_attempts(wait)
+    if not verify_password(data.current_password, user.hashed_password):
+        login_limit.record_failure(user.username, client)
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Current password is incorrect")
+    login_limit.record_success(user.username, client)
+
+    now = int(time.time())
+    user.hashed_password = get_password_hash(data.new_password)
+    cutoff = db.get(LoginCutoff, user.id) or LoginCutoff(user_id=user.id)
+    cutoff.not_before = now
+    db.add(cutoff)
+    db.commit()
+    # As with renewals, through the cookie the new token goes only into the cookie.
+    return login_response(response, user, create_access_token(user.id, auth_time=now), show_token=bearer is not None)
+
 
 # Audio formats accepted for recordings, by content type. Browsers record
 # WebM (Chrome, Firefox) or MP4 (Safari).

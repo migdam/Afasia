@@ -76,11 +76,7 @@ def login(credentials: UserLogin, request: Request, response: Response, db: Sess
     client = request.client.host if request.client else "unknown"
     wait = login_limit.retry_after(credentials.username, client)
     if wait:
-        raise HTTPException(
-            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-            detail="Too many failed attempts. Please wait and try again.",
-            headers={"Retry-After": str(wait)},
-        )
+        raise login_limit.too_many_attempts(wait)
 
     user = db.query(User).filter(User.username == credentials.username).first()
 

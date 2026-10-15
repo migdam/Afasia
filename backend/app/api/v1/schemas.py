@@ -5,6 +5,16 @@ from pydantic import BaseModel, EmailStr, field_validator
 from ...db.models import DifficultyLevel, ExerciseType, UserRole, BadgeType
 
 
+def check_new_password(password: str) -> str:
+    """The rules for a new password, at sign-up and when changing it."""
+    if len(password) < 8:
+        raise ValueError("Password must be at least 8 characters")
+    # bcrypt would silently ignore everything past 72 bytes.
+    if len(password.encode()) > 72:
+        raise ValueError("Password must be at most 72 bytes (UTF-8)")
+    return password
+
+
 # User schemas
 class UserCreate(BaseModel):
     email: EmailStr
@@ -13,15 +23,14 @@ class UserCreate(BaseModel):
     full_name: Optional[str] = None
     language: str = "en"
 
-    @field_validator("password")
-    @classmethod
-    def fits_bcrypt(cls, password: str) -> str:
-        if len(password) < 8:
-            raise ValueError("Password must be at least 8 characters")
-        # bcrypt would silently ignore everything past 72 bytes.
-        if len(password.encode()) > 72:
-            raise ValueError("Password must be at most 72 bytes (UTF-8)")
-        return password
+    _password_rules = field_validator("password")(check_new_password)
+
+
+class PasswordChange(BaseModel):
+    current_password: str
+    new_password: str
+
+    _password_rules = field_validator("new_password")(check_new_password)
 
 
 class UserLogin(BaseModel):
