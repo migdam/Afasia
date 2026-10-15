@@ -19,6 +19,21 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 51: 2026-10-15 14:49 UTC: P2-4c Larger text and targets
+- **Baseline:** `check.sh` exit code 0: 240 backend tests, smoke, 65 e2e. No human commits. Tests were written in the scratchpad until it finished.
+- **Test first:** `e2e/test_sizes.py` measures in the browser. 6 tests failed before: body 16 px, controls 36–46 px tall, language button contrast 1.43:1, and no A+. I added the 7th after a phone screenshot showed the header running off a 375 px screen; it failed until the header wrapped.
+- **Did:**
+  - Root 125%, or 150% with A+; small font sizes raised to 0.9 rem.
+  - 48 px minimums; icon buttons take the theme text color.
+  - The A+ toggle (`aria-pressed`, a translated `aria-label` through `data-i18n-label`, kept in `localStorage`).
+  - Header controls wrap.
+  - Guides and READMEs (EN/PL).
+- **Test lessons:** the contrast measurement first caught a color transition mid-way (1.21:1). A `wait_for_function` with a string is blocked by the page's CSP (no eval), which is good to know. It is now a Python polling loop.
+- **Verified:** `scripts/check.sh` exit code 0: ruff, pip-audit "No known vulnerabilities found", 240 backend tests, smoke, 72 e2e. Phone screenshots in PL, light and dark, with large text.
+- **Commit:** 7b30886 (pushed: yes)
+- **Discovered:** the header overflow on phones, fixed here.
+- **Next:** P2-4d (read aloud).
+
 ### 50: 2026-10-15 14:32 UTC: P2-4b In-app messages
 - **Baseline:** `check.sh` exit code 0: 239 backend tests, smoke, 58 e2e. No human commits. Tests were written in the scratchpad until it finished.
 - **Test first:**
