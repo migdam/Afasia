@@ -1,13 +1,21 @@
 """Authentication endpoints."""
+import time
+
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from ....db.database import get_db
 from ....db.models import User
 from ....core import login_limit
+from ....core.config import settings
 from ....core.security import (
     verify_password,
     get_password_hash,
     create_access_token,
+    credentials_error,
+    decode_token,
+    get_current_user_id,
+    security,
 )
 from ..schemas import UserCreate, UserLogin, TokenResponse, UserResponse
 
@@ -79,5 +87,28 @@ def login(credentials: UserLogin, db: Session = Depends(get_db)):
     login_limit.record_success(credentials.username)
     return TokenResponse(
         access_token=create_access_token(user.id),
+        user=UserResponse.model_validate(user)
+    )
+
+
+@router.post("/refresh", response_model=TokenResponse)
+def refresh(
+    user_id: int = Depends(get_current_user_id),
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    db: Session = Depends(get_db),
+):
+    """Swap a valid token for a fresh one, keeping the original login time.
+
+    The frontend calls this while the user is active, so a login only ends
+    after ACCESS_TOKEN_EXPIRE_MINUTES of not using the app, or
+    LOGIN_MAX_HOURS after logging in, whichever comes first.
+    """
+    auth_time = decode_token(credentials.credentials).get("auth_time")
+    if not isinstance(auth_time, int) or time.time() - auth_time >= settings.LOGIN_MAX_HOURS * 3600:
+        raise credentials_error()
+
+    user = db.get(User, user_id)
+    return TokenResponse(
+        access_token=create_access_token(user.id, auth_time=auth_time),
         user=UserResponse.model_validate(user)
     )

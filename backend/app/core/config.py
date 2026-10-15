@@ -29,7 +29,11 @@ class Settings(BaseSettings):
     # Security
     SECRET_KEY: str
     ALGORITHM: str = "HS256"
+    # A login ends after this many minutes without using the app; the
+    # frontend renews it while the user is active...
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    # ...but never for longer than this after logging in.
+    LOGIN_MAX_HOURS: int = 12
 
     # Database
     DATABASE_URL: str = "sqlite:///./aphasia_app.db"

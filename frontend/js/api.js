@@ -21,6 +21,42 @@ class APIClient {
         localStorage.removeItem('access_token');
     }
 
+    tokenClaims() {
+        try {
+            const payload = this.token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+            return JSON.parse(atob(payload));
+        } catch {
+            return null;
+        }
+    }
+
+    // A login runs out after a stretch of not using the app. While the app
+    // is in use, swap the token for a fresh one once half its life is gone.
+    // The server stops renewing a login some hours after it began; then the
+    // current token is simply used until it expires.
+    async renewIfStale() {
+        const claims = this.token && this.tokenClaims();
+        if (!claims || !claims.iat || this.renewing || this.renewRefused === this.token) {
+            return;
+        }
+        const now = Date.now() / 1000;
+        if (now - claims.iat < (claims.exp - claims.iat) / 2) {
+            return;
+        }
+        const token = this.token;
+        this.renewing = true;
+        try {
+            const data = await this.request('/auth/refresh', { method: 'POST' });
+            if (this.token === token) {
+                this.setToken(data.access_token);
+            }
+        } catch {
+            this.renewRefused = token;
+        } finally {
+            this.renewing = false;
+        }
+    }
+
     async request(endpoint, options = {}) {
         const headers = {
             'Content-Type': 'application/json',
@@ -43,6 +79,9 @@ class APIClient {
                 throw new Error(data?.detail || 'Request failed');
             }
 
+            if (!endpoint.startsWith('/auth/')) {
+                this.renewIfStale();
+            }
             return data;
         } catch (error) {
             console.error('API request failed:', error);

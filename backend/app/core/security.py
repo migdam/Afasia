@@ -33,13 +33,23 @@ def get_password_hash(password: str) -> str:
     return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
 
-def create_access_token(user_id: int, expires_delta: Optional[timedelta] = None) -> str:
-    """Create a JWT access token for a user."""
-    expire = datetime.now(timezone.utc) + (
-        expires_delta or timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    )
+def create_access_token(
+    user_id: int,
+    expires_delta: Optional[timedelta] = None,
+    auth_time: Optional[int] = None,
+) -> str:
+    """Create a JWT access token for a user.
+
+    auth_time is when the user actually logged in (Unix time); renewed tokens
+    keep it, so a login can't be stretched past LOGIN_MAX_HOURS.
+    """
+    now = datetime.now(timezone.utc)
+    issued = int(now.timestamp())
+    auth_time = issued if auth_time is None else auth_time
+    expire = now + (expires_delta or timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES))
+    latest = datetime.fromtimestamp(auth_time + settings.LOGIN_MAX_HOURS * 3600, timezone.utc)
     # A JWT subject must be a string (RFC 7519, section 4.1.2).
-    claims = {"sub": str(user_id), "exp": expire}
+    claims = {"sub": str(user_id), "iat": issued, "auth_time": auth_time, "exp": min(expire, latest)}
     return jwt.encode(claims, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
 

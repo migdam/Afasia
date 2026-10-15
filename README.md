@@ -11,7 +11,7 @@ A web app for practising words and sentences after a stroke or brain injury. Peo
 
 Accounts, practice sessions, feedback, scores, the progress chart and the admin page are covered by automated tests (see [Development](#development)). Export, scheduling and the phone layout are not tested yet.
 
-- **Accounts.** Sign up, log in and out, and stay signed in after a reload. Passwords are hashed with bcrypt; logins use JWTs that expire after 30 minutes.
+- **Accounts.** Sign up, log in and out, and stay signed in after a reload. Passwords are hashed with bcrypt; logins use JWTs. A login ends after 30 minutes without using the app, and at most 12 hours after logging in.
 - **Practice sessions** of 5–50 exercises, at easy, medium or hard:
   - *Word naming*: read a short description ("A pet that barks and wags its tail") and type the word.
   - *Sentence completion*: choose the word that completes a sentence.
@@ -91,7 +91,8 @@ Copy `.env.template` to `.env` at the repository root. The settings:
 | `SECRET_KEY` | (required) | Signs login tokens. Use at least 32 random bytes (`openssl rand -hex 32`). |
 | `DATABASE_URL` | `sqlite:///./aphasia_app.db` | Any SQLAlchemy URL, e.g. `postgresql://user:password@host/db` |
 | `BACKEND_CORS_ORIGINS` | `http://localhost:3000,http://localhost:8000` | Comma-separated origins allowed to call the API |
-| `ACCESS_TOKEN_EXPIRE_MINUTES` | `30` | How long a login lasts |
+| `ACCESS_TOKEN_EXPIRE_MINUTES` | `30` | Minutes without using the app before a login ends (the app renews the login while it is in use) |
+| `LOGIN_MAX_HOURS` | `12` | Hours after logging in when a login ends anyway |
 | `DEBUG`, `HOST`, `PORT` | `true`, `0.0.0.0`, `8000` | Server options |
 | `UPLOAD_DIR`, `MAX_UPLOAD_SIZE` | `./uploads`, 10 MB | Where voice recordings go |
 | `POSTGRES_PASSWORD`, `FRONTEND_PORT`, `BACKEND_PORT`, `PIP_CA_FILE` | | Docker Compose only |
@@ -147,7 +148,7 @@ The app is improved in small, tested steps by a documented loop. See [`loop/READ
 Before anyone relies on this app, at least these must be fixed. Each one is in [`loop/BACKLOG.md`](loop/BACKLOG.md).
 
 - **Security**
-  - Login tokens are kept in `localStorage`, and a login lasts a fixed 30 minutes (P1-5b).
+  - Login tokens are kept in `localStorage`, where any script running on the page could read them (P1-5c).
   - The limit on wrong passwords (5 per username in 15 minutes) is kept in memory: each server process counts on its own, and a restart forgets it.
 - **Privacy:** there is no privacy notice, no consent step before recording, and no way to export or delete your data (P1-6). The app stores health information.
 - **Roles:** any therapist can see and deactivate every patient. Therapists aren't linked to their own patients yet (P1-3b).

@@ -31,7 +31,7 @@ The exercises themselves are in English for now, in both languages. A few messag
 
 **To log out:** click **Logout** at the top right. The login form is emptied, so the next person can't see what you typed.
 
-A login lasts 30 minutes. After that, the next time you open or reload the page you have to log in again. There is no "forgot password" yet.
+While you use the app, you stay logged in. After 30 minutes without using it, or 12 hours after you logged in, you have to log in again. There is no "forgot password" yet.
 
 ## The dashboard
 
@@ -129,7 +129,7 @@ Everything you do is stored on the server that runs the app: your account, your 
 | "Incorrect username or password" | Check the spelling and Caps Lock. Usernames are case-sensitive. |
 | "Inactive user" | Your account was deactivated. Ask your therapist or admin. |
 | "Too many failed attempts" | After 5 wrong passwords, logging in to that account is paused for up to 15 minutes. Wait, then try again. |
-| You're back at the login page | Your 30-minute login expired. Log in again. |
+| You're back at the login page | Your login ended after 30 minutes without use, or 12 hours after you logged in. Log in again. |
 | "Failed to start session" | The server may be down. Try again later, or tell whoever runs the app. |
 | "Please provide an answer" | Type a word or choose an option before **Submit**. |
 | The microphone doesn't work | Allow it in your browser's site settings and reload. Pronunciation is unreliable anyway (see above). |

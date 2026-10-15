@@ -11,7 +11,7 @@ Aplikacja internetowa do ćwiczenia słów i zdań po udarze lub urazie mózgu. 
 
 Konta, sesje ćwiczeń, informacja zwrotna, wyniki, wykres postępów i panel administratora są sprawdzane testami automatycznymi (zob. [Rozwój](#rozwój)). Eksport, planowanie sesji i układ na telefon nie mają jeszcze testów.
 
-- **Konta.** Rejestracja, logowanie i wylogowanie. Po odświeżeniu strony nadal jesteś zalogowany. Hasła są szyfrowane algorytmem bcrypt, a logowanie korzysta z tokenów JWT ważnych 30 minut.
+- **Konta.** Rejestracja, logowanie i wylogowanie. Po odświeżeniu strony nadal jesteś zalogowany. Hasła są haszowane algorytmem bcrypt, a logowanie korzysta z tokenów JWT. Zalogowanie kończy się po 30 minutach bez korzystania z aplikacji, a najpóźniej 12 godzin po zalogowaniu.
 - **Sesje ćwiczeń** po 5–50 ćwiczeń, na poziomie łatwym, średnim lub trudnym:
   - *Nazywanie słów*: przeczytaj krótki opis („A pet that barks and wags its tail”) i wpisz słowo.
   - *Uzupełnianie zdań*: wybierz słowo, które kończy zdanie.
@@ -91,7 +91,8 @@ Skopiuj `.env.template` do `.env` w katalogu głównym repozytorium. Ustawienia:
 | `SECRET_KEY` | (wymagane) | Podpisuje tokeny logowania. Co najmniej 32 losowe bajty (`openssl rand -hex 32`). |
 | `DATABASE_URL` | `sqlite:///./aphasia_app.db` | Dowolny adres SQLAlchemy, np. `postgresql://użytkownik:hasło@host/baza` |
 | `BACKEND_CORS_ORIGINS` | `http://localhost:3000,http://localhost:8000` | Adresy stron (oddzielone przecinkami), które mogą wywoływać API |
-| `ACCESS_TOKEN_EXPIRE_MINUTES` | `30` | Jak długo trwa zalogowanie |
+| `ACCESS_TOKEN_EXPIRE_MINUTES` | `30` | Po ilu minutach bez korzystania z aplikacji kończy się zalogowanie (aplikacja odnawia je, gdy jest używana) |
+| `LOGIN_MAX_HOURS` | `12` | Po ilu godzinach od zalogowania zalogowanie kończy się mimo wszystko |
 | `DEBUG`, `HOST`, `PORT` | `true`, `0.0.0.0`, `8000` | Opcje serwera |
 | `UPLOAD_DIR`, `MAX_UPLOAD_SIZE` | `./uploads`, 10 MB | Gdzie trafiają nagrania głosu |
 | `POSTGRES_PASSWORD`, `FRONTEND_PORT`, `BACKEND_PORT`, `PIP_CA_FILE` | | Tylko dla Docker Compose |
@@ -147,7 +148,7 @@ Aplikację ulepsza się małymi, przetestowanymi krokami według opisanej pętli
 Zanim ktokolwiek zacznie polegać na tej aplikacji, trzeba naprawić co najmniej poniższe. Każdy punkt jest w [`loop/BACKLOG.md`](loop/BACKLOG.md).
 
 - **Bezpieczeństwo**
-  - Tokeny logowania są przechowywane w `localStorage`, a zalogowanie trwa stałe 30 minut (P1-5b).
+  - Tokeny logowania są przechowywane w `localStorage`, skąd mógłby je odczytać każdy skrypt działający na stronie (P1-5c).
   - Limit błędnych haseł (5 na nazwę użytkownika w ciągu 15 minut) jest trzymany w pamięci: każdy proces serwera liczy osobno, a restart go kasuje.
 - **Prywatność:** brak informacji o prywatności, zgody przed nagrywaniem oraz możliwości eksportu i usunięcia swoich danych (P1-6). Aplikacja przechowuje dane o zdrowiu.
 - **Role:** każdy terapeuta widzi i może dezaktywować wszystkich pacjentów. Terapeuci nie są jeszcze powiązani ze swoimi pacjentami (P1-3b).

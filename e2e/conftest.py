@@ -19,6 +19,7 @@ from playwright.sync_api import expect, sync_playwright
 
 ROOT = Path(__file__).resolve().parents[1]
 PASSWORD = "correct horse battery staple"
+SECRET_KEY = "e2e-secret-key-that-is-at-least-32-bytes"
 
 
 def call_api(servers, method, path, body=None, token=None):
@@ -67,7 +68,7 @@ def servers(tmp_path_factory):
     env = {
         **os.environ,
         "ENV_FILE": str(tmp / "absent.env"),
-        "SECRET_KEY": "e2e-secret-key-that-is-at-least-32-bytes",
+        "SECRET_KEY": SECRET_KEY,
         "DATABASE_URL": f"sqlite:///{tmp}/e2e.db",
         "UPLOAD_DIR": str(tmp / "uploads"),
         "BACKEND_CORS_ORIGINS": web_url,

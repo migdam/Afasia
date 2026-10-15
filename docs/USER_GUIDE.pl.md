@@ -31,7 +31,7 @@ Same ćwiczenia są na razie po angielsku, w obu wersjach językowych. Po wybran
 
 **Wylogowanie:** kliknij **Wyloguj** w prawym górnym rogu. Formularz logowania zostaje wyczyszczony, więc następna osoba nie zobaczy, co wpisano.
 
-Zalogowanie trwa 30 minut. Po tym czasie przy następnym otwarciu lub odświeżeniu strony trzeba zalogować się ponownie. Nie ma jeszcze opcji „nie pamiętam hasła”.
+Dopóki korzystasz z aplikacji, pozostajesz zalogowany. Po 30 minutach bez korzystania z niej albo 12 godzinach od zalogowania trzeba zalogować się ponownie. Nie ma jeszcze opcji „nie pamiętam hasła”.
 
 ## Tablica
 
@@ -129,7 +129,7 @@ Wszystko, co robisz, jest zapisywane na serwerze, na którym działa aplikacja: 
 | „Incorrect username or password” | Sprawdź pisownię i Caps Lock. W nazwie użytkownika liczy się wielkość liter. |
 | „Inactive user” | Twoje konto zostało dezaktywowane. Zapytaj logopedę lub administratora. |
 | „Too many failed attempts” | Po 5 błędnych hasłach logowanie na to konto jest wstrzymane na maksymalnie 15 minut. Odczekaj i spróbuj ponownie. |
-| Wracasz na stronę logowania | Minęło 30 minut zalogowania. Zaloguj się ponownie. |
+| Wracasz na stronę logowania | Zalogowanie wygasło po 30 minutach bez korzystania z aplikacji albo 12 godzinach od zalogowania. Zaloguj się ponownie. |
 | „Failed to start session” | Serwer może nie działać. Spróbuj później albo powiadom osobę, która uruchamia aplikację. |
 | „Please provide an answer” | Przed **Zatwierdź** wpisz słowo albo wybierz odpowiedź. |
 | Mikrofon nie działa | Zezwól na mikrofon w ustawieniach strony w przeglądarce i odśwież stronę. Wymowa i tak działa zawodnie (zob. wyżej). |
