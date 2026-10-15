@@ -19,6 +19,23 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 58: 2026-10-15 16:52 UTC: P2-6a Word choice for naming
+- **Baseline:** `check.sh` exit code 0: 259 backend tests, smoke, 97 e2e. No human commits. Tests were written in the scratchpad until it finished.
+- **Split:** P2-6 became a (word choice), b (letter tiles) and c (picture choice, waiting on H2).
+- **Test first:** `backend/tests/test_word_choice.py`, 4 tests, and `e2e/test_word_choice.py`. The choice tests failed before; "typing still works" is a guard.
+- **Did:**
+  - `ExerciseChoice` (its own table) and `Exercise.choices_shown`.
+  - `content.choice_words`, the `/choices` endpoint, and `CHOICE_POINT_SHARE` in `calculate_points`.
+  - `choices_shown` in the API and export.
+  - Frontend `showOptions`/`showWordChoices`, and the submit path takes a chosen word.
+  - Privacy notice, guides and READMEs (EN/PL); `docker-smoke.sh`.
+- **Verified:**
+  - `scripts/check.sh` exit code 0: ruff, pip-audit "No known vulnerabilities found", 264 backend tests, smoke, 99 e2e.
+  - `docker-smoke.sh` exit code 0, including deletion with word choices.
+- **Commit:** 1151005 (pushed: yes)
+- **Discovered:** nothing new. The 50% share for choosing joins the open H1 scoring questions.
+- **Next:** P2-6b (letter tiles).
+
 ### 57: 2026-10-15 16:35 UTC: P2-5 Forgiving answer checking
 - **Baseline:** `check.sh` exit code 0: 240 backend tests, smoke, 95 e2e. No human commits. Tests were written in the scratchpad until it finished.
 - **Test first:**
