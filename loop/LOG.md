@@ -19,6 +19,25 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 71: 2026-10-15 20:59 UTC: P2-10c1 The CSV export in the person's language
+- **Baseline:** `check.sh` exit code 0: 305 backend tests, smoke, 120 e2e. No human commits. The module, tests and patch were written in the scratchpad until the baseline finished.
+- **Split:** P2-10c became c1 (CSV) and c2 (PDF, which needs an embedded font with Polish letters).
+- **Test first:**
+  - `backend/tests/test_csv_export.py`: all 4 tests failed before. They cover Polish with Warsaw time, semicolons and a decimal comma; English by default in UTC; the account's language when none is asked for; and a 422 for unknown languages.
+  - `e2e/test_exports.py`: the file downloaded from a Polish screen is in Polish although the account is English. It failed before.
+- **Did:**
+  - `app/export_text.py`: texts, delimiters, `language_of`, `decimal`, `local_time`.
+  - `GET /users/progress/export/csv` takes `lang`, and writes a byte-order mark and local times named in the header.
+  - The frontend sends `lang` for both exports.
+  - `Progress.date` is set to the finish time in `finish_session`, the same moment as before, so tests can control it.
+  - Updated the guides and the README API rows and test note (EN/PL).
+- **Verified:** `scripts/check.sh` exit code 0: ruff "All checks passed!", pip-audit "No known vulnerabilities found", 309 backend tests, smoke, 121 e2e.
+- **Commit:** 4c3fb12 (pushed: yes)
+- **Discovered:**
+  - Tests that fake the finish time get negative session durations: `started_at` comes from the real clock. This has no effect on the app, but don't assert on time columns in such tests.
+  - DejaVu Sans is installed on this system (fonts-dejavu-core), so it is available for P2-10c2.
+- **Next:** P2-10c2 (the PDF).
+
 ### 70: 2026-10-15 20:42 UTC: P2-10b Dates, numbers and plural forms
 - **Baseline:** `check.sh` exit code 0: 305 backend tests, smoke, 116 e2e. No human commits. The tests and the patch were written in the scratchpad until the baseline finished.
 - **Test first:** `e2e/test_dates_and_numbers.py`. All 3 initial tests failed before:
