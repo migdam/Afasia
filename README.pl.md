@@ -11,7 +11,7 @@ Aplikacja internetowa do ćwiczenia słów i zdań po udarze lub urazie mózgu. 
 
 Konta, sesje ćwiczeń, informacja zwrotna, wyniki, wykres postępów i panel administratora są sprawdzane testami automatycznymi (zob. [Rozwój](#rozwój)). Eksport, planowanie sesji i układ na telefon nie mają jeszcze testów.
 
-- **Konta.** Rejestracja, logowanie, wylogowanie i zmiana hasła na stronie Konto. Po odświeżeniu strony nadal jesteś zalogowany. Hasła są haszowane algorytmem bcrypt, a logowanie korzysta z tokenów JWT. Zalogowanie kończy się po 30 minutach bez korzystania z aplikacji, a najpóźniej 12 godzin po zalogowaniu.
+- **Konta.** Rejestracja, logowanie, wylogowanie i zmiana hasła na stronie Konto. Odświeżenie strony nie kończy zalogowania. Hasła są haszowane algorytmem bcrypt, a logowanie korzysta z tokenów JWT. Zalogowanie kończy się po 30 minutach bez korzystania z aplikacji, a najpóźniej 12 godzin po zalogowaniu.
 - **Sesje ćwiczeń** po 5–50 ćwiczeń, na poziomie łatwym, średnim lub trudnym:
   - *Nazywanie słów*: przeczytaj krótki opis („A pet that barks and wags its tail”) i wpisz słowo.
   - *Uzupełnianie zdań*: wybierz słowo, które kończy zdanie.
@@ -165,7 +165,7 @@ Zanim ktokolwiek zacznie polegać na tej aplikacji, trzeba naprawić co najmniej
 - **Prywatność:** nagrania i rozpoznawanie mowy wymagają zgody, o którą aplikacja pyta. Na stronie Konto można pobrać lub usunąć wszystkie swoje dane. Informacja o prywatności (`frontend/privacy.html`, PL i EN, z odnośnikami na stronie logowania i stronie Konto) opisuje, co robi kod; kto prowadzi aplikację, podstawa prawna, miejsce hostingu i kontakt są oznaczone „[do uzupełnienia]”, dopóki ktoś o nich nie zdecyduje (backlog H4, H5). Aplikacja przechowuje dane o zdrowiu.
 - **Role:** każdy terapeuta widzi i może dezaktywować wszystkich pacjentów. Terapeuci nie są jeszcze powiązani ze swoimi pacjentami (P1-3b).
 - **Treść kliniczna:** po polsku i po angielsku, w `backend/content/` i sprawdzana przy starcie aplikacji: 30 pojęć do nazywania, 12 zdań do uzupełnienia i 9 zwrotów do powtórzenia. Wszystkie są tymczasowe i niesprawdzone przez logopedę. Nie ma obrazków ani nagrań. Na czym powinien opierać się każdy rodzaj ćwiczeń, ze sprawdzoną bibliografią, opisuje [`docs/clinical/README.pl.md`](docs/clinical/README.pl.md); ten dokument także oczekuje na ocenę kliniczną.
-- **Dostępność** nie została zbadana, a zasady projektowania przyjaznego osobom z afazją z [`loop/PROMPT.md`](loop/PROMPT.md) nie są jeszcze spełnione. Na przykład aplikacja nadal sama przechodzi dalej po 2 sekundach.
+- **Dostępność** nie została zbadana, a zasady projektowania przyjaznego osobom z afazją z [`loop/PROMPT.md`](loop/PROMPT.md) nie są jeszcze spełnione. Na przykład komunikaty nadal pojawiają się w okienkach przeglądarki i nie ma jeszcze czytania na głos.
 - **Kwestie prawne:** nie oceniono, czy aplikacja jest wyrobem medycznym w rozumieniu przepisów UE.
 - **Wdrażanie:** nie ma jeszcze ciągłej integracji (CI).
 

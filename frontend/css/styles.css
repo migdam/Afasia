@@ -409,11 +409,6 @@ body {
     transition: width 0.3s ease;
 }
 
-.timer {
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: var(--primary-color);
-}
 
 .exercise-content {
     background: var(--bg-primary);

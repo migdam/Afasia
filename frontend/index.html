@@ -188,7 +188,6 @@
                             <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
                         </div>
                     </div>
-                    <div class="timer" id="exercise-timer">00:00</div>
                 </div>
 
                 <div class="exercise-content">
@@ -230,7 +229,10 @@
 
                     <button id="submit-answer" class="btn btn-primary btn-large" data-i18n="submit">Submit</button>
 
-                    <div id="feedback" class="feedback" style="display: none;"></div>
+                    <div id="feedback" class="feedback" role="status" style="display: none;"></div>
+
+                    <!-- No automatic move on (U4): the person goes on when ready. -->
+                    <button type="button" id="next-exercise" class="btn btn-primary btn-large" style="display: none;" data-i18n="nextExercise">Next</button>
                 </div>
             </div>
         </div>

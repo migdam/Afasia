@@ -9,8 +9,6 @@ class AphasiaApp {
         this.currentExercises = [];
         this.currentExerciseIndex = 0;
         this.exerciseStartTime = null;
-        this.timerInterval = null;
-        this.advanceTimeout = null;
         this.recordedAudio = null;
     }
 
@@ -93,6 +91,10 @@ class AphasiaApp {
         document.getElementById('delete-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             await this.handleDeleteAccount();
+        });
+
+        document.getElementById('next-exercise').addEventListener('click', () => {
+            this.goToNextExercise();
         });
 
         document.getElementById('hint-btn').addEventListener('click', async () => {
@@ -387,7 +389,6 @@ class AphasiaApp {
             // Show exercise page
             ui.showPage('exercise');
             this.showCurrentExercise();
-            this.startTimer();
         } catch (error) {
             alert('Failed to start session: ' + error.message);
         }
@@ -423,6 +424,8 @@ class AphasiaApp {
         document.getElementById('exercise-input').style.display = 'none';
         document.getElementById('voice-recorder').style.display = 'none';
         document.getElementById('feedback').style.display = 'none';
+        document.getElementById('next-exercise').style.display = 'none';
+        document.getElementById('submit-answer').style.display = '';
 
         // Hints: for naming only, starting afresh for every exercise.
         document.getElementById('hint-list').replaceChildren();
@@ -541,16 +544,15 @@ class AphasiaApp {
                 feedback.append(rightAnswer);
             }
 
-            // Move to next exercise after delay
-            this.advanceTimeout = setTimeout(() => {
-                this.advanceTimeout = null;
-                this.currentExerciseIndex++;
-                if (this.currentExerciseIndex < this.currentExercises.length) {
-                    this.showCurrentExercise();
-                } else {
-                    this.completeSession();
-                }
-            }, 2000);
+            // No automatic move on (U4): offer "Next", or the result after the
+            // last exercise, and put the focus there.
+            const last = this.currentExerciseIndex === this.currentExercises.length - 1;
+            const next = document.getElementById('next-exercise');
+            next.dataset.i18n = last ? 'seeResult' : 'nextExercise';
+            next.textContent = i18n.translate(next.dataset.i18n);
+            submitButton.style.display = 'none';
+            next.style.display = 'inline-block';
+            next.focus();
         } catch (error) {
             submitButton.disabled = false;
             alert('Failed to submit answer: ' + error.message);
@@ -606,7 +608,6 @@ class AphasiaApp {
             // The server scored the session when the last answer arrived.
             const session = await api.completeSession(this.currentSession.id);
 
-            this.stopTimer();
             this.stopListening();
             alert(`Session complete! Score: ${Math.round(session.score)}%`);
 
@@ -625,30 +626,15 @@ class AphasiaApp {
     }
 
     leaveExercise() {
-        // A pending move to the next exercise would otherwise run in the
-        // next session.
-        clearTimeout(this.advanceTimeout);
-        this.advanceTimeout = null;
-        this.stopTimer();
         this.stopListening();
     }
 
-    startTimer() {
-        let seconds = 0;
-        const timerEl = document.getElementById('exercise-timer');
-
-        this.timerInterval = setInterval(() => {
-            seconds++;
-            const mins = Math.floor(seconds / 60);
-            const secs = seconds % 60;
-            timerEl.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-        }, 1000);
-    }
-
-    stopTimer() {
-        if (this.timerInterval) {
-            clearInterval(this.timerInterval);
-            this.timerInterval = null;
+    goToNextExercise() {
+        this.currentExerciseIndex++;
+        if (this.currentExerciseIndex < this.currentExercises.length) {
+            this.showCurrentExercise();
+        } else {
+            this.completeSession();
         }
     }
 }

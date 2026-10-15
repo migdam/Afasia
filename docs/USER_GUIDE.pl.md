@@ -31,9 +31,9 @@ Przeglądarka zapamiętuje oba wybory.
 
 **Wylogowanie:** kliknij **Wyloguj** w prawym górnym rogu. Formularz logowania zostaje wyczyszczony, więc następna osoba nie zobaczy, co wpisano.
 
-Dopóki korzystasz z aplikacji, pozostajesz zalogowany. Po 30 minutach bez korzystania z niej albo 12 godzinach od zalogowania trzeba zalogować się ponownie. Nie ma jeszcze opcji „nie pamiętam hasła”.
+Dopóki korzystasz z aplikacji, zalogowanie trwa. Po 30 minutach bez korzystania z niej albo 12 godzinach od zalogowania trzeba zalogować się ponownie. Nie ma jeszcze opcji „nie pamiętam hasła”.
 
-**Zmiana hasła:** dotknij **Konto** na dole ekranu. Wpisz obecne hasło i nowe, mające co najmniej 8 znaków, a potem kliknij **Zmień hasło**. Komunikat pod przyciskiem powie, czy się udało. Na tym urządzeniu pozostajesz zalogowany, ale na innych trzeba zalogować się ponownie nowym hasłem.
+**Zmiana hasła:** dotknij **Konto** na dole ekranu. Wpisz obecne hasło i nowe, mające co najmniej 8 znaków, a potem kliknij **Zmień hasło**. Komunikat pod przyciskiem powie, czy się udało. Na tym urządzeniu zalogowanie trwa dalej, ale na innych trzeba zalogować się ponownie nowym hasłem.
 
 ## Tablica
 
@@ -58,12 +58,12 @@ Pasek na dole przełącza między **Tablicą** a **Postępem**. Terapeuci i admi
 2. Kliknij **Rozpocznij**.
 3. Odpowiedz na ćwiczenie i kliknij **Zatwierdź**.
 4. Zobaczysz **„Poprawnie! Świetna robota!”** albo **„Nie tym razem. Prawidłowa odpowiedź: …”**, z prawidłową odpowiedzią pogrubioną.
-5. Po 2 sekundach samo pojawi się następne ćwiczenie.
+5. Nie spiesz się. Kiedy zechcesz, kliknij **Dalej**. Po ostatnim ćwiczeniu przycisk nazywa się **Zobacz wynik**.
 
 Na górze ekranu ćwiczenia:
 - **Wyjdź** kończy sesję. Aplikacja poprosi o potwierdzenie. Przerwana sesja zostaje nieukończona i nie liczy się do wyników.
 - Licznik i pasek pokazują, ile już za tobą, np. **3/10**.
-- Zegar pokazuje, ile trwa sesja. Nie ma limitu czasu.
+- Nie ma zegara ani limitu czasu.
 
 Po ostatnim ćwiczeniu pojawia się wynik, np. „Session complete! Score: 80%” (ten komunikat jest jeszcze po angielsku), i wracasz na tablicę.
 

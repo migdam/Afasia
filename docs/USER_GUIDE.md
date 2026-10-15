@@ -58,12 +58,12 @@ The bar at the bottom switches between **Dashboard** and **Progress**. Therapist
 2. Click **Start**.
 3. Answer the exercise, then click **Submit**.
 4. You'll see either **"Correct! Well done!"** or **"Not quite. Correct answer: …"**, with the right answer in bold.
-5. After 2 seconds the next exercise appears by itself.
+5. Take as long as you like. When you're ready, click **Next**. After the last exercise, the button says **See my result**.
 
 At the top of the exercise screen:
 - **Exit** leaves the session. You're asked to confirm. A session you leave stays unfinished and doesn't count towards your scores.
 - The counter and bar show how far you are, for example **3/10**.
-- The clock shows how long the session has taken. There is no time limit.
+- There is no clock and no time limit.
 
 After the last exercise, a message shows your score, for example "Session complete! Score: 80%", and you return to the dashboard.
 

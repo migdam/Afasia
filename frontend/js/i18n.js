@@ -53,6 +53,8 @@ const translations = {
         incorrect: "Not quite.",
         correctAnswer: "Correct answer",
         hint: "Hint",
+        nextExercise: "Next",
+        seeResult: "See my result",
         hintsUsed: "Hints used",
 
         // Progress
@@ -177,6 +179,8 @@ const translations = {
         incorrect: "Nie tym razem.",
         correctAnswer: "Prawidłowa odpowiedź",
         hint: "Podpowiedź",
+        nextExercise: "Dalej",
+        seeResult: "Zobacz wynik",
         hintsUsed: "Użyte podpowiedzi",
 
         // Progress

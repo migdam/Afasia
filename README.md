@@ -165,7 +165,7 @@ Before anyone relies on this app, at least these must be fixed. Each one is in [
 - **Privacy:** recordings and speech recognition need the person's consent, asked in the app. People can download or delete all their data on the Account page. The privacy notice (`frontend/privacy.html`, EN and PL, linked from the login and Account pages) describes what the code does; who runs the app, the legal basis, where it is hosted and whom to contact are marked "[to be completed]" until someone decides them (backlog H4, H5). The app stores health information.
 - **Roles:** any therapist can see and deactivate every patient. Therapists aren't linked to their own patients yet (P1-3b).
 - **Clinical content:** in Polish and English, in `backend/content/` and checked when the app starts: 30 naming concepts, 12 sentences to complete and 9 phrases to repeat. All are placeholders, not reviewed by a speech-language therapist. There are no pictures or recordings. What each exercise type should be based on, with checked references, is in [`docs/clinical/README.md`](docs/clinical/README.md), also pending clinical review.
-- **Accessibility** has not been audited, and the aphasia-friendly design rules in [`loop/PROMPT.md`](loop/PROMPT.md) are not met yet. For example, the app still moves on automatically after 2 seconds.
+- **Accessibility** has not been audited, and the aphasia-friendly design rules in [`loop/PROMPT.md`](loop/PROMPT.md) are not met yet. For example, messages still pop up as browser dialogs, and there is no read-aloud yet.
 - **Legal:** whether the app counts as a medical device under EU rules has not been assessed.
 - **Delivery:** there is no continuous integration yet.
 

@@ -54,8 +54,9 @@ def test_a_session_gives_feedback_and_ends_with_the_server_score(page, account):
             expect(feedback).to_have_text(f"Not quite. Correct answer: {right}")
         else:
             expect(feedback).to_have_text("Correct! Well done!")
+        page.click("#next-exercise")
 
-    expect(page.locator("#dashboard-page")).to_be_visible(timeout=10_000)
+    expect(page.locator("#dashboard-page")).to_be_visible()
     assert dialogs == ["Session complete! Score: 80%"]
     expect(page.locator("#recent-sessions")).to_contain_text("80%")
     expect(page.locator("#badge-count")).to_have_text("1")  # the first-session badge
@@ -69,6 +70,7 @@ def test_double_clicking_submit_sends_the_answer_once(page, account):
     page.dblclick("#submit-answer")
 
     expect(page.locator("#feedback")).to_have_text("Correct! Well done!")
+    page.click("#next-exercise")
     expect(page.locator("#exercise-counter")).to_have_text("2/5")
     assert dialogs == []  # a second submission would get "already answered"
 
@@ -96,7 +98,7 @@ def test_leaving_during_feedback_does_not_move_the_next_session_on(page, account
     page.click("#exit-exercise")  # while the feedback is still showing
     start_session(page)
 
-    page.wait_for_timeout(2500)  # longer than the feedback pause
+    page.wait_for_timeout(2500)  # nothing moves it on by itself (U4)
 
     expect(page.locator("#exercise-counter")).to_have_text("1/5")
 

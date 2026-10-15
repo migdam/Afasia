@@ -43,7 +43,8 @@ def test_three_hints_then_the_word_and_the_feedback_counts_them(page, account, l
     page.click("#submit-answer")
     expect(page.locator("#feedback")).to_contain_text(text["used"])
 
-    expect(page.locator("#exercise-counter")).to_have_text("2/5", timeout=10_000)
+    page.click("#next-exercise")
+    expect(page.locator("#exercise-counter")).to_have_text("2/5")
     expect(hints).to_have_count(0)  # a fresh start for the next word
     expect(button).to_be_enabled()
 

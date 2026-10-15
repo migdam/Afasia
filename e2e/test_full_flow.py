@@ -53,8 +53,9 @@ def play_session(page, exercise_type, text, wrong_first):
         feedback = page.locator("#feedback")
         expect(feedback).to_be_visible()
         expect(feedback).to_have_text(text["wrong"].format(right) if wrong else text["right"])
+        page.click("#next-exercise")  # the person moves on when ready (U4)
 
-    expect(page.locator("#dashboard-page")).to_be_visible(timeout=10_000)
+    expect(page.locator("#dashboard-page")).to_be_visible()
 
 
 @pytest.mark.parametrize("language", ["en", "pl"])
