@@ -54,6 +54,8 @@ python3 -m http.server 3000
 
 Otwieraj aplikację pod adresem `http://localhost:3000`, a nie `http://127.0.0.1:3000`. Ciasteczko logowania pochodzi z `localhost:8000`, a przeglądarka odsyła je tylko stronom z tej samej witryny (domyślnie dozwolone są też tylko adresy `localhost`).
 
+Frontend znajduje API przez `frontend/js/config.js`. Jego Content-Security-Policy (w `frontend/index.html`) pozwala stronie łączyć się tylko z własnym adresem i lokalnymi portami deweloperskimi, więc skrypt wstrzyknięty do strony nie wyśle danych gdzie indziej. Jeśli API stoi pod innym adresem, dopisz go tam do `connect-src`. Konfiguracja Dockera trzyma API pod tym samym adresem, a nginx wysyła dodatkowo surowszą politykę.
+
 Backend czyta `.env` z katalogu głównego repozytorium, niezależnie od tego, skąd go uruchomisz. Nieznane mu ustawienia pomija, więc ten sam plik służy też Docker Compose. Podczas pracy nad kodem bazą danych jest SQLite (`backend/aphasia_app.db`).
 
 ## Uruchamianie w Dockerze

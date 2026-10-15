@@ -21,3 +21,11 @@ def test_index_html_has_no_inline_scripts_or_handlers():
 
     assert not re.search(r"<script(?![^>]*\bsrc=)[^>]*>", html), "inline <script>"
     assert not re.search(r"\son[a-z]+=", html), "inline event handler"
+
+
+def test_the_page_policy_allows_no_other_websites():
+    html = (FRONTEND / "index.html").read_text()
+    policy = re.search(r'http-equiv="Content-Security-Policy" content="([^"]+)"', html).group(1)
+    connect = next(d for d in policy.split(";") if d.strip().startswith("connect-src")).split()[1:]
+
+    assert "http:" not in connect and "https:" not in connect and "*" not in connect, connect

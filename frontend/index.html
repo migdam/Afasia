@@ -7,7 +7,10 @@
     <!-- Scripts only from this site's own files: no inline scripts or handlers,
          so injected markup can't run code. connect-src allows another origin
          because in development the API runs on its own port. -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self' blob:; connect-src 'self' http: https:; object-src 'none'; base-uri 'self'; form-action 'self'">
+    <!-- connect-src: the app itself, and an API on a local development port
+         (js/config.js). An API on another site must be added here. Docker's
+         nginx sends a stricter policy as well (connect-src 'self'). -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self' blob:; connect-src 'self' http://localhost:* http://127.0.0.1:*; object-src 'none'; base-uri 'self'; form-action 'self'">
     <title>Aphasia Speech Therapy</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/dark-mode.css">

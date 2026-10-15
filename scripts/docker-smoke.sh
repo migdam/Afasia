@@ -82,6 +82,8 @@ for path in ("/", "/js/app.js", "/css/styles.css", "/sw.js", "/privacy.html"):
         headers, page = response.headers, response.read()
     assert headers["Cache-Control"] == "no-cache", f"{path}: Cache-Control {headers['Cache-Control']}"
     assert headers["X-Content-Type-Options"] == "nosniff", f"{path}: no security headers"
+    policy = headers["Content-Security-Policy"] or ""
+    assert "connect-src 'self';" in policy and "frame-ancestors 'none'" in policy, f"{path}: CSP {policy}"
 assert b"Informacja o prywatno" in page, "privacy.html is missing from the image"
 print("pages, scripts and styles are revalidated, with security headers; the privacy notice is served")
 

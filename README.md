@@ -54,6 +54,8 @@ python3 -m http.server 3000
 
 Open the app at `http://localhost:3000`, not `http://127.0.0.1:3000`. The login cookie comes from `localhost:8000`, and the browser only sends it back for pages on the same site (and only `localhost` origins are allowed by default).
 
+The frontend finds the API through `frontend/js/config.js`. Its Content-Security-Policy (in `frontend/index.html`) lets the page talk only to its own origin and to local development ports, so a script injected into the page can't send data elsewhere. If you put the API on another site, add that origin to `connect-src` there. The Docker setup keeps the API on the same origin and sends a stricter policy from nginx.
+
 The backend reads `.env` from the repository root, wherever it is started from. Settings it doesn't use are ignored, so the same file also serves Docker Compose. In development the database is SQLite (`backend/aphasia_app.db`).
 
 ## Running with Docker
