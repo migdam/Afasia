@@ -174,8 +174,9 @@ def check_and_award_badges(db: Session, user: User):
     """Check if user earned any new badges."""
     new_badges = []
 
-    # First session badge
-    if user.sessions and len(user.sessions) == 1:
+    # First session badge: for the first finished one; sessions left
+    # unfinished don't count.
+    if any(s.is_completed for s in user.sessions):
         if not db.query(UserBadge).filter(
             UserBadge.user_id == user.id,
             UserBadge.badge_type == BadgeType.FIRST_SESSION
@@ -207,6 +208,22 @@ def check_and_award_badges(db: Session, user: User):
     return new_badges
 
 
+def streaks(days: set, today) -> tuple:
+    """The run of days in a row up to today, and the longest run, in a set
+    of dates."""
+    current = 0
+    while today - timedelta(days=current) in days:
+        current += 1
+    longest = 0
+    for day in days:
+        if day - timedelta(days=1) not in days:  # the start of a run
+            length = 1
+            while day + timedelta(days=length) in days:
+                length += 1
+            longest = max(longest, length)
+    return current, longest
+
+
 def finish_session(db: Session, session: TherapySession):
     """Score a session whose exercises are all answered, and credit the user.
 
@@ -230,18 +247,19 @@ def finish_session(db: Session, session: TherapySession):
     # Added in SQL, so sessions finishing at the same moment don't lose points.
     user.total_points = User.total_points + points
 
-    # Update streak
-    today = now.date()
-    if user.last_activity_date:
-        last_date = user.last_activity_date.date()
-        if (today - last_date).days == 1:
-            user.current_streak += 1
-        elif (today - last_date).days > 1:
-            user.current_streak = 1
-    else:
-        user.current_streak = 1
-
-    user.longest_streak = max(user.longest_streak, user.current_streak)
+    # Streaks come from the days with a finished session, read afresh, not
+    # from the counters: a session finishing at the same time as another
+    # may have read the person before the other one finished (P2-9a).
+    days = {now.date()} | {
+        finished.date() for (finished,) in db.query(TherapySession.completed_at).filter(
+            TherapySession.user_id == user.id,
+            TherapySession.is_completed.is_(True),
+            TherapySession.completed_at.isnot(None),
+        )
+    }
+    current, longest = streaks(days, now.date())
+    user.current_streak = current
+    user.longest_streak = max(user.longest_streak or 0, longest)
     user.last_activity_date = now
 
     # Check for badges
