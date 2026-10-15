@@ -21,7 +21,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
 |------|--------|----------|
 | G1 Runs | 🟡 | `scripts/check.sh` passes, including `scripts/smoke.sh`: the README backend quick start in a copy of the tree answers `/health`. Not yet covered: a from-scratch install in the copy (it reuses `.venv`) and the frontend half of the quick start (P0-7) |
 | G2 Backend tests | 🔴 | 47 tests pass, including register → login → profile and a full scored session; coverage not measured |
-| G3 End-to-end | 🔴 | No e2e tests |
+| G3 End-to-end | 🟡 | Harness in place (P0-7a): sign-up, reload, logout and login pass in Chromium. Exercises, feedback, progress, export and Polish are not covered yet (P0-7b–g) |
 | G4 Authorization | 🔴 | P1-3 |
 | G5 Security | 🔴 | P1-1, P1-2, P1-4 |
 | G6 Accessibility | 🔴 | Not measured |
@@ -57,23 +57,28 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
   **Acceptance:** tests for completion on the last answer, points summed over correct answers, idempotent re-submission (no double points or records), server-only scoring, and a recorded duration.
 - [x] **P0-5 Image-recognition sessions hang the server** ✅ (dff1068). A type or difficulty without content now gets 422 and creates no session. There's no more silent fallback to medium. Docs mark image recognition as not available yet. Original report: `EXERCISE_DATA` has no `image_recognition` content, and `generate_exercises` loops forever on an empty pool. Reproduced: still spinning after 3 s, pinning a worker thread at 100% CPU. Fail fast with a clear 4xx when there is no content, and add a test.
 - [x] **P0-6 Naming prompts contain the answer** ✅ (aa67ddf). Naming items now describe the thing to name, since there are no pictures to show. `test_content.py` enforces C4 for every item. The items are placeholders, pending clinical review. Original report: for example, `"What is this? (cat)"` has the answer `cat`. Fix the naming prompts, and add a test that no naming prompt contains its answer (C4). Repetition prompts like "Say: Hello" are fine. The full content model is P2-2.
-- [ ] **P0-7 Frontend flow is broken against the real API** 🔎:
-  - The final score is always 0%: `completeSession()` counts `is_correct` on the exercise list fetched at session start (all `null`) and shows that. Since P0-4 the server ignores the client's score, and `POST /complete` returns the server-computed session: show its `score`, and stop sending score and duration.
-  - Wrong-answer feedback reads "Incorrect. Try again! Correct! Well done!: undefined". It concatenates both messages and reads `correct_answer`, a field the API never returns (✅ confirmed absent).
-  - Submit stays enabled during the 2 s feedback delay, so a double click submits twice and skips an exercise. Since P0-4 the second submission gets 409 "Exercise already answered", which the UI shows as an error alert.
-  - `recordedAudio` and the hidden text input aren't reset between exercises or sessions.
-  - The admin list reads `user.is_active`, which `UserResponse` doesn't include.
-  - The dashboard badge count only updates after visiting Progress.
-  - `API_BASE_URL` is hard-coded to `http://localhost:8000`.
-  - The images and audio that exercises reference (`/assets/images/*.jpg`, `/assets/audio/*.mp3`) don't exist.
-  - Both exercise-type dropdowns offer Image Recognition, which the server refuses (422) since P0-5. Hide it until P2-2 adds content.
-  - The progress chart draws dots but no line (`beginPath()` inside the path loop), the canvas has no height, and its colors are hard-coded for the light theme.
+- [ ] **P0-7 Frontend flow is broken against the real API** 🔎. Split into P0-7a–g on 2026-10-15; done when all of them are. Each one comes with Playwright tests in `e2e/`. **Acceptance for the whole item:** a Playwright e2e test, in EN and PL: register → one session per working exercise type → correct feedback → progress shows the session with the right score.
+  - [x] **P0-7a E2E harness** (5ff957e). `e2e/`: pytest and Playwright against the real backend and the static frontend, run by `check.sh`. Covers sign-up, staying signed in after a reload, logout and login. Found and fixed along the way: logging out left the sign-up form on screen, password included.
+  - [ ] **P0-7b Session result and feedback.**
+    - The final score is always 0%: `completeSession()` counts `is_correct` on the exercise list fetched at session start (all `null`) and shows that. Since P0-4 the server ignores the client's score, and `POST /complete` returns the server-computed session: show its `score`, and stop sending score and duration.
+    - Wrong-answer feedback reads "Incorrect. Try again! Correct! Well done!: undefined". It concatenates both messages and reads `correct_answer`, a field the API never returns (✅ confirmed absent). Return the correct answer in the answer response only, once the exercise is answered, and show one calm message.
 
-  **Acceptance:** a Playwright e2e test, in EN and PL: register → one session per working exercise type → correct feedback → progress shows the session with the right score.
+    **Test:** a sentence-completion session with one wrong answer shows the right answer and ends with the server's score.
+  - [ ] **P0-7c Exercise state.**
+    - Submit stays enabled during the 2 s feedback delay, so a double click submits twice and skips an exercise. Since P0-4 the second submission gets 409 "Exercise already answered", which the UI shows as an error alert.
+    - `recordedAudio` and the hidden text input aren't reset between exercises or sessions.
+  - [ ] **P0-7d Dashboard and admin data.**
+    - The admin list reads `user.is_active`, which `UserResponse` doesn't include.
+    - The dashboard badge count only updates after visiting Progress.
+  - [ ] **P0-7e Unavailable content.**
+    - Both exercise-type dropdowns offer Image Recognition, which the server refuses (422) since P0-5. Hide it until P2-2 adds content.
+    - The images and audio that exercises reference (`/assets/images/*.jpg`, `/assets/audio/*.mp3`) don't exist, so the UI shows broken media. Show nothing until there are assets (H2, H3).
+  - [ ] **P0-7f Progress chart.** It draws dots but no line (`beginPath()` inside the path loop), the canvas has no height, and its colors are hard-coded for the light theme.
+  - [ ] **P0-7g The whole flow in EN and PL**, per the acceptance above.
 - [ ] **P0-8 Docker stack** 🔎:
   - No PostgreSQL driver in requirements, so the backend can't connect to the compose `db` service.
   - DB password and secret fallback are hard-coded in `docker-compose.yml`.
-  - The frontend calls `localhost:8000`, which only works on the developer's own machine. Proxy `/api` through nginx instead.
+  - The frontend calls `localhost:8000`, which only works on the developer's own machine. Proxy `/api` through nginx instead. Since P0-7a a page can set `window.API_BASE_URL` before `api.js` loads; the deployed default should be the same-origin `/api/v1`.
   - `.gitignore` ignores `.dockerignore` files, so the build contexts can't exclude anything: local databases, uploads and caches get copied into the images. Stop ignoring it and add a `.dockerignore` per build context.
 
   **Acceptance:** `docker compose up` passes the smoke test. If Docker can't run in the loop's environment, mark the item `[!]` and say so.
@@ -84,6 +89,7 @@ Humans: edit freely. Reorder, add, answer questions inline. The loop treats your
   - Links to `docs/API.md`, `docs/DEPLOYMENT.md` and `LICENSE`, none of which exist.
   - Invented contact details: `support@aphasia-therapy.app`, `@AphasiaTherapy`, a website.
   - `.env.template` offers `SMTP_*` settings "for notifications", but nothing sends email and Settings ignores those keys. Remove them until P4-4 uses them.
+  - `README.pl.md` has no project-structure section, unlike `README.md`.
   - `docs/USER_GUIDE.md` says total time "excludes paused time". There is no pause: a session's time runs from its start to its last answer (since P0-4).
 
   Replace them with an accurate status ("early development"), a "Known limitations" section, and links that resolve, in both languages.

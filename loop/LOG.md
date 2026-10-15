@@ -17,6 +17,31 @@ Newest entry first. One entry per iteration.
 
 ---
 
+### 7: 2026-10-15 05:18 UTC: P0-7a E2E harness (P0-7 split into a–g)
+- **Baseline:** `check.sh` green (47 passed, smoke OK), same as entry 6. No human commits.
+- **Split:** P0-7 is too big for one iteration and every part needs browser tests, so it became P0-7a–g. The harness (a) comes first. Each existing bullet moved to the sub-item that will fix it, and the API-address bullet moved to P0-8.
+- **Feasibility:**
+  - This environment blocks Playwright's browser download (`cdn.playwright.dev` returns 403: "no rule or allowlist entry allows host").
+  - It does provide Chromium build 1194 in `/opt/pw-browsers` and sets `PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD`.
+  - Reading `browsers.json` from the 1.55–1.57 wheels showed that 1.56.0 is the release that expects build 1194. Pinned it. Headless Chromium 141 launches.
+- **Did:**
+  - `e2e/` (pytest and Playwright). A session fixture starts the real backend (temp DB, CORS for the test origin) and a static server for `frontend/`. Each test gets a fresh context with the service worker blocked, and an uncaught JS error fails the test.
+  - `api.js` honours `window.API_BASE_URL`.
+  - `check.sh` runs the browser tests (and downloads a browser where the environment allows it) and lints `e2e/`.
+  - Added `e2e/` and `scripts/` to the README's project tree.
+- **Found and fixed:** after logging out, the auth page kept showing the sign-up form with the earlier password still in it (28 characters, checked with a throwaway probe test), and the login form was hidden. `showAuthPage()` now resets both forms and shows the login form.
+- **Verified:**
+  ```
+  check.sh: ruff "All checks passed!" · backend "47 passed" · "README quick start: the backend answered /health"
+            e2e "2 passed in 5.48s" · first run with the venv rebuild: real 0m49s
+  ```
+  - Before the `ui.js` fix: `test_logging_out_shows_an_empty_login_form` failed ("#login-form … Actual value: hidden").
+  - With `api.js` temporarily set back to the hard-coded address: the sign-up test fails ("expected to be visible, Actual value: hidden"). So the tests do go through the browser to the backend.
+- **Commit:** 5ff957e (pushed: yes), plus this log/backlog commit.
+- **Discovered:** `README.pl.md` has no project-structure section (added to P0-9).
+- **Next:** P0-7b. Show the server's score, and wrong-answer feedback with the right answer.
+- **Protocol notes:** browser downloads may be blocked in other environments too. `check.sh` honours `PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD`, and if no matching browser is available the e2e step fails loudly instead of skipping.
+
 ### 6: 2026-10-15 05:06 UTC: P0-6 Naming prompts contain the answer
 - **Baseline:** `check.sh` green (31 passed, smoke OK), same as entry 5. No human commits.
 - **Did:**
