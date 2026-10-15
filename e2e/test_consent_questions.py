@@ -66,6 +66,9 @@ def test_yes_starts_the_recording_and_is_not_asked_again(page, servers, account)
     page.click("#record-btn")
     page.click("#consent-yes")
     expect(page.locator("#record-btn")).to_have_class(RECORDING)
+    # Then speech recognition is asked about, separately (P2-7a).
+    expect(page.locator("#consent-dialog")).to_contain_text("speech recognition")
+    page.click("#consent-no")
     page.click("#record-btn")
     expect(page.locator("#record-btn")).not_to_have_class(RECORDING)
 
@@ -88,18 +91,16 @@ def test_the_answers_can_be_changed_on_the_account_page(page, servers, account):
     assert consents(page, servers)["recordings"] is False
 
 
-def test_speech_recognition_is_asked_about_separately(page, servers, account):
+def test_speech_recognition_is_asked_about_separately_when_recording_starts(page, servers, account):
+    # Recognition listens while recording (P2-7a), so it is asked about then.
     open_pronunciation(page, servers=servers, recordings=True)
     page.click("#record-btn")
-    expect(page.locator("#record-btn")).to_have_class(RECORDING)
-    page.click("#record-btn")
-    expect(page.locator("#record-btn")).not_to_have_class(RECORDING)
-
-    page.click("#submit-answer")
     expect(page.locator("#consent-dialog")).to_contain_text("speech recognition")
     page.click("#consent-no")
 
-    expect(page.locator("#feedback")).to_be_visible()
+    expect(page.locator("#record-btn")).to_have_class(RECORDING)  # recording goes on without it
+    page.click("#record-btn")
+    expect(page.locator("#record-btn")).not_to_have_class(RECORDING)
     assert page.evaluate("window.__recognitionStarts") == 0
     assert consents(page, servers)["speech_recognition"] is False
 
@@ -111,6 +112,7 @@ def test_with_consent_speech_recognition_is_used(page, servers, account):
     page.click("#record-btn")
     expect(page.locator("#record-btn")).not_to_have_class(RECORDING)
 
+    page.click("#rate-said")
     page.click("#submit-answer")
 
     expect(page.locator("#feedback")).to_be_visible()

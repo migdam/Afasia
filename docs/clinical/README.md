@@ -38,9 +38,9 @@ Each type the app knows, what it does today, and what it should be based on.
 
 ### Pronunciation (`pronunciation`)
 
-- **Today:** a word or phrase to say ("Say: Hello"; `backend/content/phrases.json`, in Polish and English), which the person records. The browser's speech recognition judges the answer, if the person agrees to it.
+- **Today:** a word or phrase to say ("Say: Hello"; `backend/content/phrases.json`, in Polish and English), which the person can hear read aloud, record, play back and then rate themselves ("I said it" / "Not yet"). That rating decides. With consent, the browser's speech recognition listens during the recording and its result is shown as a suggestion and kept with the recording.
 - **Basis:** repetition of words and phrases is a common therapy task [citation needed].
-- **Gaps:** speech recognition is unreliable for aphasic speech, so it must never be the only judge; the person should be able to rate themselves, or a therapist should review the recording (principle C5; backlog P2-7).
+- **Gaps:** no therapist review of recordings yet; the reliability of self-rating for this population is a question for clinical review (principle C5).
 
 ### Image recognition (`image_recognition`)
 

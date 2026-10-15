@@ -247,6 +247,15 @@
                             <span data-i18n="record">Record</span>
                         </button>
                         <div id="recording-status" class="recording-status"></div>
+                        <button type="button" id="play-recording" class="btn btn-secondary" hidden data-i18n="playRecording">▶ Play my recording</button>
+                        <!-- What speech recognition heard: a suggestion only (C5) -->
+                        <p id="heard" class="heard" hidden></p>
+                        <!-- The person's own rating decides (C5) -->
+                        <div id="self-rating" class="self-rating" role="group" aria-labelledby="self-rating-label">
+                            <p id="self-rating-label" data-i18n="howDidItGo">How did it go?</p>
+                            <button type="button" id="rate-said" class="option-btn" data-i18n="rateSaid">I said it</button>
+                            <button type="button" id="rate-not-yet" class="option-btn" data-i18n="rateNotYet">Not yet</button>
+                        </div>
                     </div>
 
                     <button id="submit-answer" class="btn btn-primary btn-large" data-i18n="submit">Submit</button>

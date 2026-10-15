@@ -24,7 +24,7 @@ Accounts, practice sessions, feedback, scores, the progress chart and the admin 
 
 ### Not working yet
 
-- **Pronunciation** sessions let you record yourself, but the answer is judged by the browser's own speech recognition, which doesn't work in most browsers and is unreliable for aphasic speech. It's being redesigned (backlog P2-7).
+- **Pronunciation:** listen, record, play the recording back, and rate yourself ("I said it" / "Not yet"); your own rating decides. Browser speech recognition, if allowed, only suggests what it heard. There is no therapist review of recordings yet.
 - **Image recognition** has no exercises, so the app doesn't offer it.
 - **Pictures and recorded audio** don't exist yet. Naming exercises use descriptions instead.
 - **Offline use** isn't supported: every exercise needs the server. The app used to install a service worker that kept old code and cached personal data; it has been retired, and `sw.js` now removes it, and its caches, from browsers that still have it.

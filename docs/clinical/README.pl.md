@@ -38,9 +38,9 @@ Każdy rodzaj ćwiczeń, który zna aplikacja: co robi dziś i na czym powinien 
 
 ### Wymowa (`pronunciation`)
 
-- **Dziś:** słowo lub zwrot do powiedzenia („Powiedz: Cześć”; `backend/content/phrases.json`, po polsku i po angielsku), które osoba nagrywa. Odpowiedź ocenia rozpoznawanie mowy przeglądarki, jeśli osoba się na nie zgodzi.
+- **Dziś:** słowo lub zwrot do powiedzenia („Powiedz: Cześć”; `backend/content/phrases.json`, po polsku i po angielsku), które osoba może odsłuchać, nagrać, odsłuchać w swoim wykonaniu i ocenić („Udało się” / „Jeszcze nie”). Decyduje ta ocena. Za zgodą rozpoznawanie mowy przeglądarki słucha podczas nagrania, a jego wynik jest pokazywany jako podpowiedź i zapisywany z nagraniem.
 - **Podstawa:** powtarzanie słów i zwrotów to częste zadanie w terapii [citation needed].
-- **Braki:** rozpoznawanie mowy zawodzi przy mowie osób z afazją, więc nie może być jedynym sędzią; osoba powinna móc sama ocenić swoją wypowiedź albo nagranie powinien odsłuchać logopeda (zasada C5; backlog P2-7).
+- **Braki:** logopeda nie może jeszcze odsłuchiwać nagrań; wiarygodność samooceny w tej grupie powinien ocenić specjalista (zasada C5).
 
 ### Rozpoznawanie obrazów (`image_recognition`)
 

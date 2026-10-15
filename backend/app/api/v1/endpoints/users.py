@@ -2,7 +2,7 @@
 import time
 from typing import List, Optional
 from datetime import datetime, timedelta
-from fastapi import APIRouter, Depends, HTTPException, Request, Response, status, UploadFile, File
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status, UploadFile, File, Form
 from fastapi.security import HTTPAuthorizationCredentials
 from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from sqlalchemy.orm import Session
@@ -480,6 +480,8 @@ def export_progress_pdf(
 async def upload_audio(
     exercise_id: int,
     audio: UploadFile = File(...),
+    # What the browser's speech recognition heard, if the person allowed it.
+    transcription: Optional[str] = Form(None, max_length=500),
     user_id: int = Depends(get_current_user_id),
     db: Session = Depends(get_db)
 ):
@@ -531,6 +533,7 @@ async def upload_audio(
         user_id=user_id,
         exercise_id=exercise_id,
         file_path=str(file_path),
+        transcription=transcription,
     )
 
     db.add(recording)

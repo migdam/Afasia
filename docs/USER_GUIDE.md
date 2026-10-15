@@ -86,9 +86,15 @@ You read a sentence with a gap, such as "The sky is ___". Click the word that fi
 
 ### Pronunciation
 
-You see a word or phrase to say, such as "Say: Hello". Click **Record**, say it, click the button again to stop, then click **Submit**. The first time, the app asks whether it may keep your recordings (see [Your data](#your-data)), and your browser asks for permission to use the microphone. The microphone is on only while you record: it turns off when you stop, leave the session or log out, and your browser stops showing it as in use.
+You see a word or phrase to say, such as "Say: Hello". Click **🔊 Read aloud** to hear it first, if your device has a voice for it.
 
-**This doesn't work reliably yet.** Your answer is judged by the browser's own speech recognition. In most browsers that isn't available, and where it is, it's unreliable for speech affected by aphasia. Answers are often marked wrong when they were right. This exercise type is being redesigned.
+1. Click **Record**, say it, and click the button again to stop.
+2. Click **▶ Play my recording** to listen to yourself.
+3. Choose how it went: **I said it** or **Not yet**, then click **Submit**.
+
+Your own rating decides. If you allowed speech recognition, the app shows what the browser heard, as a suggestion only. You can also rate without recording. The first time, the app asks whether it may keep your recordings (see [Your data](#your-data)), and your browser asks for permission to use the microphone. The microphone is on only while you record: it turns off when you stop, leave the session or log out, and your browser stops showing it as in use.
+
+Speech recognition often gets speech wrong after a stroke, which is why it never decides. A therapist reviewing recordings isn't possible yet.
 
 ### Image Recognition
 

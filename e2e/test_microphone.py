@@ -29,7 +29,9 @@ def live_microphones(page):
 
 def start_recording(page, servers):
     # Consent is asked for in the app (test_consent_questions.py); here it is given up front.
-    call_api(servers, "PUT", "/users/consents", {"recordings": True}, token=browser_token(page))
+    # (speech recognition answered too, as it is asked when recording starts)
+    call_api(servers, "PUT", "/users/consents", {"recordings": True, "speech_recognition": False},
+             token=browser_token(page))
     page.add_init_script(COUNT_STREAMS)
     page.reload()
     expect(page.locator("#dashboard-page")).to_be_visible()

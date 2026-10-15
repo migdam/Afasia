@@ -24,7 +24,7 @@ Konta, sesje ćwiczeń, informacja zwrotna, wyniki, wykres postępów i panel ad
 
 ### Co jeszcze nie działa
 
-- **Wymowa.** Można się nagrać, ale odpowiedź ocenia wbudowane rozpoznawanie mowy przeglądarki. W większości przeglądarek ono nie działa, a mowy osób z afazją nie rozpoznaje wiarygodnie. Ten typ ćwiczeń jest projektowany od nowa (backlog P2-7).
+- **Wymowa.** Odsłuchanie wzoru, nagranie, odsłuchanie siebie i własna ocena („Udało się” / „Jeszcze nie”); decyduje ocena osoby ćwiczącej. Rozpoznawanie mowy przeglądarki, jeśli jest dozwolone, tylko podpowiada, co usłyszało. Odsłuchiwanie nagrań przez logopedę nie jest jeszcze możliwe.
 - **Rozpoznawanie obrazów** nie ma ćwiczeń, więc aplikacja go nie oferuje.
 - **Obrazków ani nagrań** jeszcze nie ma. Ćwiczenia nazywania używają opisów.
 - **Praca offline** nie jest obsługiwana: każde ćwiczenie wymaga połączenia z serwerem. Aplikacja instalowała kiedyś service worker, który zatrzymywał starą wersję kodu i zapamiętywał dane osobowe; został wycofany, a `sw.js` usuwa go wraz z jego pamięcią podręczną z przeglądarek, które wciąż go mają.

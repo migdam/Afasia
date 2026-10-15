@@ -105,6 +105,11 @@ class AphasiaApp {
         });
 
         document.getElementById('try-again').addEventListener('click', () => this.tryAgain());
+        document.getElementById('rate-said').addEventListener('click', () => this.rate('said_it'));
+        document.getElementById('rate-not-yet').addEventListener('click', () => this.rate('not_yet'));
+        document.getElementById('play-recording').addEventListener('click', () => {
+            if (this.recordedAudio) audioRecorder.playAudioBlob(this.recordedAudio);
+        });
         document.getElementById('choose-words').addEventListener('click', () => this.showWordChoices());
         document.getElementById('use-tiles').addEventListener('click', () => this.showLetterTiles());
         document.getElementById('tiles-undo').addEventListener('click', () => this.undoTile());
@@ -473,6 +478,12 @@ class AphasiaApp {
         document.getElementById('try-again').style.display = 'none';
         this.practiceAnswer = null;
         this.lastRightAnswer = null;
+        this.selfRating = null;
+        this.heard = null;
+        document.getElementById('play-recording').hidden = true;
+        document.getElementById('heard').hidden = true;
+        document.getElementById('rate-said').classList.remove('selected');
+        document.getElementById('rate-not-yet').classList.remove('selected');
         ui.updateReadAloud();
         document.getElementById('submit-answer').style.display = '';
 
@@ -525,6 +536,7 @@ class AphasiaApp {
         // is shown, so a double click can't send the answer twice.
         submitButton.disabled = true;
         let answer = '';
+        let selfRating = null;
 
         // Read the answer from the input this exercise shows, never from a
         // hidden one that still holds an earlier value.
@@ -534,26 +546,19 @@ class AphasiaApp {
         } else if (selectedOption) {
             answer = selectedOption.dataset.answer;  // a naming word chosen from the list
         } else if (exercise.exercise_type === 'pronunciation') {
+            // The person's own rating decides (C5); recognition only suggested.
+            if (!this.selfRating) {
+                submitButton.disabled = false;
+                this.showFeedback('', i18n.translate('rateFirst'));
+                return;
+            }
+            selfRating = this.selfRating;
+            answer = this.heard ? this.heard.transcript : '';
             if (this.recordedAudio) {
                 // There is a recording only with consent to keep it (P1-6b).
-                await api.uploadAudio(exercise.id, this.recordedAudio).catch((error) => {
+                await api.uploadAudio(exercise.id, this.recordedAudio, answer).catch((error) => {
                     console.error('Upload failed:', error);
                 });
-                // Speech recognition needs its own consent: the browser may
-                // send the audio to its maker's servers.
-                if (speechRecognizer.isSupported() && await this.hasConsent('speech_recognition')) {
-                    try {
-                        const result = await speechRecognizer.recognize(
-                            i18n.getCurrentLanguage() === 'pl' ? 'pl-PL' : 'en-US'
-                        );
-                        answer = result.transcript;
-                    } catch (error) {
-                        console.error('Speech recognition failed:', error);
-                        answer = 'recognition_failed';
-                    }
-                } else {
-                    answer = 'recorded';
-                }
             }
         } else {
             answer = document.getElementById('answer-input').value;
@@ -566,7 +571,7 @@ class AphasiaApp {
             return;
         }
 
-        if (!answer) {
+        if (!answer && !selfRating) {
             submitButton.disabled = false;
             const feedback = document.getElementById('feedback');
             feedback.className = 'feedback';
@@ -578,7 +583,7 @@ class AphasiaApp {
         const timeTaken = Math.floor((Date.now() - this.exerciseStartTime) / 1000);
 
         try {
-            const result = await api.submitAnswer(exercise.id, answer, timeTaken);
+            const result = await api.submitAnswer(exercise.id, answer, timeTaken, selfRating);
 
             // Show feedback
             const feedback = document.getElementById('feedback');
@@ -593,10 +598,14 @@ class AphasiaApp {
             } else {
                 // One calm message, with the right answer emphasized; "almost"
                 // for a near miss (the server decides, app/answers.py).
-                const text = result.almost
-                    ? i18n.translate('almostRight')
-                    : `${i18n.translate('incorrect')} ${i18n.translate('correctAnswer')}:`;
-                this.showFeedback('incorrect', text, result.correct_answer);
+                if (selfRating) {
+                    this.showFeedback('incorrect', i18n.translate('keepPractising'));
+                } else {
+                    const text = result.almost
+                        ? i18n.translate('almostRight')
+                        : `${i18n.translate('incorrect')} ${i18n.translate('correctAnswer')}:`;
+                    this.showFeedback('incorrect', text, result.correct_answer);
+                }
             }
             // Practice once more after a wrong answer (not for recordings).
             this.lastRightAnswer = result.is_correct || exercise.exercise_type === 'pronunciation'
@@ -632,12 +641,39 @@ class AphasiaApp {
             recordBtn.classList.add('recording');
             recordBtn.replaceChildren(el('span', 'record-icon', '⏹️'), el('span', '', 'Stop'));
             statusEl.textContent = 'Recording...';
+            await this.listenAlong();
         } else {
-            // Stop recording
+            // Stop recording, and recognition with it
             this.recordedAudio = await audioRecorder.stopRecording();
+            speechRecognizer.stop();
             this.resetRecordButton();
             statusEl.textContent = 'Recording saved. Click submit when ready.';
+            document.getElementById('play-recording').hidden = false;
         }
+    }
+
+    // With its own consent, let the browser's speech recognition listen to
+    // the same speech as the recording (not new audio afterwards). What it
+    // hears is shown as a suggestion; the person's rating decides (C5).
+    async listenAlong() {
+        this.heard = null;
+        if (!speechRecognizer.isSupported() || !(await this.hasConsent('speech_recognition'))) {
+            return;
+        }
+        speechRecognizer.recognize(i18n.getCurrentLanguage() === 'pl' ? 'pl-PL' : 'en-US')
+            .then((result) => {
+                this.heard = result;
+                const heard = document.getElementById('heard');
+                heard.textContent = `${i18n.translate('heard')} ${result.transcript}`;
+                heard.hidden = false;
+            })
+            .catch((error) => console.error('Speech recognition failed:', error));
+    }
+
+    rate(rating) {
+        this.selfRating = rating;
+        document.getElementById('rate-said').classList.toggle('selected', rating === 'said_it');
+        document.getElementById('rate-not-yet').classList.toggle('selected', rating === 'not_yet');
     }
 
     resetRecordButton() {

@@ -137,6 +137,9 @@ class ExerciseResponse(BaseModel):
 class ExerciseAnswer(BaseModel):
     answer: str
     time_taken_seconds: int
+    # Pronunciation: the person's own rating decides (C5); the answer is then
+    # just what speech recognition heard, if anything.
+    self_rating: Optional[Literal["said_it", "not_yet"]] = None
 
 
 class Hint(BaseModel):

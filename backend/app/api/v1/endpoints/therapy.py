@@ -416,7 +416,11 @@ def submit_answer(
     else:
         expected = {exercise.correct_answer}
     is_correct = matches(answer_data.answer, expected)
-    almost = not is_correct and exercise.exercise_type != ExerciseType.SENTENCE_COMPLETION and any(
+    if exercise.exercise_type == ExerciseType.PRONUNCIATION and answer_data.self_rating:
+        # Speech recognition is unreliable for aphasic speech (C5), so the
+        # person's own rating decides; what it heard is only kept.
+        is_correct = answer_data.self_rating == "said_it"
+    almost = not answer_data.self_rating and not is_correct and exercise.exercise_type != ExerciseType.SENTENCE_COMPLETION and any(
         is_near_miss(answer_data.answer, e) for e in expected
     )
 

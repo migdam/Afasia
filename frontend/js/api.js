@@ -188,9 +188,12 @@ class APIClient {
         return blob;
     }
 
-    async uploadAudio(exerciseId, audioBlob) {
+    async uploadAudio(exerciseId, audioBlob, transcription = null) {
         const formData = new FormData();
         formData.append('audio', audioBlob, 'recording');
+        if (transcription) {
+            formData.append('transcription', transcription);  // what recognition heard, with consent
+        }
 
         const response = await this.fetch(`/users/audio/upload?exercise_id=${exerciseId}`, {
             method: 'POST',
@@ -220,12 +223,13 @@ class APIClient {
         return this.request(`/therapy/sessions/${sessionId}/exercises`);
     }
 
-    async submitAnswer(exerciseId, answer, timeTaken) {
+    async submitAnswer(exerciseId, answer, timeTaken, selfRating = null) {
         return this.request(`/therapy/exercises/${exerciseId}/answer`, {
             method: 'POST',
             body: JSON.stringify({
                 answer: answer,
                 time_taken_seconds: timeTaken,
+                ...(selfRating ? { self_rating: selfRating } : {}),
             }),
         });
     }

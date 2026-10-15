@@ -105,7 +105,7 @@ def test_answer_options_are_readable_in_both_themes_even_under_the_pointer(page,
     for theme in ("light", "dark"):
         if theme == "dark":
             page.click("#theme-toggle")
-        for index in range(page.locator(".option-btn").count()):
+        for index in range(page.locator("#exercise-options .option-btn").count()):
             selector = f"#exercise-options .option-btn:nth-child({index + 1})"
             for hovered in (False, True):
                 if hovered:
