@@ -111,6 +111,18 @@ class APIClient {
         return data;
     }
 
+    // Consent: { recordings, speech_recognition }, each true, false or null (not asked)
+    async getConsents() {
+        return this.request('/users/consents');
+    }
+
+    async setConsents(choices) {
+        return this.request('/users/consents', {
+            method: 'PUT',
+            body: JSON.stringify(choices),
+        });
+    }
+
     // User endpoints
     async getProfile() {
         return this.request('/users/profile');

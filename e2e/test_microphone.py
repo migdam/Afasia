@@ -6,6 +6,7 @@ the streams it opens, so the tests can see whether any is still live.
 import re
 
 from playwright.sync_api import expect
+from conftest import browser_token, call_api
 from test_sessions import record_dialogs, start_session
 
 RECORDING = re.compile(r"\brecording\b")
@@ -26,7 +27,9 @@ def live_microphones(page):
     )
 
 
-def start_recording(page):
+def start_recording(page, servers):
+    # Consent is asked for in the app (test_consent_questions.py); here it is given up front.
+    call_api(servers, "PUT", "/users/consents", {"recordings": True}, token=browser_token(page))
     page.add_init_script(COUNT_STREAMS)
     page.reload()
     expect(page.locator("#dashboard-page")).to_be_visible()
@@ -36,8 +39,8 @@ def start_recording(page):
     assert live_microphones(page) == 1
 
 
-def test_the_microphone_turns_off_when_a_recording_stops(page, account):
-    start_recording(page)
+def test_the_microphone_turns_off_when_a_recording_stops(page, servers, account):
+    start_recording(page, servers)
 
     page.click("#record-btn")
 
@@ -45,8 +48,8 @@ def test_the_microphone_turns_off_when_a_recording_stops(page, account):
     assert live_microphones(page) == 0
 
 
-def test_a_second_recording_turns_it_on_and_off_again(page, account):
-    start_recording(page)
+def test_a_second_recording_turns_it_on_and_off_again(page, servers, account):
+    start_recording(page, servers)
     page.click("#record-btn")
     expect(page.locator("#record-btn")).not_to_have_class(RECORDING)
 
@@ -58,9 +61,9 @@ def test_a_second_recording_turns_it_on_and_off_again(page, account):
     assert live_microphones(page) == 0
 
 
-def test_leaving_the_session_mid_recording_turns_it_off(page, account):
+def test_leaving_the_session_mid_recording_turns_it_off(page, servers, account):
     record_dialogs(page)  # accepts "Are you sure you want to exit?"
-    start_recording(page)
+    start_recording(page, servers)
 
     page.click("#exit-exercise")
 
@@ -68,8 +71,8 @@ def test_leaving_the_session_mid_recording_turns_it_off(page, account):
     page.wait_for_function("() => window.__micStreams.every(s => s.getTracks().every(t => t.readyState === 'ended'))")
 
 
-def test_logging_out_mid_recording_turns_it_off(page, account):
-    start_recording(page)
+def test_logging_out_mid_recording_turns_it_off(page, servers, account):
+    start_recording(page, servers)
 
     page.click("#logout-btn")
 

@@ -65,6 +65,12 @@ class AphasiaApp {
         });
 
         // Logout
+        [['consent-recordings', 'recordings'], ['consent-speech', 'speech_recognition']].forEach(([id, kind]) => {
+            document.getElementById(id).addEventListener('change', async (e) => {
+                await this.saveConsent(kind, e.target.checked);
+            });
+        });
+
         document.getElementById('password-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             await this.handleChangePassword();
@@ -99,6 +105,7 @@ class AphasiaApp {
                     ui.loadProgress();
                 } else if (page === 'account') {
                     ui.showPage('account');
+                    this.showConsents();
                 } else if (page === 'admin') {
                     ui.showPage('admin');
                     ui.loadAdminDashboard();
@@ -208,6 +215,54 @@ class AphasiaApp {
         }
     }
 
+    // The person's consent answers, loaded once per login.
+    async loadConsents() {
+        if (!this.consents) {
+            this.consents = await api.getConsents();
+        }
+        return this.consents;
+    }
+
+    // Whether the person agrees to `kind`, asking them first if they haven't
+    // been asked yet. A dialog closed without an answer counts as no, and is
+    // not saved, so they are asked again next time.
+    async hasConsent(kind) {
+        let consents;
+        try {
+            consents = await this.loadConsents();
+        } catch {
+            return false;
+        }
+        if (consents[kind] !== null) {
+            return consents[kind];
+        }
+        const answer = await ui.askConsent(kind);
+        if (answer === null) {
+            return false;
+        }
+        await this.saveConsent(kind, answer);
+        return answer;
+    }
+
+    async saveConsent(kind, granted) {
+        try {
+            this.consents = await api.setConsents({ [kind]: granted });
+            ui.showFormMessage('consent-message', 'saved', 'success');
+        } catch {
+            ui.showFormMessage('consent-message', 'error', 'error');
+        }
+    }
+
+    async showConsents() {
+        try {
+            const consents = await this.loadConsents();
+            document.getElementById('consent-recordings').checked = consents.recordings === true;
+            document.getElementById('consent-speech').checked = consents.speech_recognition === true;
+        } catch {
+            ui.showFormMessage('consent-message', 'error', 'error');
+        }
+    }
+
     async handleChangePassword() {
         const form = document.getElementById('password-form');
         const current = document.getElementById('current-password').value;
@@ -226,6 +281,7 @@ class AphasiaApp {
 
     async logout() {
         this.leaveExercise();
+        this.consents = null;  // the next person's answers are their own
         // Wait until the cookie is gone, or it could outlive a new login.
         await api.logout();
         ui.showAuthPage();
@@ -369,16 +425,18 @@ class AphasiaApp {
             answer = selectedOption ? selectedOption.dataset.answer : '';
         } else if (exercise.exercise_type === 'pronunciation') {
             if (this.recordedAudio) {
-                // Use speech recognition if available (Enhancement 12)
-                if (speechRecognizer.isSupported()) {
+                // There is a recording only with consent to keep it (P1-6b).
+                await api.uploadAudio(exercise.id, this.recordedAudio).catch((error) => {
+                    console.error('Upload failed:', error);
+                });
+                // Speech recognition needs its own consent: the browser may
+                // send the audio to its maker's servers.
+                if (speechRecognizer.isSupported() && await this.hasConsent('speech_recognition')) {
                     try {
                         const result = await speechRecognizer.recognize(
                             i18n.getCurrentLanguage() === 'pl' ? 'pl-PL' : 'en-US'
                         );
                         answer = result.transcript;
-
-                        // Upload audio
-                        await api.uploadAudio(exercise.id, this.recordedAudio);
                     } catch (error) {
                         console.error('Speech recognition failed:', error);
                         answer = 'recognition_failed';
@@ -439,11 +497,17 @@ class AphasiaApp {
         const statusEl = document.getElementById('recording-status');
 
         if (!audioRecorder.isRecording) {
-            // Start recording (ignoring clicks while the microphone opens)
+            // Start recording (ignoring clicks while asking or while the
+            // microphone opens). Without consent the microphone stays off.
             if (this.openingMicrophone) return;
             this.openingMicrophone = true;
-            const started = await audioRecorder.startRecording();
+            const allowed = await this.hasConsent('recordings');
+            const started = allowed && await audioRecorder.startRecording();
             this.openingMicrophone = false;
+            if (!allowed) {
+                statusEl.textContent = i18n.translate('recordingOff');
+                return;
+            }
             if (!started) return;
 
             recordBtn.classList.add('recording');

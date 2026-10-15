@@ -79,7 +79,7 @@ You read a sentence with a gap, such as "The sky is ___". Click the word that fi
 
 ### Pronunciation
 
-You see a word or phrase to say, such as "Say: Hello". Click **Record**, say it, click the button again to stop, then click **Submit**. Your browser asks for permission to use the microphone the first time. The microphone is on only while you record: it turns off when you stop, leave the session or log out, and your browser stops showing it as in use.
+You see a word or phrase to say, such as "Say: Hello". Click **Record**, say it, click the button again to stop, then click **Submit**. The first time, the app asks whether it may keep your recordings (see [Your data](#your-data)), and your browser asks for permission to use the microphone. The microphone is on only while you record: it turns off when you stop, leave the session or log out, and your browser stops showing it as in use.
 
 **This doesn't work reliably yet.** Your answer is judged by the browser's own speech recognition. In most browsers that isn't available, and where it is, it's unreliable for speech affected by aphasia. Answers are often marked wrong when they were right. This exercise type is being redesigned.
 
@@ -122,7 +122,7 @@ At the moment every therapist sees every patient. Signing up always makes a pati
 
 ## Your data
 
-Everything you do is stored on the server that runs the app: your account, your answers and your scores. Recordings are kept only if you have agreed to it. The app can't ask you yet, so for now your recordings are not kept. A privacy notice, the consent questions, and ways to export or delete all your data are planned but not available yet. Ask whoever runs the app if you need your data removed.
+Everything you do is stored on the server that runs the app: your account, your answers and your scores. Recordings are kept only if you agree. The first time you click **Record**, the app asks whether it may keep your recordings; if you say no, the microphone stays off. Before using your browser's speech recognition, which may send your voice to the company that made the browser, it asks separately. You can change both answers at any time under **Your choices** on the **Account** page. A privacy notice and ways to export or delete all your data are planned but not available yet. Ask whoever runs the app if you need your data removed.
 
 ## When something goes wrong
 

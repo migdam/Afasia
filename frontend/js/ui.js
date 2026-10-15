@@ -59,6 +59,30 @@ class UIManager {
         message.textContent = i18n.translate(key);
     }
 
+    // Ask a consent question in an in-app dialog. Resolves to true (yes),
+    // false (no) or null (closed with Escape: no answer).
+    askConsent(kind) {
+        const dialog = document.getElementById('consent-dialog');
+        document.getElementById('consent-title').textContent = i18n.translate(`${kind}ConsentTitle`);
+        document.getElementById('consent-text').textContent = i18n.translate(`${kind}ConsentText`);
+        const yes = document.getElementById('consent-yes');
+        const no = document.getElementById('consent-no');
+        yes.textContent = i18n.translate(`${kind}ConsentYes`);
+        no.textContent = i18n.translate('consentNo');
+        return new Promise((resolve) => {
+            const finish = (answer) => {
+                yes.onclick = no.onclick = dialog.oncancel = null;
+                if (dialog.open) dialog.close();
+                resolve(answer);
+            };
+            yes.onclick = () => finish(true);
+            no.onclick = () => finish(false);
+            dialog.oncancel = (event) => { event.preventDefault(); finish(null); };
+            dialog.showModal();
+            no.focus();  // the choice that does nothing is the safe default
+        });
+    }
+
     showAuthPage() {
         // Start again from an empty login form, so nothing typed earlier (a
         // password included) is left on screen for the next person.

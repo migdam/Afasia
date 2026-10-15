@@ -835,3 +835,40 @@ body {
 .form-message.error {
     border-left-color: var(--error-color);
 }
+
+/* The consent question (ui.askConsent) */
+.consent-dialog {
+    max-width: 32rem;
+    width: calc(100% - 2rem);
+    margin: auto;  /* centred; the global reset removes the browser's default */
+    border: none;
+    border-radius: var(--border-radius-lg);
+    padding: 1.5rem;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-lg);
+}
+
+.consent-dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.consent-dialog p {
+    font-size: 1.1rem;
+    line-height: 1.5;
+}
+
+/* A yes/no choice with its label beside it */
+.choice {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.choice input {
+    flex-shrink: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+}

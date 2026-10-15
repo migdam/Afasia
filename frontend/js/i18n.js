@@ -90,6 +90,20 @@ const translations = {
         wrongCurrentPassword: "The current password is not right.",
         newPasswordRules: "The new password needs at least 8 characters.",
         tooManyAttempts: "Too many wrong passwords. Wait up to 15 minutes, then try again.",
+        yourChoices: "Your choices",
+        consentRecordingsLabel: "Keep my voice recordings",
+        consentSpeechLabel: "Use the browser's speech recognition",
+        saved: "Saved.",
+
+        // Consent questions
+        recordingsConsentTitle: "Keep your recordings?",
+        recordingsConsentText: "To practise speaking, the app records your voice. May we keep your recordings on the server? Only you can play them. You can change this at any time on the Account page.",
+        recordingsConsentYes: "Yes, keep them",
+        speech_recognitionConsentTitle: "Use speech recognition?",
+        speech_recognitionConsentText: "Your browser can try to recognise what you said. To do this, it may send your voice to the company that made the browser. It often gets speech wrong when someone has aphasia. You can change this at any time on the Account page.",
+        speech_recognitionConsentYes: "Yes, use it",
+        consentNo: "No",
+        recordingOff: "Recording is off. You can turn it on on the Account page.",
 
         // Common
         save: "Save",
@@ -187,6 +201,20 @@ const translations = {
         wrongCurrentPassword: "Obecne hasło jest nieprawidłowe.",
         newPasswordRules: "Nowe hasło musi mieć co najmniej 8 znaków.",
         tooManyAttempts: "Zbyt wiele błędnych haseł. Odczekaj do 15 minut i spróbuj ponownie.",
+        yourChoices: "Twoje zgody",
+        consentRecordingsLabel: "Przechowuj moje nagrania głosu",
+        consentSpeechLabel: "Używaj rozpoznawania mowy przeglądarki",
+        saved: "Zapisano.",
+
+        // Consent questions
+        recordingsConsentTitle: "Przechowywać Twoje nagrania?",
+        recordingsConsentText: "Aby ćwiczyć mówienie, aplikacja nagrywa Twój głos. Czy możemy przechowywać nagrania na serwerze? Odtworzyć je możesz tylko Ty. Możesz to zmienić w każdej chwili na stronie Konto.",
+        recordingsConsentYes: "Tak, przechowuj",
+        speech_recognitionConsentTitle: "Używać rozpoznawania mowy?",
+        speech_recognitionConsentText: "Przeglądarka może spróbować rozpoznać, co mówisz. W tym celu może wysłać Twój głos do firmy, która ją stworzyła. Mowę osób z afazją często rozpoznaje błędnie. Możesz to zmienić w każdej chwili na stronie Konto.",
+        speech_recognitionConsentYes: "Tak, używaj",
+        consentNo: "Nie",
+        recordingOff: "Nagrywanie jest wyłączone. Możesz je włączyć na stronie Konto.",
 
         // Common
         save: "Zapisz",

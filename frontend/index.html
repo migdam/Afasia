@@ -286,7 +286,30 @@
                     <p id="password-message" class="form-message"></p>
                 </form>
             </div>
+
+            <div class="card">
+                <h3 data-i18n="yourChoices">Your choices</h3>
+                <div class="choice">
+                    <input type="checkbox" id="consent-recordings">
+                    <label for="consent-recordings" data-i18n="consentRecordingsLabel">Keep my voice recordings</label>
+                </div>
+                <div class="choice">
+                    <input type="checkbox" id="consent-speech">
+                    <label for="consent-speech" data-i18n="consentSpeechLabel">Use the browser's speech recognition</label>
+                </div>
+                <p id="consent-message" class="form-message"></p>
+            </div>
         </div>
+
+        <!-- Asked before the first recording and before speech recognition -->
+        <dialog id="consent-dialog" class="consent-dialog" aria-labelledby="consent-title" aria-describedby="consent-text">
+            <h3 id="consent-title"></h3>
+            <p id="consent-text"></p>
+            <div class="modal-actions">
+                <button type="button" id="consent-no" class="btn btn-secondary"></button>
+                <button type="button" id="consent-yes" class="btn btn-primary"></button>
+            </div>
+        </dialog>
 
         <!-- Admin Page -->
         <div id="admin-page" class="page">
