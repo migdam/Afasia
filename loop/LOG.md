@@ -19,6 +19,27 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 66: 2026-10-15 19:20 UTC: P2-9c Rest days in streaks
+- **Baseline:** `check.sh` exit code 0: 297 backend tests, smoke, 107 e2e. No human commits. The tests and the patch were written in the scratchpad until the baseline finished.
+- **Test first:** `backend/tests/test_rest_days.py`. It can't be imported before the change (there is no `app.streaks`), so a copy without that import ran against the old code: 3 of 4 failed.
+  - `(1, 1) == (4, 4)`: Monday, Wednesday, Friday and Monday counted as 1.
+  - `(2, 2) == (0, 2)`: a stale streak was shown after a long break.
+  - The setting was missing.
+  - The fourth test, "a longer break starts a new streak", is a guard.
+- **Did:**
+  - `app/streaks.py` (`zone`, `local_day`, `goes_on`, `streaks`, `streak_today`), with `STREAK_REST_DAYS` 2 as a placeholder that lets someone practise Monday, Wednesday and Friday.
+  - `User.streak_now` makes the counted streak lapse once more days off have passed than a streak allows. `UserResponse.current_streak` reads it through `AliasChoices`, so login, profile and admin show it, as do progress and the PDF.
+  - The setting is in compose, `.env.template` and the README tables. The guides and READMEs are updated (EN/PL).
+- **Tests changed (behaviour changed, explained in the commit):**
+  - `test_streaks`: the "gap starts again" case now uses 3 days off.
+  - `test_streaks` and `test_time_zone` also move the clock used for reading.
+- **Verified:** `scripts/check.sh` exit code 0: ruff "All checks passed!", pip-audit "No known vulnerabilities found", 301 backend tests, smoke, 107 e2e.
+- **Commit:** 47c7904 (pushed: yes)
+- **Discovered:**
+  - The admin list now looks up each patient's time zone (one query per patient, at most 50 per page). That is fine at this size; note it if the list grows.
+  - A weekly goal was not built; it is left for H1 to ask for.
+- **Next:** P2-9d (the three badge types that are never awarded).
+
 ### 65: 2026-10-15 19:04 UTC: P2-9b Streak days in the person's time zone
 - **Baseline:** `check.sh` exit code 0: 291 backend tests, smoke, 106 e2e. No human commits. The tests and the patch were written in the scratchpad until the baseline finished.
 - **Test first:**
