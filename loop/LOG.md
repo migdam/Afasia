@@ -19,6 +19,26 @@ Times in entries 13–23 were first written as estimates that ran up to 2¼ hour
 
 ---
 
+### 70: 2026-10-15 20:42 UTC: P2-10b Dates, numbers and plural forms
+- **Baseline:** `check.sh` exit code 0: 305 backend tests, smoke, 116 e2e. No human commits. The tests and the patch were written in the scratchpad until the baseline finished.
+- **Test first:** `e2e/test_dates_and_numbers.py`. All 3 initial tests failed before:
+  - dates in words on the dashboard in EN and PL, including straight after switching (it showed "1/1/2099, 10:00:00 AM");
+  - progress units ("1" with no unit);
+  - Polish plural forms (the helper didn't exist).
+  - An English plural-forms test was added later.
+- **Did:**
+  - i18n helpers: `locale()` (en-GB, pl-PL), `formatDate` and `formatDateTime` (long, in words), `formatShortDate` (chart), `formatNumber`, `formatPercent`, `formatCount` (`Intl.PluralRules` with forms in `PLURAL_FORMS`) and `formatDuration` (minutes under an hour).
+  - Used for session, plan and badge dates, chart labels, scores and accuracies, points, the longest streak and the total time.
+  - `ui.refreshLists()` writes the lists again after a change of language.
+  - Updated the guides (EN/PL).
+- **Found on the way:**
+  - Intl's `unit: 'day'` gives "1 doba / 5 dób" in Chromium (Node gives "dzień"). So the forms are written out per plural category, as the backlog asked (`Intl.PluralRules`).
+  - The first screenshot showed "0 godzin" after a real session. Total time now shows minutes under an hour.
+- **Verified:** `scripts/check.sh` exit code 0: ruff "All checks passed!", pip-audit "No known vulnerabilities found", 305 backend tests, smoke, 120 e2e. Screenshots at 390 px in Polish ("1 stycznia 2099 10:00", "15 października 2026", "1 dzień") were sent to the user.
+- **Commit:** 4d2e3d4 (pushed: yes)
+- **Discovered:** nothing new.
+- **Next:** P2-10c (the CSV and PDF exports in the person's language; the PDF needs an embedded font with Polish letters).
+
 ### 69: 2026-10-15 20:18 UTC: P1-11 Session cards fit a phone
 - **Baseline:** `check.sh` exit code 0: 305 backend tests, smoke, 112 e2e. No human commits. The test and the patch were written in the scratchpad until the baseline finished.
 - **Test first:** `e2e/test_session_lists_fit.py`, at 390 px with two finished sessions and a long planned title. It checks that no title, badge, score or button sticks out of its card, that no card scrolls, and that every score is on screen. All 4 cases (EN/PL × normal/larger text) failed before. With larger text the Delete button stuck out too.
